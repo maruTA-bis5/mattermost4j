@@ -19,6 +19,7 @@ package net.bis5.mattermost.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * TODO 型の説明
@@ -27,7 +28,17 @@ import lombok.Data;
  * @since 2016/10/08
  */
 @Data
+@NoArgsConstructor
 public class Command {
+
+	public Command(String creatorId, String teamId, String url, CommandMethod method, String trigger) {
+		this.creatorId = creatorId;
+		this.teamId = teamId;
+		this.url = url;
+		this.method = method;
+		this.trigger = trigger;
+	}
+
 	@JsonProperty("id")
 	private String id;
 	@JsonProperty("token")
