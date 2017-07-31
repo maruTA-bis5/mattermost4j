@@ -17,14 +17,19 @@
 package net.bis5.mattermost.client4;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+
+import javax.ws.rs.ProcessingException;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.bis5.mattermost.client4.model.ApiError;
 import net.bis5.mattermost.model.Channel;
+import net.bis5.mattermost.model.ChannelMember;
 import net.bis5.mattermost.model.ChannelType;
 import net.bis5.mattermost.model.Config;
 import net.bis5.mattermost.model.Post;
@@ -66,9 +71,9 @@ public class TestHelper {
 
 	public TestHelper setup() throws InterruptedException, ExecutionException {
 		initSystemAdmin();
-		Config config = client.getConfig().toCompletableFuture().get().readEntity();
+		Config config = client.getConfig().thenApply(this::checkNoError).toCompletableFuture().get().readEntity();
 		config.getTeamSettings().setMaxUsersPerTeam(50);
-		config.getRateLimitSettings().setEnable(true);
+		config.getRateLimitSettings().setEnable(false);
 		// TODO un-comment these lines when Dockerfile setup.
 		// config.getEmailSettings().setSendEmailNotifications(true);
 		// config.getEmailSettings().setSmtpServer("localhost");
@@ -93,13 +98,22 @@ public class TestHelper {
 		basicUser2 = createUser();
 		linkUserToTeam(basicUser2, basicTeam);
 		// TODO app.~
-		client.addChannelMember(basicChannel.getId(), basicUser.getId())
-				.thenRun(() -> client.addChannelMember(basicChannel.getId(), basicUser2.getId()))
-				.thenRun(() -> client.addChannelMember(basicChannel2.getId(), basicUser.getId()))
-				.thenRun(() -> client.addChannelMember(basicChannel2.getId(), basicUser2.getId()))
-				.thenRun(() -> client.addChannelMember(basicPrivateChannel.getId(), basicUser.getId()))
-				.thenRun(() -> client.addChannelMember(basicPrivateChannel.getId(), basicUser2.getId()))
-				.toCompletableFuture().get();
+		CompletableFuture<ApiResponse<ChannelMember>> basicUserCh1 = client.addChannelMember(basicChannel.getId(),
+				basicUser.getId()).toCompletableFuture();
+		CompletableFuture<ApiResponse<ChannelMember>> basicUser2Ch1 = client
+				.addChannelMember(basicChannel.getId(), basicUser2.getId()).toCompletableFuture();
+		CompletableFuture<ApiResponse<ChannelMember>> basicUserCh2 = client
+				.addChannelMember(basicChannel2.getId(), basicUser.getId()).toCompletableFuture();
+		CompletableFuture<ApiResponse<ChannelMember>> basicUser2Ch2 = client
+				.addChannelMember(basicChannel2.getId(), basicUser2.getId()).toCompletableFuture();
+		CompletableFuture<ApiResponse<ChannelMember>> basicUserPrivCh = client
+				.addChannelMember(basicPrivateChannel.getId(), basicUser.getId()).toCompletableFuture();
+		CompletableFuture<ApiResponse<ChannelMember>> basicUser2PrivCh = client
+				.addChannelMember(basicPrivateChannel.getId(), basicUser2.getId()).toCompletableFuture();
+		CompletableFuture
+				.allOf(basicUserCh1, basicUser2Ch1, basicUserCh2, basicUser2Ch2, basicUserPrivCh, basicUser2PrivCh)
+				.get();
+
 		// linkUserToTeam(systemAdminUser, basicTeam);
 		loginBasic();
 		return this;
@@ -132,7 +146,7 @@ public class TestHelper {
 		user.setRoles(Arrays.asList(Role.ROLE_SYSTEM_ADMIN, Role.ROLE_SYSTEM_USER).stream().map(r -> r.getId())
 				.collect(Collectors.joining(" ")));
 
-		user = client.createUser(user).toCompletableFuture().get().readEntity();
+		user = client.createUser(user).thenApply(this::checkNoError).toCompletableFuture().get().readEntity();
 		user.setPassword("Password1");
 		return user;
 	}
@@ -148,7 +162,7 @@ public class TestHelper {
 		user.setLastName("l_" + id);
 		user.setPassword("Password1");
 
-		user = client.createUser(user).toCompletableFuture().get().readEntity();
+		user = client.createUser(user).thenApply(this::checkNoError).toCompletableFuture().get().readEntity();
 		user.setPassword("Password1");
 		return user;
 	}
@@ -162,7 +176,7 @@ public class TestHelper {
 		team.setEmail(generateTestEmail());
 		team.setType(TeamType.OPEN);
 
-		team = client.createTeam(team).toCompletableFuture().get().readEntity();
+		team = client.createTeam(team).thenApply(this::checkNoError).toCompletableFuture().get().readEntity();
 		return team;
 	}
 
@@ -183,7 +197,7 @@ public class TestHelper {
 		channel.setType(type);
 		channel.setTeamId(basicTeam.getId());
 
-		channel = client.createChannel(channel).toCompletableFuture().get().readEntity();
+		channel = client.createChannel(channel).thenApply(this::checkNoError).toCompletableFuture().get().readEntity();
 		return channel;
 	}
 
@@ -194,19 +208,19 @@ public class TestHelper {
 		post.setChannelId(channel.getId());
 		post.setMessage("message_" + id);
 
-		post = client.createPost(post).toCompletableFuture().get().readEntity();
+		post = client.createPost(post).thenApply(this::checkNoError).toCompletableFuture().get().readEntity();
 		return post;
 	}
 
-	public Post createPinnedPost() throws InterruptedException, ExecutionException {
+	public Post createPinnedPost(String channelId) throws InterruptedException, ExecutionException {
 		String id = newId();
 
 		Post post = new Post();
-		post.setChannelId(basicChannel.getId());
+		post.setChannelId(channelId);
 		post.setMessage("message_" + id);
 		post.setPinned(true);
 
-		post = client.createPost(post).toCompletableFuture().get().readEntity();
+		post = client.createPost(post).thenApply(this::checkNoError).toCompletableFuture().get().readEntity();
 		return post;
 	}
 
@@ -255,16 +269,35 @@ public class TestHelper {
 		return this;
 	}
 
-	protected void loginAs(User user) throws InterruptedException, ExecutionException {
+	protected TestHelper loginAs(User user) throws InterruptedException, ExecutionException {
 		client.login(user.getEmail(), user.getPassword()).toCompletableFuture().get();
+		return this;
 	}
 
-	protected void linkUserToTeam(User user, Team team) throws InterruptedException, ExecutionException {
-		client.addTeamMembers(team.getId(), user.getId()).toCompletableFuture().get();
+	protected TestHelper linkUserToTeam(User user, Team team) throws InterruptedException, ExecutionException {
+		client.addTeamMembers(team.getId(), user.getId()).thenApply(this::checkNoError).toCompletableFuture().get();
+		return this;
 	}
 
 	public TestHelper updateUserRoles(String userId, Role... roles) throws InterruptedException, ExecutionException {
-		client.updateUserRoles(userId, roles).toCompletableFuture().get();
+		client.updateUserRoles(userId, roles).thenApply(this::checkNoError).toCompletableFuture().get();
 		return this;
+	}
+
+	public TestHelper updateUserToNonTeamAdmin(User user, Team team) throws InterruptedException, ExecutionException {
+		client.updateTeamMemberRoles(team.getId(), user.getId(), Role.ROLE_TEAM_USER).thenApply(this::checkNoError)
+				.toCompletableFuture().get();
+		return this;
+	}
+
+	public <T> ApiResponse<T> checkNoError(ApiResponse<T> response) {
+		response.getRawResponse().bufferEntity();
+		try {
+			ApiError error = response.readError();
+			throw new AssertionError("Expected no error, got " + error);
+		} catch (ProcessingException ex) {
+			// no error
+		}
+		return response;
 	}
 }
