@@ -115,14 +115,6 @@ import net.bis5.mattermost.model.license.MfaSecret;
  */
 public class MattermostClient {
 
-	// FIXME idea note
-	// -
-	// gnello/php-mattermost-driverのように、PostModel#getPost(hogehoge)でHttpResponse的なオブジェクトを返すべきか?
-	// やるとすれば、javax.ws.rs.core.ResponseをWrapして、データモデルを一発で取り出せる何かであった方が楽
-	// どちらにせよ、これみたいな低レベルAPIも必要になってくるので、これはこのまま作り続けてみる。(後で分割するかもしれないが
-	// *
-	// CompletionStage<ApiResponse<Channel>>みたいに、javax.ws.rs.core.Responseと本来のレスポンスを一緒くたにした方を返すべき
-
 	protected static final String API_URL_SUFFIX = "/api/v4";
 	private final String url;
 	private final String apiUrl;
@@ -145,10 +137,6 @@ public class MattermostClient {
 		this.url = url;
 		this.apiUrl = url + API_URL_SUFFIX;
 	}
-
-	// protected Response buildResponse(Object someone) {
-	// return new Response(); // FIXME
-	// }
 
 	public void setOAuthToken(String token) {
 		this.authToken = token;
