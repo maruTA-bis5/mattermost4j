@@ -102,6 +102,7 @@ import net.bis5.mattermost.model.TeamStats;
 import net.bis5.mattermost.model.TeamUnread;
 import net.bis5.mattermost.model.User;
 import net.bis5.mattermost.model.UserAutocomplete;
+import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
 import net.bis5.mattermost.model.WebrtcInfoResponse;
@@ -675,9 +676,9 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<User>>> getUsers(int page, int perPage, String etag) {
+	public CompletionStage<ApiResponse<UserList>> getUsers(int page, int perPage, String etag) {
 		String query = String.format("?page=%d&per_page=%d", page, perPage);
-		return doApiGet(getUsersRoute() + query, etag, listType());
+		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
 	/**
@@ -689,9 +690,9 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<User>>> getUsersInTeam(String teamId, int page, int perPage, String etag) {
+	public CompletionStage<ApiResponse<UserList>> getUsersInTeam(String teamId, int page, int perPage, String etag) {
 		String query = String.format("?in_team=%s&page=%d&per_page=%d", teamId, page, perPage);
-		return doApiGet(getUsersRoute() + query, etag, listType());
+		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
 	/**
@@ -703,10 +704,10 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<User>>> getUsersNotInTeam(String teamId, int page, int perPage,
+	public CompletionStage<ApiResponse<UserList>> getUsersNotInTeam(String teamId, int page, int perPage,
 			String etag) {
 		String query = String.format("?not_in_team=%s&page=%d&per_page=%d", teamId, page, perPage);
-		return doApiGet(getUsersRoute() + query, etag, listType());
+		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
 	/**
@@ -718,10 +719,10 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<User>>> getUsersInChannel(String channelId, int page, int perPage,
+	public CompletionStage<ApiResponse<UserList>> getUsersInChannel(String channelId, int page, int perPage,
 			String etag) {
 		String query = String.format("?in_channel=%s&page=%d&per_page=%d", channelId, page, perPage);
-		return doApiGet(getUsersRoute() + query, etag, listType());
+		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
 	/**
@@ -734,12 +735,12 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<User>>> getUsersNotInChannel(String teamId, String channelId, int page,
+	public CompletionStage<ApiResponse<UserList>> getUsersNotInChannel(String teamId, String channelId, int page,
 			int perPage,
 			String etag) {
 		String query = String.format("?in_team=%s&not_in_channel=%s&page=%d&per_page=%d", teamId, channelId, page,
 				perPage);
-		return doApiGet(getUsersRoute() + query, etag, listType());
+		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
 	/**
@@ -751,9 +752,9 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<User>>> getUsersWithoutTeam(int page, int perPage, String etag) {
+	public CompletionStage<ApiResponse<UserList>> getUsersWithoutTeam(int page, int perPage, String etag) {
 		String query = String.format("?without_team=1&page=%d&per_page=%d", page, perPage);
-		return doApiGet(getUsersRoute() + query, etag, listType());
+		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
 	/**
@@ -762,8 +763,8 @@ public class MattermostClient {
 	 * @param userIds
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<User>>> getUsersByIds(String... userIds) {
-		return doApiPost(getUsersRoute() + "/ids", userIds, listType());
+	public CompletionStage<ApiResponse<UserList>> getUsersByIds(String... userIds) {
+		return doApiPost(getUsersRoute() + "/ids", userIds, UserList.class);
 	}
 
 	/**
@@ -772,8 +773,8 @@ public class MattermostClient {
 	 * @param usernames
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<User>>> getUsersByUsernames(String... usernames) {
-		return doApiPost(getUsersRoute() + "/usernames", usernames, listType());
+	public CompletionStage<ApiResponse<UserList>> getUsersByUsernames(String... usernames) {
+		return doApiPost(getUsersRoute() + "/usernames", usernames, UserList.class);
 	}
 
 	/**
@@ -782,8 +783,8 @@ public class MattermostClient {
 	 * @param search
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<User>>> searchUsers(UserSearch search) {
-		return doApiPost(getUsersRoute() + "/search", search, listType());
+	public CompletionStage<ApiResponse<UserList>> searchUsers(UserSearch search) {
+		return doApiPost(getUsersRoute() + "/search", search, UserList.class);
 	}
 
 	/**
