@@ -18,6 +18,7 @@ package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -27,6 +28,7 @@ import lombok.Data;
  * @since 2017/06/10
  */
 @Data
+@Builder
 public class UserSearch {
 
 	@JsonProperty("term")
