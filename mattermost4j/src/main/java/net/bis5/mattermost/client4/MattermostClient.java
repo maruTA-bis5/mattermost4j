@@ -614,7 +614,7 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<UserAutocomplete>> autocompleteUsersInTeam(String teamId, String username,
 			String etag) {
-		String query = String.format("?in_team=%s&name=%s", teamId, username);
+		String query = new QueryBuilder().append("in_team", teamId).append("name", username).toString();
 		return doApiGet(getUsersRoute() + "/autocomplete" + query, etag, UserAutocomplete.class);
 	}
 
@@ -629,7 +629,8 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<UserAutocomplete>> autocompleteUsersInChannel(String teamId, String channelId,
 			String username, String etag) {
-		String query = String.format("?in_team=%s&in_channel=%s&name=%s", teamId, channelId, username);
+		String query = new QueryBuilder().append("in_team", teamId).append("in_channel", channelId)
+				.append("name", username).toString();
 		return doApiGet(getUsersRoute() + "/autocomplete" + query, etag, UserAutocomplete.class);
 	}
 
@@ -641,7 +642,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<UserAutocomplete>> autocompleteUsers(String username, String etag) {
-		String query = String.format("?name=%s", username);
+		String query = new QueryBuilder().append("name", username).toString();
 		return doApiGet(getUsersRoute() + "/autocomplete" + query, etag, UserAutocomplete.class);
 	}
 
@@ -677,7 +678,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<UserList>> getUsers(int page, int perPage, String etag) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("Per_page", perPage).toString();
 		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
@@ -691,7 +692,8 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<UserList>> getUsersInTeam(String teamId, int page, int perPage, String etag) {
-		String query = String.format("?in_team=%s&page=%d&per_page=%d", teamId, page, perPage);
+		String query = new QueryBuilder().append("in_team", teamId).append("page", page).append("per_page", perPage)
+				.toString();
 		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
@@ -706,7 +708,8 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<UserList>> getUsersNotInTeam(String teamId, int page, int perPage,
 			String etag) {
-		String query = String.format("?not_in_team=%s&page=%d&per_page=%d", teamId, page, perPage);
+		String query = new QueryBuilder().append("not_in_team", teamId).append("page", page).append("per_page", perPage)
+				.toString();
 		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
@@ -721,7 +724,8 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<UserList>> getUsersInChannel(String channelId, int page, int perPage,
 			String etag) {
-		String query = String.format("?in_channel=%s&page=%d&per_page=%d", channelId, page, perPage);
+		String query = new QueryBuilder().append("in_channel", channelId).append("page", page)
+				.append("per_page", perPage).toString();
 		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
@@ -738,8 +742,8 @@ public class MattermostClient {
 	public CompletionStage<ApiResponse<UserList>> getUsersNotInChannel(String teamId, String channelId, int page,
 			int perPage,
 			String etag) {
-		String query = String.format("?in_team=%s&not_in_channel=%s&page=%d&per_page=%d", teamId, channelId, page,
-				perPage);
+		String query = new QueryBuilder().append("in_team", teamId).append("not_in_channel", channelId)
+				.append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
@@ -753,7 +757,8 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<UserList>> getUsersWithoutTeam(int page, int perPage, String etag) {
-		String query = String.format("?without_team=1&page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("without_team", 1).append("page", page).append("per_page", perPage)
+				.toString();
 		return doApiGet(getUsersRoute() + query, etag, UserList.class);
 	}
 
@@ -993,7 +998,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<Audits>> getUserAudits(String userId, int page, int perPage, String etag) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getUserRoute(userId) + "/audits" + query, etag, Audits.class);
 	}
 
@@ -1070,7 +1075,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<List<Team>>> getAllTeams(String etag, int page, int perPage) {
-		String query = String.format("?page=%s&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getTeamsRoute() + query, etag, listType());
 	}
 
@@ -1190,7 +1195,7 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<List<TeamMember>>> getTeamMembers(String teamId, int page, int perPage,
 			String etag) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getTeamMembersRoute(teamId) + query, etag, listType());
 	}
 
@@ -1425,7 +1430,7 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<ChannelList>> getPublicChannelsForTeam(String teamId, int page, int perPage,
 			String etag) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getChannelsForTeamRoute(teamId) + query, etag, ChannelList.class);
 	}
 
@@ -1510,7 +1515,7 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<ChannelMembers>> getChannelMembers(String channelId, int page, int perPage,
 			String etag) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getChannelMembersRoute(channelId) + query, etag, ChannelMembers.class);
 	}
 
@@ -1729,7 +1734,7 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<PostList>> getPostsForChannel(String channelId, int page, int perPage,
 			String etag) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getChannelRoute(channelId) + "/posts" + query, etag, PostList.class);
 	}
 
@@ -1742,7 +1747,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<PostList>> getFlaggedPostsForUser(String userId, int page, int perPage) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getUserRoute(userId) + "/posts/flagged" + query, null, PostList.class);
 	}
 
@@ -1759,7 +1764,7 @@ public class MattermostClient {
 			int perPage) {
 		// TODO teamId length validation
 
-		String query = String.format("?in_team=%s&page=%d&per_page=%d", teamId, page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getUserRoute(userId) + "/posts/flagged" + query, null, PostList.class);
 	}
 
@@ -1776,7 +1781,8 @@ public class MattermostClient {
 			int page,
 			int perPage) {
 		// TODO channelId length validation
-		String query = String.format("?in_channel=%s&page=%d&per_page=%d", channelId, page, perPage);
+		String query = new QueryBuilder().append("in_channel", channelId).append("page", page)
+				.append("per_page", perPage).toString();
 		return doApiGet(getUserRoute(userId) + "/posts/flagged" + query, null, PostList.class);
 	}
 
@@ -1804,7 +1810,8 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<PostList>> getPostsAfter(String channelId, String postId, int page, int perPage,
 			String etag) {
-		String query = String.format("?page=%d&per_page=%d&after=%s", page, perPage, postId);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).append("after", postId)
+				.toString();
 		return doApiGet(getChannelRoute(channelId) + "/posts" + query, etag, PostList.class);
 	}
 
@@ -1820,7 +1827,8 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<PostList>> getPostsBefore(String channelId, String postId, int page, int perPage,
 			String etag) {
-		String query = String.format("?page=%d&per_page=%d&before=%s", page, perPage, postId);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).append("before", postId)
+				.toString();
 		return doApiGet(getChannelRoute(channelId) + "/posts" + query, etag, PostList.class);
 	}
 
@@ -1964,7 +1972,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<List<IncomingWebhook>>> getIncomingWebhooks(int page, int perPage, String etag) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getIncomingWebhooksRoute() + query, etag, listType());
 	}
 
@@ -1981,7 +1989,8 @@ public class MattermostClient {
 	public CompletionStage<ApiResponse<List<IncomingWebhook>>> getIncomingWebhooksForTeam(String teamId, int page,
 			int perPage,
 			String etag) {
-		String query = String.format("?page=%d&per_page=%d&team_id=%s", page, perPage, teamId);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).append("team_id", teamId)
+				.toString();
 		return doApiGet(getIncomingWebhooksRoute() + query, etag, listType());
 	}
 
@@ -2037,7 +2046,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<List<OutgoingWebhook>>> getOutgoingWebhooks(int page, int perPage, String etag) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getOutgoingWebhooksRoute() + query, etag, listType());
 	}
 
@@ -2063,7 +2072,8 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<List<OutgoingWebhook>>> getOutgoingWebhooksForChannel(String channelId, int page,
 			int perPage, String etag) {
-		String query = String.format("?page=%d&per_page=%d&channel_id=%s", page, perPage, channelId);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage)
+				.append("channel_id", channelId).toString();
 		return doApiGet(getOutgoingWebhooksRoute() + query, etag, listType());
 	}
 
@@ -2079,7 +2089,8 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<List<OutgoingWebhook>>> getOutgoingWebhooksForTeam(String teamId, int page,
 			int perPage, String etag) {
-		String query = String.format("?page=%d&per_page=%d&team_id=%s", page, perPage, teamId);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).append("team_id", teamId)
+				.toString();
 		return doApiGet(getOutgoingWebhooksRoute() + query, etag, listType());
 	}
 
@@ -2275,7 +2286,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<Compliances>> getComplianceReports(int page, int perPage) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getComplianceReportsRoute() + query, null, Compliances.class);
 	}
 
@@ -2342,7 +2353,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<Audits>> getAudits(int page, int perPage, String etag) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet("/audits" + query, etag, Audits.class);
 	}
 
@@ -2377,7 +2388,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<List<String>>> getLogs(int page, int perPage) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet("/logs" + query, null, listType());
 	}
 
@@ -2416,7 +2427,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<List<OAuthApp>>> getOAuthApps(int page, int perPage) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getOAuthAppsRoute() + query, null, listType());
 	}
 
@@ -2475,7 +2486,7 @@ public class MattermostClient {
 	 */
 	public CompletionStage<ApiResponse<List<OAuthApp>>> getAuthorizedPAuthAppsForUser(String userId, int page,
 			int perPage) {
-		String query = String.format("?page=%d&per_page=%d", page, perPage);
+		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getUserRoute(userId) + "/oauth/apps/authorized" + query, null, listType());
 	}
 
@@ -2546,7 +2557,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public CompletionStage<ApiResponse<List<Command>>> listCommands(String teamId, boolean customOnly) {
-		String query = String.format("?team_id=%s&custom_only=%b", teamId, customOnly);
+		String query = new QueryBuilder().append("team_id", teamId).append("custom_only", customOnly).toString();
 		return doApiGet(getCommandsRoute() + query, null, listType());
 	}
 
