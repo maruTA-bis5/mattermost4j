@@ -16,15 +16,21 @@
  */
 package net.bis5.mattermost.client4;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -55,6 +61,8 @@ import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.User;
+import net.bis5.mattermost.model.UserAutocomplete;
+import net.bis5.mattermost.model.UserSearch;
 
 /**
  * Mattermost API call test
@@ -637,6 +645,192 @@ public class MattermostApiTest {
 				.toCompletableFuture().get();
 
 		assertThat(unread.getChannelId(), is(channel.getId()));
+	}
+
+	// Users
+
+	@Test
+	public void testUsers_CreateUser() throws InterruptedException, ExecutionException {
+		User user = new User();
+		user.setEmail(th.generateTestEmail());
+		user.setUsername(th.generateTestUsername());
+		user.setPassword("PASSWD");
+
+		User created = client.createUser(user)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(created.getEmail(), is(user.getEmail()));
+		assertThat(created.getUsername(), is(user.getUsername()));
+	}
+
+	@Test
+	public void testUsers_GetUsers() throws InterruptedException, ExecutionException {
+		List<User> users = client.getUsers(0, 60, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(users, is(not(emptyIterable())));
+	}
+
+	@Test
+	public void testUsers_GetUsers_InChannel() throws InterruptedException, ExecutionException {
+		th.loginBasic();
+		Channel channel = th.createPublicChannel();
+		client.addChannelMember(channel.getId(), th.basicUser2().getId()).thenApply(this::checkNoError)
+				.toCompletableFuture().get();
+
+		List<User> users = client.getUsersInChannel(channel.getId(), 0, 60, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
+				containsInAnyOrder(th.basicUser().getId(), th.basicUser2().getId()));
+	}
+
+	@Test
+	public void testUsers_GetUsers_NotInChannel() throws InterruptedException, ExecutionException {
+		Set<String> notInChannelUserIds = new HashSet<>(Arrays.asList(th.basicUser().getId(), th.basicUser2().getId(),
+				th.teamAdminUser().getId()));
+		th.loginBasic();
+		Channel channel = th.createPublicChannel();
+		notInChannelUserIds.remove(th.basicUser().getId());
+
+		List<User> users = client.getUsersNotInChannel(th.basicTeam().getId(), channel.getId(), 0, 60, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
+				hasItems(notInChannelUserIds.toArray(new String[0])));
+	}
+
+	@Test
+	public void testUsers_GetUsers_InTeam() throws InterruptedException, ExecutionException {
+		User notInTeamUser = th.loginSystemAdmin().createUser();
+		Set<String> inTeamUserIds = new HashSet<>(Arrays.asList(th.basicUser().getId(), th.basicUser2().getId(),
+				th.teamAdminUser().getId()));
+		th.loginBasic();
+
+		List<User> users = client.getUsersInTeam(th.basicTeam().getId(), 0, 60, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		Set<String> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
+		assertThat(userIds, not(hasItems(notInTeamUser.getId())));
+		assertThat(userIds, hasItems(inTeamUserIds.toArray(new String[0])));
+	}
+
+	@Test
+	public void testUsers_GetUsers_NotInTeam() throws InterruptedException, ExecutionException {
+		th.loginBasic();
+		Set<String> inTeamUserIds = new HashSet<>(Arrays.asList(th.basicUser().getId(), th.basicUser2().getId(),
+				th.systemAdminUser().getId(), th.teamAdminUser().getId()));
+
+		List<User> users = client.getUsersNotInTeam(th.basicTeam().getId(), 0, 60, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
+				not(hasItems(inTeamUserIds.toArray(new String[0]))));
+	}
+
+	@Test
+	public void testUsers_GetUsers_WithoutTeam() throws InterruptedException, ExecutionException {
+		User withoutTeamUser = th.loginSystemAdmin().createUser();
+		th.loginSystemAdmin();
+
+		List<User> users = client.getUsersWithoutTeam(0, 60, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
+				hasItem(withoutTeamUser.getId()));
+	}
+
+	@Test
+	public void testUsers_GetUsersByIds() throws InterruptedException, ExecutionException {
+
+		List<User> users = client.getUsersByIds(th.basicUser().getId(), th.basicUser2().getId())
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
+				containsInAnyOrder(th.basicUser().getId(), th.basicUser2().getId()));
+	}
+
+	@Test
+	public void testUsers_GetUsersByUsernames() throws InterruptedException, ExecutionException {
+
+		List<User> users = client.getUsersByUsernames(th.basicUser().getUsername(), th.basicUser2().getUsername())
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
+				containsInAnyOrder(th.basicUser().getId(), th.basicUser2().getId()));
+	}
+
+	@Test
+	public void testUsers_SearchUsers() throws InterruptedException, ExecutionException {
+		UserSearch criteria = UserSearch.builder().term(th.basicUser().getUsername()).teamId(th.basicTeam().getId())
+				.build();
+
+		List<User> users = client.searchUsers(criteria)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(users.stream().map(User::getUsername).collect(Collectors.toSet()),
+				hasItem(th.basicUser().getUsername()));
+	}
+
+	@Test
+	public void testUsers_AutocompleteUsers() throws InterruptedException, ExecutionException {
+
+		UserAutocomplete autocompleteUsers = client.autocompleteUsers(th.basicUser().getUsername(), null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(autocompleteUsers.getUsers().stream().map(User::getId).collect(Collectors.toSet()),
+				hasItem(th.basicUser().getId()));
+	}
+
+	@Test
+	public void testUsers_AutocompleteUsers_InTeam() throws InterruptedException, ExecutionException {
+
+		UserAutocomplete autocompleteUsers = client
+				.autocompleteUsersInTeam(th.basicTeam().getId(), th.basicUser().getUsername(), null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(autocompleteUsers.getUsers().stream().map(User::getId).collect(Collectors.toSet()),
+				hasItem(th.basicUser().getId()));
+	}
+
+	@Test
+	public void testUsers_AutocompleteUsers_InChannel() throws InterruptedException, ExecutionException {
+		Channel channel = th.createPublicChannel();
+
+		UserAutocomplete autocompleteUsers = client
+				.autocompleteUsersInChannel(th.basicTeam().getId(), channel.getId(), null, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(autocompleteUsers.getUsers().stream().map(User::getId).collect(Collectors.toSet()),
+				hasItem(th.basicUser().getId()));
+		assertThat(autocompleteUsers.getOutOfChannel().stream().map(User::getId).collect(Collectors.toSet()),
+				hasItem(th.basicUser2().getId()));
 	}
 
 }
