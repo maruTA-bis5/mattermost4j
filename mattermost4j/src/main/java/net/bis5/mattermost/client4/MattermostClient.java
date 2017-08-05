@@ -370,7 +370,7 @@ public class MattermostClient {
 	}
 
 	protected <T> CompletionStage<ApiResponse<Void>> doApiPostMultiPart(String url, MultiPart multiPart) {
-		return RxCompletionStage.from(httpClient.target(url))
+		return RxCompletionStage.from(httpClient.target(apiUrl + url))
 				.request(MediaType.APPLICATION_JSON_TYPE)
 				.header(HEADER_AUTH, getAuthority())
 				.rx()
