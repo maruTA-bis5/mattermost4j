@@ -96,6 +96,7 @@ import net.bis5.mattermost.model.SessionList;
 import net.bis5.mattermost.model.Status;
 import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
+import net.bis5.mattermost.model.TeamExists;
 import net.bis5.mattermost.model.TeamList;
 import net.bis5.mattermost.model.TeamMember;
 import net.bis5.mattermost.model.TeamPatch;
@@ -1107,11 +1108,8 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<Boolean> teamExists(String name, String etag) {
-		return doApiGet(getTeamByNameRoute(name) + "/exists", etag, stringMapType())
-				.thenApply(r -> r.readEntity())
-				.thenApply(m -> m.getOrDefault("exists", "false"))
-				.thenApply(Boolean::valueOf);
+	public CompletionStage<ApiResponse<TeamExists>> teamExists(String name, String etag) {
+		return doApiGet(getTeamByNameRoute(name) + "/exists", etag, TeamExists.class);
 	}
 
 	/**
@@ -1177,10 +1175,27 @@ public class MattermostClient {
 	 * deletes the team softly (archive only, not permanent delete).
 	 * 
 	 * @param teamId
+	 * @see {@link #deleteTeam(String, boolean)}
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<Boolean>> softDeleteTeam(String teamId) {
+	public CompletionStage<ApiResponse<Boolean>> deleteTeam(String teamId) {
 		return doApiDelete(getTeamRoute(teamId))
+				.thenApply(this::checkStatusOK);
+	}
+
+	/**
+	 * deletes the team
+	 * 
+	 * @param teamId
+	 * @param permanent
+	 *            {@code true}: Permanently delete the team, to be used for
+	 *            compliance reasons only.
+	 * @see {@link #deleteTeam(String)}
+	 * @return
+	 */
+	public CompletionStage<ApiResponse<Boolean>> deleteTeam(String teamId, boolean permanent) {
+		String query = new QueryBuilder().append("permanent", Boolean.toString(permanent)).toString();
+		return doApiDelete(getTeamRoute(teamId) + query)
 				.thenApply(this::checkStatusOK);
 	}
 
