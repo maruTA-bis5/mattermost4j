@@ -21,12 +21,20 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.junit.Assert.assertThat;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +55,9 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import net.bis5.mattermost.model.Audit;
+import net.bis5.mattermost.model.Audits;
+import net.bis5.mattermost.model.AuthService;
 import net.bis5.mattermost.model.Channel;
 import net.bis5.mattermost.model.ChannelList;
 import net.bis5.mattermost.model.ChannelMember;
@@ -59,9 +70,12 @@ import net.bis5.mattermost.model.ChannelView;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.Role;
+import net.bis5.mattermost.model.Session;
+import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.User;
 import net.bis5.mattermost.model.UserAutocomplete;
+import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
 
 /**
@@ -831,6 +845,293 @@ public class MattermostApiTest {
 				hasItem(th.basicUser().getId()));
 		assertThat(autocompleteUsers.getOutOfChannel().stream().map(User::getId).collect(Collectors.toSet()),
 				hasItem(th.basicUser2().getId()));
+	}
+
+	@Test
+	public void testUsers_GetUser() throws InterruptedException, ExecutionException {
+		String userId = th.basicUser().getId();
+
+		User user = client.getUser(userId, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(user.getId(), is(userId));
+	}
+
+	@Test
+	public void testUsers_UpdateUser() throws InterruptedException, ExecutionException {
+		User user = th.basicUser();
+		String firstName = "newFirst" + user.getFirstName();
+		String lastName = "newLast" + user.getLastName();
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
+
+		user = client.updateUser(user)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(user.getFirstName(), is(firstName));
+		assertThat(user.getLastName(), is(lastName));
+	}
+
+	@Test
+	public void testUsers_Deactivate() throws InterruptedException, ExecutionException {
+		th.loginSystemAdmin();
+		String userId = th.basicUser().getId();
+
+		boolean result = client.deleteUser(userId)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testUsers_PatchUser() throws InterruptedException, ExecutionException {
+		UserPatch patch = new UserPatch();
+		String firstName = "newFirst" + th.basicUser().getFirstName();
+		String lastName = "newLast" + th.basicUser().getLastName();
+		patch.setFirstName(firstName);
+		patch.setLastName(lastName);
+
+		User user = client.patchUser(th.basicUser().getId(), patch)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(user.getFirstName(), is(firstName));
+		assertThat(user.getLastName(), is(lastName));
+	}
+
+	@Test
+	public void testUsers_UpdateUserRoles() throws InterruptedException, ExecutionException {
+		th.loginSystemAdmin();
+
+		boolean result = client.updateUserRoles(th.basicUser().getId(), Role.ROLE_SYSTEM_ADMIN, Role.ROLE_SYSTEM_USER)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testUsers_UpdateUserActiveStatus() throws InterruptedException, ExecutionException {
+
+		boolean result = client.updateUserActive(th.basicUser().getId(), false)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testUsers_GetUserProfileImage()
+			throws InterruptedException, ExecutionException, FileNotFoundException, IOException {
+
+		byte[] image = client.getProfileImage(th.basicUser().getId(), null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		Path tempFile = Files.createTempFile("mm", ".png");
+		System.out.println(tempFile);
+		try (FileOutputStream fout = new FileOutputStream(tempFile.toFile())) {
+			fout.write(image);
+		}
+	}
+
+	@Test
+	public void testUsers_SetUserProfileImage() throws InterruptedException, ExecutionException, URISyntaxException {
+		Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+
+		boolean result = client.setProfileImage(th.basicUser().getId(), image)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testUsers_GetUserByName() throws InterruptedException, ExecutionException {
+		String username = th.basicUser().getUsername();
+
+		User user = client.getUserByUsername(username, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(user.getId(), is(th.basicUser().getId()));
+	}
+
+	@Test
+	public void testUsers_ResetPassword() throws InterruptedException, ExecutionException {
+
+		client.resetPassword(th.newRandomString(64), "passwd")
+				// invalid token
+				.thenApply(r -> checkStatus(r, Status.BAD_REQUEST))
+				.toCompletableFuture().get();
+	}
+
+	@Test
+	public void testUsers_UpdateUserMfa() throws InterruptedException, ExecutionException {
+
+		client.updateUserMfa(th.basicUser().getId(), null, false)
+				// Enterprise Edition required
+				.thenApply(r -> checkStatus(r, Status.NOT_IMPLEMENTED))
+				.toCompletableFuture().get();
+	}
+
+	@Test
+	public void testUsers_GenerateMfaSecret() throws InterruptedException, ExecutionException {
+		th.loginSystemAdmin();
+
+		client.generateMfaSecret(th.basicUser().getId())
+				// Enterprise Edition required
+				.thenApply(r -> checkStatus(r, Status.NOT_IMPLEMENTED))
+				.toCompletableFuture().get();
+	}
+
+	@Test
+	public void testUsers_CheckMfa() throws InterruptedException, ExecutionException {
+		boolean mfaRequired = client.checkUserMfa(th.basicUser().getId())
+				.toCompletableFuture().get();
+
+		assertThat(mfaRequired, is(false));
+	}
+
+	@Test
+	public void testUsers_UpdateUserPassword() throws InterruptedException, ExecutionException {
+		String userId = th.basicUser().getId();
+		String currentPassword = th.basicUser().getPassword();
+		String newPassword = "new" + currentPassword;
+
+		boolean result = client.updateUserPassword(userId, currentPassword, newPassword)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testUsers_SendPasswordResetEmail() throws InterruptedException, ExecutionException {
+		String email = th.basicUser().getEmail();
+
+		boolean result = client.sendPasswordResetEmail(email)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testUsers_GetUserByEmail() throws InterruptedException, ExecutionException {
+		String email = th.basicUser().getEmail();
+
+		User user = client.getUserByEmail(email, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(user.getId(), is(th.basicUser().getId()));
+	}
+
+	@Test
+	public void testUsers_GetUserSessions() throws InterruptedException, ExecutionException {
+		String userId = th.basicUser().getId();
+
+		List<Session> sessions = client.getSessions(userId, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(sessions.stream().findAny().map(Session::getUserId).get(), is(userId));
+	}
+
+	@Test
+	public void testUsers_RevokeUserSession() throws InterruptedException, ExecutionException {
+		Session session = client.getSessions(th.basicUser().getId(), null)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get()
+				.stream()
+				.findAny()
+				.get();
+
+		boolean result = client.revokeSession(session.getUserId(), session.getId())
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testUsers_AttachMobileDevice() throws InterruptedException, ExecutionException {
+		boolean result = client.attachDeviceId(th.newId())
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testUsers_GetAudits() throws InterruptedException, ExecutionException {
+
+		Audits audits = client.getUserAudits(th.basicUser().getId(), 0, 50, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(audits.stream().findAny().map(Audit::getId).get(), is(not(nullValue())));
+	}
+
+	@Test
+	public void testUsers_VerifyEmail() throws InterruptedException, ExecutionException {
+
+		client.verifyUserEmail(th.newId())
+				// invalid token
+				.thenApply(r -> checkStatus(r, Status.BAD_REQUEST))
+				.toCompletableFuture().get();
+	}
+
+	@Test
+	public void testUsers_SendVerificationEmail() throws InterruptedException, ExecutionException {
+
+		boolean result = client.sendVerificationEmail(th.basicUser().getEmail())
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testUsers_SwitchLoginMethod() throws InterruptedException, ExecutionException {
+		SwitchRequest request = new SwitchRequest();
+		request.setCurrentService(AuthService.Email);
+		request.setNewService(AuthService.GitLab);
+		request.setEmail(th.basicUser().getEmail());
+		request.setPassword(th.basicUser().getPassword());
+
+		client.switchAccountType(request)
+				.thenApply(r -> checkStatus(r, Status.NOT_IMPLEMENTED))
+				.toCompletableFuture().get();
 	}
 
 }
