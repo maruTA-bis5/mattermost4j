@@ -16,9 +16,7 @@
  */
 package net.bis5.mattermost.model;
 
-import java.util.List;
-
-import lombok.Data;
+import java.util.ArrayList;
 
 /**
  * TODO 型の説明
@@ -26,9 +24,8 @@ import lombok.Data;
  * @author Maruyama Takayuki
  * @since 2017/06/07
  */
-@Data
-public class Audits {
-
-	private List<Audit> audits;
+public class Audits extends ArrayList<Audit> {
+	/** $Comment$ */
+	private static final long serialVersionUID = 1L;
 
 }
