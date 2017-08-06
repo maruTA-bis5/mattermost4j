@@ -23,4 +23,15 @@ jobs:
     
     steps:
       - checkout
+      - run:
+        - name: wait for spin-up mattermost
+        - command: |
+          for i in 1 2 3 4 5; do
+            curl -I "${MATTERMOST_URL:-http://localhost:8065}"
+            if [ $? -eq 0 ] ; then
+              break
+            else
+              sleep 5
+            fi
+          done
       - run: mvn integration-test
