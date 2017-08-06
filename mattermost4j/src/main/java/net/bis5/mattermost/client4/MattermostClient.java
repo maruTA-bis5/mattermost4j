@@ -91,7 +91,7 @@ import net.bis5.mattermost.model.Preference;
 import net.bis5.mattermost.model.Reaction;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.SamlCertificateStatus;
-import net.bis5.mattermost.model.Session;
+import net.bis5.mattermost.model.SessionList;
 import net.bis5.mattermost.model.Status;
 import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
@@ -937,8 +937,8 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<Session>>> getSessions(String userId, String etag) {
-		return doApiGet(getUserRoute(userId) + "/sessions", etag, listType());
+	public CompletionStage<ApiResponse<SessionList>> getSessions(String userId, String etag) {
+		return doApiGet(getUserRoute(userId) + "/sessions", etag, SessionList.class);
 	}
 
 	/**
