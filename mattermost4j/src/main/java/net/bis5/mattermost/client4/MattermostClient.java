@@ -96,6 +96,7 @@ import net.bis5.mattermost.model.SessionList;
 import net.bis5.mattermost.model.Status;
 import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
+import net.bis5.mattermost.model.TeamList;
 import net.bis5.mattermost.model.TeamMember;
 import net.bis5.mattermost.model.TeamPatch;
 import net.bis5.mattermost.model.TeamSearch;
@@ -1073,9 +1074,9 @@ public class MattermostClient {
 	 * @param perPage
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<Team>>> getAllTeams(String etag, int page, int perPage) {
+	public CompletionStage<ApiResponse<TeamList>> getAllTeams(String etag, int page, int perPage) {
 		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getTeamsRoute() + query, etag, listType());
+		return doApiGet(getTeamsRoute() + query, etag, TeamList.class);
 	}
 
 	/**
@@ -1095,8 +1096,8 @@ public class MattermostClient {
 	 * @param search
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<Team>>> searchTeams(TeamSearch search) {
-		return doApiPost(getTeamsRoute() + "/search", search, listType());
+	public CompletionStage<ApiResponse<TeamList>> searchTeams(TeamSearch search) {
+		return doApiPost(getTeamsRoute() + "/search", search, TeamList.class);
 	}
 
 	/**
@@ -1121,8 +1122,8 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<Team>>> getTeamsForUser(String userId, String etag) {
-		return doApiGet(getUserRoute(userId) + "/teams", etag, listType());
+	public CompletionStage<ApiResponse<TeamList>> getTeamsForUser(String userId, String etag) {
+		return doApiGet(getUserRoute(userId) + "/teams", etag, TeamList.class);
 	}
 
 	/**
