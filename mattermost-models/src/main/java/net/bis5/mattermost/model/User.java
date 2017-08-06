@@ -46,7 +46,7 @@ public class User {
 	@JsonProperty("auth_data")
 	private String authData;
 	@JsonProperty("auth_service")
-	private String authService;
+	private AuthService authService;
 	@JsonProperty("email")
 	private String email;
 	@JsonProperty("email_verified")

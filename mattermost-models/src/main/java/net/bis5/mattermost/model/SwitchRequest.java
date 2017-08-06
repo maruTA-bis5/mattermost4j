@@ -30,9 +30,9 @@ import lombok.Data;
 public class SwitchRequest {
 
 	@JsonProperty("current_service")
-	private String currentService;
+	private AuthService currentService;
 	@JsonProperty("new_service")
-	private String newService;
+	private AuthService newService;
 	@JsonProperty("email")
 	private String email;
 	@JsonProperty("current_password")
