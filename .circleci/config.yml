@@ -1,10 +1,10 @@
 workflows:
   version: 2
   test-supported-versions:
-  jobs:
-    - test-mattermost-3.9
-    - test-mattermost-3.10
-    - test-mattermost-4.0
+    jobs:
+      - test-mattermost-3.9
+      - test-mattermost-3.10
+      - test-mattermost-4.0
  
 version: 2
 jobs:
