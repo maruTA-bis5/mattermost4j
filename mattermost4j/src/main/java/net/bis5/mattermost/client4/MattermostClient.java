@@ -56,6 +56,7 @@ import net.bis5.mattermost.client4.model.RevokeSessionRequest;
 import net.bis5.mattermost.client4.model.SearchPostsRequest;
 import net.bis5.mattermost.client4.model.SendPasswordResetEmailRequest;
 import net.bis5.mattermost.client4.model.SendVerificationEmailRequest;
+import net.bis5.mattermost.client4.model.SwitchAccountTypeResult;
 import net.bis5.mattermost.client4.model.UpdateRolesRequest;
 import net.bis5.mattermost.client4.model.UpdateUserActiveRequest;
 import net.bis5.mattermost.client4.model.UpdateUserMfaRequest;
@@ -541,10 +542,8 @@ public class MattermostClient {
 	 * 
 	 * @return
 	 */
-	public CompletionStage<String> switchAccountType(SwitchRequest switchRequest) {
-		return doApiPost(getUsersRoute() + "/login/switch", switchRequest, stringMapType())
-				.thenApply(r -> r.readEntity())
-				.thenApply(m -> m.get("follow_link"));
+	public CompletionStage<ApiResponse<SwitchAccountTypeResult>> switchAccountType(SwitchRequest switchRequest) {
+		return doApiPost(getUsersRoute() + "/login/switch", switchRequest, SwitchAccountTypeResult.class);
 	}
 
 	// User Section
