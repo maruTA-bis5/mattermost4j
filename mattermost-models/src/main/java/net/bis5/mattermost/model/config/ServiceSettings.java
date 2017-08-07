@@ -16,6 +16,8 @@
  */
 package net.bis5.mattermost.model.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.AllowEditPost;
 import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
@@ -30,6 +32,7 @@ import net.bis5.mattermost.model.config.consts.WebServerMode;
  * @since 2016/10/08
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceSettings {
 
 	private String siteUrl;
