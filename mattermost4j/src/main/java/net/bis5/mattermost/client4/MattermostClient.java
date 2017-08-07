@@ -1239,6 +1239,16 @@ public class MattermostClient {
 	}
 
 	/**
+	 * add user to a team and return a team member.
+	 * 
+	 * @param teamMemberToAdd
+	 * @return
+	 */
+	public CompletionStage<ApiResponse<TeamMember>> addTeamMember(TeamMember teamMemberToAdd) {
+		return doApiPost(getTeamMembersRoute(teamMemberToAdd.getTeamId()), teamMemberToAdd, TeamMember.class);
+	}
+
+	/**
 	 * adds user to a team and return a team member.
 	 * 
 	 * @param teamId
