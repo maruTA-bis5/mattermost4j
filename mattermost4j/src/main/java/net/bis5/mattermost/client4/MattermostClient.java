@@ -1250,32 +1250,48 @@ public class MattermostClient {
 	}
 
 	/**
-	 * adds user to a team and return a team member.
-	 * 
 	 * @param teamId
 	 * @param userId
 	 * @param hash
 	 * @param dataToHash
 	 * @param inviteId
 	 * @return
+	 * @deprecated API Change on Mattermost 4.0
 	 */
+	@Deprecated
 	public CompletionStage<ApiResponse<TeamMember>> addTeamMember(String teamId, String userId, String hash,
-			String dataToHash,
-			String inviteId) {
-		TeamMember member = new TeamMember(teamId, userId);
-
-		String query = "";
-		// FIXME inviteId != null && (hash != null && dataToHash != null) then
-		// throw new IllegalArgumentException
-		if (inviteId != null) { // FIXME StringUtils.isNotEmpty
-			query += String.format("?invite_id=%s", inviteId);
+			String dataToHash, String inviteId) {
+		QueryBuilder query = new QueryBuilder();
+		if (StringUtils.isNotEmpty(inviteId)) {
+			query.append("invite_id", inviteId);
 		}
-		if (hash != null && dataToHash != null) { // FIXME
-													// StringUtils.isNotEmpty
-			query += String.format("?hash=%s&data=%s", hash, dataToHash);
+		if (StringUtils.isNotEmpty(hash) && StringUtils.isNotEmpty(dataToHash)) {
+			query.append("hash", hash).append("data", dataToHash);
+		}
+		TeamMember teamMember = new TeamMember(teamId, userId);
+
+		return doApiPost(getTeamMembersRoute(teamId) + query, teamMember, TeamMember.class);
+	}
+
+	/**
+	 * adds user to a team and return a team member.
+	 * 
+	 * @param hash
+	 * @param dataToHash
+	 * @param inviteId
+	 * @return
+	 * @since Mattermost 4.0
+	 */
+	public CompletionStage<ApiResponse<TeamMember>> addTeamMember(String hash, String dataToHash, String inviteId) {
+		QueryBuilder query = new QueryBuilder();
+		if (StringUtils.isNotEmpty(inviteId)) {
+			query.append("invite_id", inviteId);
+		}
+		if (StringUtils.isNotEmpty(hash) && StringUtils.isNotEmpty(dataToHash)) {
+			query.append("hash", hash).append("data", dataToHash);
 		}
 
-		return doApiPost(getTeamMembersRoute(teamId) + query, member, TeamMember.class);
+		return doApiPost(getTeamsRoute() + "/members/invite" + query.toString(), null, TeamMember.class);
 	}
 
 	/**
