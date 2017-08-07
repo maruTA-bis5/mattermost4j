@@ -16,6 +16,8 @@
  */
 package net.bis5.mattermost.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 import net.bis5.mattermost.model.config.AnalyticsSettings;
 import net.bis5.mattermost.model.config.ClusterSettings;
@@ -45,6 +47,7 @@ import net.bis5.mattermost.model.config.WebrtcSettings;
  * @since 2016/10/09
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Config {
 
 	private ServiceSettings serviceSettings;
