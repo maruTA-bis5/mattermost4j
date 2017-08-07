@@ -99,6 +99,7 @@ import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.TeamExists;
 import net.bis5.mattermost.model.TeamList;
 import net.bis5.mattermost.model.TeamMember;
+import net.bis5.mattermost.model.TeamMemberList;
 import net.bis5.mattermost.model.TeamPatch;
 import net.bis5.mattermost.model.TeamSearch;
 import net.bis5.mattermost.model.TeamStats;
@@ -1208,10 +1209,10 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<TeamMember>>> getTeamMembers(String teamId, int page, int perPage,
+	public CompletionStage<ApiResponse<TeamMemberList>> getTeamMembers(String teamId, int page, int perPage,
 			String etag) {
 		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getTeamMembersRoute(teamId) + query, etag, listType());
+		return doApiGet(getTeamMembersRoute(teamId) + query, etag, TeamMemberList.class);
 	}
 
 	/**
@@ -1221,8 +1222,8 @@ public class MattermostClient {
 	 * @param etag
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<TeamMember>>> getTeamMembersForUser(String userId, String etag) {
-		return doApiGet(getUserRoute(userId) + "/teams/members", etag, listType());
+	public CompletionStage<ApiResponse<TeamMemberList>> getTeamMembersForUser(String userId, String etag) {
+		return doApiGet(getUserRoute(userId) + "/teams/members", etag, TeamMemberList.class);
 	}
 
 	/**
@@ -1233,9 +1234,9 @@ public class MattermostClient {
 	 * @param userIds
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<TeamMember>>> getTeamMembersByIds(String teamId, String... userIds) {
+	public CompletionStage<ApiResponse<TeamMemberList>> getTeamMembersByIds(String teamId, String... userIds) {
 		String url = String.format("/teams/%s/members/ids", teamId);
-		return doApiPost(url, userIds, listType());
+		return doApiPost(url, userIds, TeamMemberList.class);
 	}
 
 	/**
@@ -1284,12 +1285,12 @@ public class MattermostClient {
 	 * @param userIds
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<TeamMember>>> addTeamMembers(String teamId, String... userIds) {
+	public CompletionStage<ApiResponse<TeamMemberList>> addTeamMembers(String teamId, String... userIds) {
 		List<TeamMember> members = Arrays.stream(userIds)
 				.map(u -> new TeamMember(teamId, u))
 				.collect(Collectors.toList());
 
-		return doApiPost(getTeamMembersRoute(teamId) + "/batch", members, listType());
+		return doApiPost(getTeamMembersRoute(teamId) + "/batch", members, TeamMemberList.class);
 	}
 
 	/**
