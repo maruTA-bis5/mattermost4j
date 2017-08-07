@@ -16,6 +16,8 @@
  */
 package net.bis5.mattermost.model.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
 
@@ -26,6 +28,7 @@ import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
  * @since 2016/10/09
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EmailSettings {
 
 	private boolean enableSignUpWithEmail;
