@@ -104,6 +104,7 @@ import net.bis5.mattermost.model.TeamPatch;
 import net.bis5.mattermost.model.TeamSearch;
 import net.bis5.mattermost.model.TeamStats;
 import net.bis5.mattermost.model.TeamUnread;
+import net.bis5.mattermost.model.TeamUnreadList;
 import net.bis5.mattermost.model.User;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
@@ -977,7 +978,7 @@ public class MattermostClient {
 	 * @param teamIdToExclude
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<List<TeamUnread>>> getTeamsUnreadForUser(String userId, String teamIdToExclude) {
+	public CompletionStage<ApiResponse<TeamUnreadList>> getTeamsUnreadForUser(String userId, String teamIdToExclude) {
 		String optional = "";
 		if (teamIdToExclude != null) { // TODO use StringUtils.isNotEmpty
 			try {
@@ -987,7 +988,7 @@ public class MattermostClient {
 				throw new AssertionError(e);
 			}
 		}
-		return doApiGet(getUserRoute(userId) + "/teams/unread" + optional, null, listType());
+		return doApiGet(getUserRoute(userId) + "/teams/unread" + optional, null, TeamUnreadList.class);
 	}
 
 	/**
