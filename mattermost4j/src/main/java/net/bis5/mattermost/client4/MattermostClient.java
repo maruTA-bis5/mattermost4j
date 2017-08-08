@@ -243,7 +243,7 @@ public class MattermostClient {
 	}
 
 	public String getPostRoute(String postId) {
-		return getPostsRoute() + String.format("%s.", StringUtils.stripToEmpty(postId));
+		return getPostsRoute() + String.format("/%s", StringUtils.stripToEmpty(postId));
 	}
 
 	public String getFilesRoute() {
