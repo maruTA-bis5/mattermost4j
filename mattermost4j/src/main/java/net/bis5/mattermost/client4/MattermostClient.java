@@ -978,7 +978,7 @@ public class MattermostClient {
 	 * @param teamIdToExclude
 	 * @return
 	 */
-	public CompletionStage<ApiResponse<TeamUnreadList>> getTeamsUnreadForUser(String userId, String teamIdToExclude) {
+	public CompletionStage<ApiResponse<TeamUnreadList>> getTeamUnreadForUser(String userId, String teamIdToExclude) {
 		String optional = "";
 		if (teamIdToExclude != null) { // TODO use StringUtils.isNotEmpty
 			try {
