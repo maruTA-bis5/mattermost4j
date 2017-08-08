@@ -36,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +64,7 @@ import net.bis5.mattermost.model.ChannelList;
 import net.bis5.mattermost.model.ChannelMember;
 import net.bis5.mattermost.model.ChannelMembers;
 import net.bis5.mattermost.model.ChannelPatch;
+import net.bis5.mattermost.model.ChannelSearch;
 import net.bis5.mattermost.model.ChannelStats;
 import net.bis5.mattermost.model.ChannelType;
 import net.bis5.mattermost.model.ChannelUnread;
@@ -73,6 +75,13 @@ import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
+import net.bis5.mattermost.model.TeamExists;
+import net.bis5.mattermost.model.TeamMember;
+import net.bis5.mattermost.model.TeamPatch;
+import net.bis5.mattermost.model.TeamSearch;
+import net.bis5.mattermost.model.TeamStats;
+import net.bis5.mattermost.model.TeamType;
+import net.bis5.mattermost.model.TeamUnread;
 import net.bis5.mattermost.model.User;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserPatch;
@@ -1132,6 +1141,367 @@ public class MattermostApiTest {
 		client.switchAccountType(request)
 				.thenApply(r -> checkStatus(r, Status.NOT_IMPLEMENTED))
 				.toCompletableFuture().get();
+	}
+
+	// Teams
+
+	@Test
+	public void testTeams_CreateTeam() throws InterruptedException, ExecutionException {
+		th.loginSystemAdmin();
+		Team team = new Team();
+		final String teamName = th.generateTestTeamName();
+		final String teamDisplayName = "dn_" + teamName;
+		team.setName(teamName);
+		team.setDisplayName(teamDisplayName);
+		team.setType(TeamType.OPEN);
+
+		team = client.createTeam(team)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(team.getName(), is(teamName));
+		assertThat(team.getDisplayName(), is(teamDisplayName));
+		assertThat(team.getType(), is(TeamType.OPEN));
+		assertThat(team.getId(), is(not(nullValue())));
+	}
+
+	@Test
+	public void testTeams_GetTeams() throws InterruptedException, ExecutionException {
+		Team team = th.loginSystemAdmin().createTeam();
+
+		List<Team> teams = client.getAllTeams(null, 0, 60)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(teams.stream().map(Team::getId).collect(Collectors.toSet()), hasItem(team.getId()));
+	}
+
+	@Test
+	public void testTeams_getTeam() throws InterruptedException, ExecutionException {
+
+		Team team = client.getTeam(th.basicTeam().getId(), null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(team.getId(), is(th.basicTeam().getId()));
+	}
+
+	@Test
+	public void testTeams_UpdateTeam() throws InterruptedException, ExecutionException {
+		th.loginTeamAdmin();
+		Team team = th.basicTeam();
+		final String teamId = team.getId();
+		final String newDispName = "new" + team.getDisplayName();
+		team.setDisplayName(newDispName);
+
+		team = client.updateTeam(team)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(team.getId(), is(teamId));
+		assertThat(team.getDisplayName(), is(newDispName));
+	}
+
+	@Test
+	public void testTeams_DeleteTeam_Soft() throws InterruptedException, ExecutionException {
+		th.loginSystemAdmin();
+
+		boolean result = client.deleteTeam(th.basicTeam().getId())
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testTeams_DeleteTeam_Permanent() throws InterruptedException, ExecutionException {
+		th.loginSystemAdmin();
+
+		boolean result = client.deleteTeam(th.basicTeam().getId(), true)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testTeams_PatchTeam() throws InterruptedException, ExecutionException {
+		th.loginTeamAdmin();
+		TeamPatch patch = new TeamPatch();
+		final String newDisplayName = "new" + th.basicTeam().getDisplayName();
+		patch.setDisplayName(newDisplayName);
+
+		Team team = client.patchTeam(th.basicTeam().getId(), patch)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(team.getDisplayName(), is(newDisplayName));
+	}
+
+	@Test
+	public void testTeams_GetTeamByName() throws InterruptedException, ExecutionException {
+		final String teamId = th.basicTeam().getId();
+		final String teamName = th.basicTeam().getName();
+
+		Team team = client.getTeamByName(teamName, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(team.getId(), is(teamId));
+	}
+
+	@Test
+	public void testTeams_SearchTeams() throws InterruptedException, ExecutionException {
+		TeamSearch search = new TeamSearch();
+		search.setTerm(th.basicTeam().getName());
+
+		List<Team> teams = client.searchTeams(search)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(teams.stream().map(Team::getId).collect(Collectors.toSet()), hasItem(th.basicTeam().getId()));
+	}
+
+	@Test
+	public void testTeams_TeamExists_Exists() throws InterruptedException, ExecutionException {
+
+		TeamExists exists = client.teamExists(th.basicTeam().getName(), null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(exists.isExists(), is(true));
+	}
+
+	@Test
+	public void testTeams_TeamExists_NotExists() throws InterruptedException, ExecutionException {
+
+		TeamExists exists = client.teamExists("fake" + th.generateTestTeamName(), null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(exists.isExists(), is(false));
+	}
+
+	@Test
+	public void testTeams_GetUsersTeams() throws InterruptedException, ExecutionException {
+		String userId = th.basicUser().getId();
+
+		List<Team> teams = client.getTeamsForUser(userId, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(teams.stream().map(Team::getId).collect(Collectors.toSet()), hasItem(th.basicTeam().getId()));
+	}
+
+	@Test
+	public void testTeams_GetTeamMembers() throws InterruptedException, ExecutionException {
+
+		List<TeamMember> teamMembers = client.getTeamMembers(th.basicTeam().getId(), 0, 60, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(teamMembers.stream().map(TeamMember::getUserId).collect(Collectors.toSet()),
+				hasItems(th.basicUser().getId(), th.basicUser2().getId()));
+	}
+
+	@Test
+	public void testTeams_AddUserToTeam() throws InterruptedException, ExecutionException {
+		th.loginSystemAdmin();
+		User user = th.createUser();
+		th.loginTeamAdmin();
+		TeamMember teamMemberToAdd = new TeamMember(th.basicTeam().getId(), user.getId());
+
+		TeamMember teamMember = client.addTeamMember(teamMemberToAdd)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(teamMember.getTeamId(), is(teamMemberToAdd.getTeamId()));
+		assertThat(teamMember.getUserId(), is(teamMemberToAdd.getUserId()));
+	}
+
+	@Test
+	@Ignore // API for 4.0+
+	public void testTeams_AddUserToTeamFromInvite() throws InterruptedException, ExecutionException {
+
+		client.addTeamMember("hash", "dataToHash", "inviteId")
+				.thenApply(r -> checkStatus(r, Status.BAD_REQUEST))
+				.toCompletableFuture().get();
+
+	}
+
+	@Test
+	public void testTeams_AddMultipleUsersToTeam() throws InterruptedException, ExecutionException {
+		th.loginSystemAdmin();
+		User user1 = th.createUser();
+		User user2 = th.createUser();
+		th.loginTeamAdmin();
+
+		List<TeamMember> members = client.addTeamMembers(th.basicTeam().getId(), user1.getId(), user2.getId())
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(members.stream().map(TeamMember::getUserId).collect(Collectors.toSet()),
+				containsInAnyOrder(user1.getId(), user2.getId()));
+	}
+
+	@Test
+	public void testTeams_GetTeamMembersForUser() throws InterruptedException, ExecutionException {
+
+		List<TeamMember> members = client.getTeamMembersForUser(th.basicUser().getId(), null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(members.stream().map(TeamMember::getUserId).collect(Collectors.toSet()),
+				hasItems(th.basicUser().getId()));
+	}
+
+	@Test
+	public void testTeams_GetTeamMember() throws InterruptedException, ExecutionException {
+		String teamId = th.basicTeam().getId();
+		String userId = th.basicUser2().getId();
+
+		TeamMember member = client.getTeamMember(teamId, userId, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(member.getTeamId(), is(teamId));
+		assertThat(member.getUserId(), is(userId));
+	}
+
+	@Test
+	public void testTeams_RemoveUserFromTeam() throws InterruptedException, ExecutionException {
+		th.loginTeamAdmin();
+		String teamId = th.basicTeam().getId();
+		String userId = th.basicUser2().getId();
+
+		boolean result = client.removeTeamMember(teamId, userId)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testTeams_GetTeamMembersByIds() throws InterruptedException, ExecutionException {
+
+		List<TeamMember> members = client
+				.getTeamMembersByIds(th.basicTeam().getId(), th.basicUser().getId(), th.basicUser2().getId())
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(members.stream().map(TeamMember::getUserId).collect(Collectors.toSet()),
+				hasItems(th.basicUser().getId(), th.basicUser2().getId()));
+	}
+
+	@Test
+	public void testTeams_GetTeamStats() throws InterruptedException, ExecutionException {
+
+		TeamStats stats = client.getTeamStats(th.basicTeam().getId(), null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(stats.getTeamId(), is(th.basicTeam().getId()));
+	}
+
+	@Test
+	public void testTeams_UpdateTeamMemberRoles() throws InterruptedException, ExecutionException {
+		th.loginTeamAdmin();
+
+		boolean result = client
+				.updateTeamMemberRoles(th.basicTeam().getId(), th.basicUser().getId(), Role.ROLE_TEAM_ADMIN)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testTeams_GetTeamUnreadsForUser() throws InterruptedException, ExecutionException {
+
+		List<TeamUnread> unreads = client.getTeamUnreadForUser(th.basicUser().getId(), null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		unreads.stream().findFirst().ifPresent(u -> assertThat(u.getTeamId(), is(th.basicTeam().getId())));
+	}
+
+	@Test
+	public void testTeams_GetTeamUnreadsForTeam() throws InterruptedException, ExecutionException {
+
+		TeamUnread unread = client.getTeamUnread(th.basicTeam().getId(), th.basicUser().getId())
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(unread.getTeamId(), is(th.basicTeam().getId()));
+	}
+
+	@Test
+	public void testTeams_InviteUsersToTheTeamByEmail() throws InterruptedException, ExecutionException {
+
+		boolean result = client
+				.inviteUsersToTeam(th.basicTeam().getId(), Collections.singletonList(th.generateTestEmail()))
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.thenApply(Boolean::booleanValue)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	@Ignore // Not Implemented
+	public void testTeams_ImportTeamFromOtherApplication() {
+	}
+
+	@Test
+	public void testTeams_GetPublicChannels() throws InterruptedException, ExecutionException {
+
+		List<Channel> channels = client.getPublicChannelsForTeam(th.basicTeam().getId(), 0, 60, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(channels.stream().findAny().get().getTeamId(), is(th.basicTeam().getId()));
+	}
+
+	@Test
+	public void testTeams_SearchChannels() throws InterruptedException, ExecutionException {
+		ChannelSearch search = new ChannelSearch();
+		search.setTerm(th.basicChannel().getName());
+
+		List<Channel> channels = client.searchChannels(th.basicTeam().getId(), search)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(channels.stream().findAny().get().getTeamId(), is(th.basicTeam().getId()));
 	}
 
 }
