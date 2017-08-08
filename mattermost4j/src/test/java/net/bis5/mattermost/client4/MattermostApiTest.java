@@ -1130,13 +1130,16 @@ public class MattermostApiTest {
 		assertThat(result, is(true));
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testUsers_SwitchLoginMethod() throws InterruptedException, ExecutionException {
 		SwitchRequest request = new SwitchRequest();
 		request.setCurrentService(AuthService.Email);
 		request.setNewService(AuthService.GitLab);
 		request.setEmail(th.basicUser().getEmail());
-		request.setPassword(th.basicUser().getPassword());
+		request.setCurrentPassword(th.basicUser().getPassword());
+		request.setPassword(th.basicUser().getPassword()); // for 4.0+
+		th.loginBasic();
 
 		client.switchAccountType(request)
 				.thenApply(r -> checkStatus(r, Status.NOT_IMPLEMENTED))
