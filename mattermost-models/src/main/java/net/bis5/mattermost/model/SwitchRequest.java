@@ -35,7 +35,10 @@ public class SwitchRequest {
 	private AuthService newService;
 	@JsonProperty("email")
 	private String email;
+	/** @deprecated Mattermost 4.0 or lator: use {@link #password} instead. */
 	@JsonProperty("current_password")
+	private String currentPassword;
+	@JsonProperty("password")
 	private String password;
 	@JsonProperty("new_password")
 	private String newPassword;
