@@ -35,6 +35,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -71,6 +73,7 @@ import net.bis5.mattermost.model.ChannelUnread;
 import net.bis5.mattermost.model.ChannelView;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
+import net.bis5.mattermost.model.PostPatch;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SwitchRequest;
@@ -1505,6 +1508,123 @@ public class MattermostApiTest {
 				.toCompletableFuture().get();
 
 		assertThat(channels.stream().findAny().get().getTeamId(), is(th.basicTeam().getId()));
+	}
+
+	// Posts
+
+	@Test
+	public void testPosts_CreatePost() throws InterruptedException, ExecutionException {
+		Post post = new Post();
+		post.setChannelId(th.basicChannel().getId());
+		post.setMessage("Hello World!");
+
+		Post postedPost = client.createPost(post)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(postedPost.getMessage(), is(post.getMessage()));
+		assertThat(postedPost.getChannelId(), is(post.getChannelId()));
+	}
+
+	@Test
+	public void testPosts_GetPost() throws InterruptedException, ExecutionException {
+		String postId = th.basicPost().getId();
+
+		Post post = client.getPost(postId, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(post.getId(), is(postId));
+	}
+
+	@Test
+	public void testPosts_DeletePost() throws InterruptedException, ExecutionException {
+		String postId = th.createPost(th.basicChannel()).getId();
+
+		boolean result = client.deletePost(postId)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testPosts_UpdatePost() throws InterruptedException, ExecutionException {
+		Post post = th.createPost(th.basicChannel());
+		post.setMessage("UPDATE:" + post.getMessage());
+
+		Post updatedPost = client.updatePost(post.getId(), post)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(updatedPost.getMessage(), is(post.getMessage()));
+	}
+
+	@Test
+	public void testPosts_PatchPost() throws InterruptedException, ExecutionException {
+		String postId = th.createPost(th.basicChannel()).getId();
+		PostPatch patch = new PostPatch();
+		patch.setMessage("NEW MESSAGE");
+
+		Post updatedPost = client.patchPost(postId, patch)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(updatedPost.getMessage(), is(patch.getMessage()));
+	}
+
+	@Test
+	public void testPosts_GetThread() throws InterruptedException, ExecutionException {
+		String postId = th.basicPost().getId();
+
+		PostList posts = client.getPostThread(postId, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(posts.getPosts().values().stream().map(Post::getId).collect(Collectors.toSet()), hasItem(postId));
+	}
+
+	@Test
+	@Ignore // TODO
+	public void testPosts_GetFlaggedPosts() {
+	}
+
+	@Test
+	@Ignore // TODO
+	public void testPosts_GetFileInfoForPost() {
+	}
+
+	@Test
+	public void testPosts_GetPostsForChannel() throws InterruptedException, ExecutionException {
+		String channelId = th.basicChannel().getId();
+
+		PostList posts = client.getPostsForChannel(channelId, 0, 60, null)
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(posts.getPosts().values().stream().map(Post::getChannelId).collect(Collectors.toSet()),
+				hasItem(channelId));
+	}
+
+	@Test
+	public void testPosts_GetPostsForChannel_Since() throws InterruptedException, ExecutionException {
+		String channelId = th.basicChannel().getId();
+
+		PostList posts = client
+				.getPostsSince(channelId, OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toEpochSecond())
+				.thenApply(this::checkNoError)
+				.thenApply(ApiResponse::readEntity)
+				.toCompletableFuture().get();
+
+		assertThat(posts.getPosts().values().stream().map(Post::getChannelId).collect(Collectors.toSet()),
+				hasItem(channelId));
 	}
 
 }
