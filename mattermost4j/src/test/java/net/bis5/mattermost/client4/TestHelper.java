@@ -173,8 +173,8 @@ public class TestHelper {
 		Team team = new Team();
 		team.setDisplayName("dn_" + id);
 		team.setName(generateTestTeamName());
-		team.setEmail(generateTestEmail());
 		team.setType(TeamType.OPEN);
+		team.setAllowOpenInvite(true);
 
 		team = client.createTeam(team).thenApply(this::checkNoError).toCompletableFuture().get().readEntity();
 		return team;
