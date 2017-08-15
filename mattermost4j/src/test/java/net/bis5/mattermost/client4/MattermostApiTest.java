@@ -1,6 +1,6 @@
 /*
  * @(#) net.bis5.mattermost.client4.MattermostApiTest
- * Copyright (c) 2017 Maruyama Takayuki
+ * Copyright (c) 2017-present, Maruyama Takayuki
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

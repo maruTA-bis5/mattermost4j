@@ -1,6 +1,6 @@
 /*
  * @(#) net.bis5.mattermost.client4.TestHelper
- * Copyright (c) 2017 Maruyama Takayuki <bis5.wsys@gmail.com>
+ * Copyright (c) 2017-present, Maruyama Takayuki
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import net.bis5.mattermost.model.User;
 /**
  * TODO 型の説明
  * 
- * @author Maruyama Takayuki <bis5.wsys@gmail.com>
+ * @author Maruyama Takayuki
  * @since 2017/06/19
  */
 @Accessors(chain = true, fluent = true)
