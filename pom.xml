@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>net.bis5</groupId>
+	<groupId>net.bis5.mattermost</groupId>
 	<artifactId>mattermost-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -10,10 +10,36 @@
 		<module>mattermost4j</module>
 		<module>mattermost-models</module>
 	</modules>
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>https://github.com/maruTA-bis5/mattermost4j</url>
+		<connection>scm:git:git://github.com/maruTA-bis5/mattermost4j.git</connection>
+		<developerConnection>scm:git:git://github.com/maruTA-bis5/mattermost4j.git</developerConnection>
+	</scm>
+	<developers>
+		<developer>
+			<id>maruTA-bis5</id>
+			<name>Maruyama Takayuki</name>
+			<email>bis5.wsys@gmail.com</email>
+			<url>http://entrance.bis5.net</url>
+			<timezone>+9</timezone>
+		</developer>
+	</developers>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/maruTA-bis5/mattermost4j/issues</url>
+	</issueManagement>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
@@ -33,6 +59,7 @@
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
 			<version>3.5.2</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -44,7 +71,7 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.16.10</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>

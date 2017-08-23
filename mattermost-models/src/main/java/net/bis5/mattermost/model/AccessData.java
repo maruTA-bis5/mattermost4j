@@ -1,6 +1,6 @@
 /*
  * @(#) net.bis5.mattermost.model.Access
- * Copyright (c) 2016 takayuki
+ * Copyright (c) 2016-present, Maruyama Takayuk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

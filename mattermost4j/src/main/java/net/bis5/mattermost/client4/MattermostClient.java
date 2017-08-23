@@ -1,6 +1,6 @@
 /*
  * @(#) net.bis5.mattermost.client4.MattermostClient
- * Copyright (c) 2017 Maruyama Takayuki <bis5.wsys@gmail.com>
+ * Copyright (c) 2017-present, Maruyama Takayuki
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -243,7 +243,7 @@ public class MattermostClient {
 	}
 
 	public String getPostRoute(String postId) {
-		return getPostsRoute() + String.format("%s.", StringUtils.stripToEmpty(postId));
+		return getPostsRoute() + String.format("/%s", StringUtils.stripToEmpty(postId));
 	}
 
 	public String getFilesRoute() {
