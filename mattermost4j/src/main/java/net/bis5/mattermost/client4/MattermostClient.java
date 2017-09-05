@@ -34,7 +34,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -439,27 +438,6 @@ public class MattermostClient {
 
 	// TODO upload api
 
-	/**
-	 * a convenience function for checking the standard OK response from the web
-	 * service.
-	 * 
-	 * @param apiResponse
-	 * @return
-	 */
-	// FIXME ApiResponseに責務を移したい
-	protected ApiResponse<Boolean> checkStatusOK(ApiResponse<Void> apiResponse) {
-		Response response = apiResponse.getRawResponse();
-		response.bufferEntity();
-		Map<String, String> m = response.readEntity(stringMapType());
-		if (m != null && m.getOrDefault(STATUS, "").equalsIgnoreCase(STATUS_OK)) {
-			return ApiResponse.of(response, true);
-		}
-		return ApiResponse.of(response, false);
-	}
-
-	protected static final String STATUS = "status";
-	protected static final String STATUS_OK = "ok";
-
 	// Authentication Section
 
 	/**
@@ -535,7 +513,7 @@ public class MattermostClient {
 		authToken = null;
 		authType = AuthType.BEARER;
 
-		return checkStatusOK(logoutResponse);
+		return logoutResponse.checkStatusOK();
 	}
 
 	/**
@@ -826,7 +804,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> updateUserMfa(String userId, String code, boolean activate) {
 		UpdateUserMfaRequest request = UpdateUserMfaRequest.builder().activate(activate).code(code).build();
-		return checkStatusOK(doApiPut(getUserRoute(userId) + "/mfa", request));
+		return doApiPut(getUserRoute(userId) + "/mfa", request).checkStatusOK();
 	}
 
 	/**
@@ -868,7 +846,7 @@ public class MattermostClient {
 			String newPassword) {
 		UpdateUserPasswordRequest request = UpdateUserPasswordRequest.builder().currentPassword(currentPassword)
 				.newPassword(newPassword).build();
-		return checkStatusOK(doApiPut(getUserRoute(userId) + "/password", request));
+		return doApiPut(getUserRoute(userId) + "/password", request).checkStatusOK();
 	}
 
 	/**
@@ -881,7 +859,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> updateUserRoles(String userId, Role... roles) {
 		UpdateRolesRequest request = new UpdateRolesRequest(roles);
-		return checkStatusOK(doApiPut(getUserRoute(userId) + "/roles", request));
+		return doApiPut(getUserRoute(userId) + "/roles", request).checkStatusOK();
 	}
 
 	/**
@@ -893,7 +871,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> updateUserActive(String userId, boolean active) {
 		UpdateUserActiveRequest request = UpdateUserActiveRequest.builder().active(active).build();
-		return checkStatusOK(doApiPut(getUserRoute(userId) + "/active", request));
+		return doApiPut(getUserRoute(userId) + "/active", request).checkStatusOK();
 	}
 
 	/**
@@ -903,7 +881,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteUser(String userId) {
-		return checkStatusOK(doApiDelete(getUserRoute(userId)));
+		return doApiDelete(getUserRoute(userId)).checkStatusOK();
 	}
 
 	/**
@@ -915,7 +893,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> sendPasswordResetEmail(String email) {
 		SendPasswordResetEmailRequest request = SendPasswordResetEmailRequest.builder().email(email).build();
-		return checkStatusOK(doApiPost(getUsersRoute() + "/password/reset/send", request));
+		return doApiPost(getUsersRoute() + "/password/reset/send", request).checkStatusOK();
 	}
 
 	/**
@@ -927,7 +905,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> resetPassword(String token, String newPassword) {
 		ResetPasswordRequest request = ResetPasswordRequest.builder().token(token).newPassword(newPassword).build();
-		return checkStatusOK(doApiPost(getUsersRoute() + "/password/reset", request));
+		return doApiPost(getUsersRoute() + "/password/reset", request).checkStatusOK();
 	}
 
 	/**
@@ -951,7 +929,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> revokeSession(String userId, String sessionId) {
 		RevokeSessionRequest request = RevokeSessionRequest.builder().sessionId(sessionId).build();
-		return checkStatusOK(doApiPost(getUserRoute(userId) + "/sessions/revoke", request));
+		return doApiPost(getUserRoute(userId) + "/sessions/revoke", request).checkStatusOK();
 	}
 
 	/**
@@ -962,7 +940,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> attachDeviceId(String deviceId) {
 		AttachDeviceIdRequest request = AttachDeviceIdRequest.builder().deviceId(deviceId).build();
-		return checkStatusOK(doApiPut(getUsersRoute() + "/sessions/device", request));
+		return doApiPut(getUsersRoute() + "/sessions/device", request).checkStatusOK();
 	}
 
 	/**
@@ -1010,7 +988,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> verifyUserEmail(String token) {
 		VerifyUserEmailRequest request = VerifyUserEmailRequest.builder().token(token).build();
-		return checkStatusOK(doApiPost(getUsersRoute() + "/email/verify", request));
+		return doApiPost(getUsersRoute() + "/email/verify", request).checkStatusOK();
 	}
 
 	/**
@@ -1023,7 +1001,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> sendVerificationEmail(String email) {
 		SendVerificationEmailRequest request = SendVerificationEmailRequest.builder().email(email).build();
-		return checkStatusOK(doApiPost(getUsersRoute() + "/email/verify/send", request));
+		return doApiPost(getUsersRoute() + "/email/verify/send", request).checkStatusOK();
 	}
 
 	/**
@@ -1040,7 +1018,7 @@ public class MattermostClient {
 		FileDataBodyPart body = new FileDataBodyPart("image", imageFilePath.toFile());
 		multiPart.bodyPart(body);
 
-		return checkStatusOK(doApiPostMultiPart(getUserRoute(userId) + "/image", multiPart));
+		return doApiPostMultiPart(getUserRoute(userId) + "/image", multiPart).checkStatusOK();
 	}
 
 	// Team Section
@@ -1145,7 +1123,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> updateTeamMemberRoles(String teamId, String userId, Role... newRoles) {
 		UpdateRolesRequest request = new UpdateRolesRequest(newRoles);
-		return checkStatusOK(doApiPut(getTeamMemberRoute(teamId, userId) + "/roles", request));
+		return doApiPut(getTeamMemberRoute(teamId, userId) + "/roles", request).checkStatusOK();
 	}
 
 	/**
@@ -1177,7 +1155,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteTeam(String teamId) {
-		return checkStatusOK(doApiDelete(getTeamRoute(teamId)));
+		return doApiDelete(getTeamRoute(teamId)).checkStatusOK();
 	}
 
 	/**
@@ -1192,7 +1170,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> deleteTeam(String teamId, boolean permanent) {
 		String query = new QueryBuilder().append("permanent", Boolean.toString(permanent)).toString();
-		return checkStatusOK(doApiDelete(getTeamRoute(teamId) + query));
+		return doApiDelete(getTeamRoute(teamId) + query).checkStatusOK();
 	}
 
 	/**
@@ -1312,7 +1290,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> removeTeamMember(String teamId, String userId) {
-		return checkStatusOK(doApiDelete(getTeamMemberRoute(teamId, userId)));
+		return doApiDelete(getTeamMemberRoute(teamId, userId)).checkStatusOK();
 	}
 
 	/**
@@ -1364,7 +1342,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> inviteUsersToTeam(String teamId, List<String> userEmails) {
-		return checkStatusOK(doApiPost(getTeamRoute(teamId) + "/invite/email", userEmails));
+		return doApiPost(getTeamRoute(teamId) + "/invite/email", userEmails).checkStatusOK();
 	}
 
 	// Channel Section
@@ -1509,7 +1487,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteChannel(String channelId) {
-		return checkStatusOK(doApiDelete(getChannelRoute(channelId)));
+		return doApiDelete(getChannelRoute(channelId)).checkStatusOK();
 	}
 
 	/**
@@ -1594,7 +1572,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> viewChannel(String userId, ChannelView view) {
 		String url = String.format(getChannelsRoute() + "/members/%s/view", userId);
-		return checkStatusOK(doApiPost(url, view));
+		return doApiPost(url, view).checkStatusOK();
 	}
 
 	/**
@@ -1619,7 +1597,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> updateChannelRoles(String channelId, String userId, Role... roles) {
 		UpdateRolesRequest request = new UpdateRolesRequest(roles);
-		return checkStatusOK(doApiPut(getChannelMemberRoute(channelId, userId) + "/roles", request));
+		return doApiPut(getChannelMemberRoute(channelId, userId) + "/roles", request).checkStatusOK();
 	}
 
 	/**
@@ -1632,7 +1610,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> updateChannelNotifyProps(String channelId, String userId,
 			Map<String, String> props) {
-		return checkStatusOK(doApiPut(getChannelMemberRoute(channelId, userId) + "/notify_props", props));
+		return doApiPut(getChannelMemberRoute(channelId, userId) + "/notify_props", props).checkStatusOK();
 	}
 
 	/**
@@ -1656,7 +1634,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> removeUserFromChannel(String channelId, String userId) {
-		return checkStatusOK(doApiDelete(getChannelMemberRoute(channelId, userId)));
+		return doApiDelete(getChannelMemberRoute(channelId, userId)).checkStatusOK();
 	}
 
 	// Post Section
@@ -1700,7 +1678,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> pinPost(String postId) {
-		return checkStatusOK(doApiPost(getPostRoute(postId) + "/pin", null));
+		return doApiPost(getPostRoute(postId) + "/pin", null).checkStatusOK();
 	}
 
 	/**
@@ -1710,7 +1688,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> unpinPost(String postId) {
-		return checkStatusOK(doApiPost(getPostRoute(postId) + "/unpin", null));
+		return doApiPost(getPostRoute(postId) + "/unpin", null).checkStatusOK();
 	}
 
 	/**
@@ -1731,7 +1709,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deletePost(String postId) {
-		return checkStatusOK(doApiDelete(getPostRoute(postId)));
+		return doApiDelete(getPostRoute(postId)).checkStatusOK();
 	}
 
 	/**
@@ -1873,7 +1851,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> getPing() {
-		return checkStatusOK(doApiGet(getSystemRoute() + "/ping", null));
+		return doApiGet(getSystemRoute() + "/ping", null).checkStatusOK();
 	}
 
 	/**
@@ -1882,7 +1860,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> testEmail() {
-		return checkStatusOK(doApiPost(getTestEmailRoute(), null));
+		return doApiPost(getTestEmailRoute(), null).checkStatusOK();
 	}
 
 	/**
@@ -1900,7 +1878,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> reloadConfig() {
-		return checkStatusOK(doApiPost(getConfigRoute() + "/reload", null));
+		return doApiPost(getConfigRoute() + "/reload", null).checkStatusOK();
 	}
 
 	/**
@@ -1931,7 +1909,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> databaseRecycle() {
-		return checkStatusOK(doApiPost(getDatabaseRoute() + "/recycle", null));
+		return doApiPost(getDatabaseRoute() + "/recycle", null).checkStatusOK();
 	}
 
 	/**
@@ -1940,7 +1918,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> invalidateCaches() {
-		return checkStatusOK(doApiPost(getCacheRoute() + "/invalidate", null));
+		return doApiPost(getCacheRoute() + "/invalidate", null).checkStatusOK();
 	}
 
 	/**
@@ -2024,7 +2002,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteIncomingWebhook(String hookId) {
-		return checkStatusOK(doApiDelete(getIncomingWebhookRoute(hookId)));
+		return doApiDelete(getIncomingWebhookRoute(hookId)).checkStatusOK();
 	}
 
 	/**
@@ -2122,7 +2100,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteOutgoingWebhook(String hookId) {
-		return checkStatusOK(doApiDelete(getOutgoingWebhookRoute(hookId)));
+		return doApiDelete(getOutgoingWebhookRoute(hookId)).checkStatusOK();
 	}
 
 	// Preferences Section
@@ -2243,7 +2221,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteSamlIdpCertificate() {
-		return checkStatusOK(doApiDelete(getSamlRoute() + "/certificate/idp"));
+		return doApiDelete(getSamlRoute() + "/certificate/idp").checkStatusOK();
 	}
 
 	/**
@@ -2253,7 +2231,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteSamlPublicCertificate() {
-		return checkStatusOK(doApiDelete(getSamlRoute() + "/certificate/public"));
+		return doApiDelete(getSamlRoute() + "/certificate/public").checkStatusOK();
 	}
 
 	/**
@@ -2263,7 +2241,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteSamlPrivateCertificate() {
-		return checkStatusOK(doApiDelete(getSamlRoute() + "/certificate/private"));
+		return doApiDelete(getSamlRoute() + "/certificate/private").checkStatusOK();
 	}
 
 	/**
@@ -2336,7 +2314,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> syncLdap() {
-		return checkStatusOK(doApiPost(getLdapRoute() + "/sync", null));
+		return doApiPost(getLdapRoute() + "/sync", null).checkStatusOK();
 	}
 
 	/**
@@ -2346,7 +2324,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> testLdap() {
-		return checkStatusOK(doApiPost(getLdapRoute() + "/test", null));
+		return doApiPost(getLdapRoute() + "/test", null).checkStatusOK();
 	}
 
 	// Audits Section
@@ -2467,7 +2445,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteOAuthApp(String appId) {
-		return checkStatusOK(doApiDelete(getOAuthAppRoute(appId)));
+		return doApiDelete(getOAuthAppRoute(appId)).checkStatusOK();
 	}
 
 	/**
@@ -2517,7 +2495,7 @@ public class MattermostClient {
 	 */
 	public ApiResponse<Boolean> deauthorizeOAuthApp(String appId) {
 		DeauthorizeOAuthAppRequest request = DeauthorizeOAuthAppRequest.builder().clientId(appId).build();
-		return checkStatusOK(doApiRequest(HttpMethod.POST, url + "/oauth/deauthorize", request, null));
+		return doApiRequest(HttpMethod.POST, url + "/oauth/deauthorize", request, null).checkStatusOK();
 	}
 
 	// Commands Section
@@ -2549,7 +2527,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteCommand(String commandId) {
-		return checkStatusOK(doApiDelete(getCommandRoute(commandId)));
+		return doApiDelete(getCommandRoute(commandId)).checkStatusOK();
 	}
 
 	/**
@@ -2676,7 +2654,7 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteEmoji(String emojiId) {
-		return checkStatusOK(doApiDelete(getEmojiRoute(emojiId)));
+		return doApiDelete(getEmojiRoute(emojiId)).checkStatusOK();
 	}
 
 	/**
@@ -2729,8 +2707,8 @@ public class MattermostClient {
 	 * @return
 	 */
 	public ApiResponse<Boolean> deleteReaction(Reaction reaction) {
-		return checkStatusOK(
-				doApiDelete(getUserRoute(reaction.getUserId()) + getPostRoute(reaction.getPostId())
-						+ String.format("/reactions/%s", reaction.getEmojiName())));
+		return doApiDelete(getUserRoute(reaction.getUserId()) + getPostRoute(reaction.getPostId())
+				+ String.format("/reactions/%s", reaction.getEmojiName()))
+						.checkStatusOK();
 	}
 }
