@@ -446,6 +446,7 @@ public class MattermostClient {
 	 * @param apiResponse
 	 * @return
 	 */
+	// FIXME ApiResponseに責務を移したい
 	protected ApiResponse<Boolean> checkStatusOK(ApiResponse<Void> apiResponse) {
 		Response response = apiResponse.getRawResponse();
 		response.bufferEntity();

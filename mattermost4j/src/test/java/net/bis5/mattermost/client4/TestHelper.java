@@ -281,6 +281,7 @@ public class TestHelper {
 		return this;
 	}
 
+	// FIXME ApiResponeの責務
 	public <T> ApiResponse<T> checkNoError(ApiResponse<T> response) {
 		response.getRawResponse().bufferEntity();
 		try {
