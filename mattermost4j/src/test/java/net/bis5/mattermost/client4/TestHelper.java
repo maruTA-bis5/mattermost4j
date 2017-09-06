@@ -17,7 +17,6 @@
 package net.bis5.mattermost.client4;
 
 import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.ProcessingException;
@@ -67,7 +66,7 @@ public class TestHelper {
 	private User basicUser;
 	private User basicUser2;
 
-	public TestHelper setup() throws InterruptedException, ExecutionException {
+	public TestHelper setup() {
 		initSystemAdmin();
 		Config config = client.getConfig().readEntity();
 		config.getTeamSettings().setMaxUsersPerTeam(50);
@@ -83,7 +82,7 @@ public class TestHelper {
 		return this;
 	}
 
-	public TestHelper initBasic() throws InterruptedException, ExecutionException {
+	public TestHelper initBasic() {
 		teamAdminUser = createUser();
 		loginTeamAdmin();
 		basicTeam = createTeam();
@@ -111,7 +110,7 @@ public class TestHelper {
 		return this;
 	}
 
-	public TestHelper initSystemAdmin() throws InterruptedException, ExecutionException {
+	public TestHelper initSystemAdmin() {
 		if (systemAdminUser != null) {
 			loginAs(systemAdminUser);
 			return this;
@@ -125,7 +124,7 @@ public class TestHelper {
 		return newRandomString(26);
 	}
 
-	public User createSystemAdminUser() throws InterruptedException, ExecutionException {
+	public User createSystemAdminUser() {
 		String id = newId();
 
 		User user = new User();
@@ -143,7 +142,7 @@ public class TestHelper {
 		return user;
 	}
 
-	public User createUser() throws InterruptedException, ExecutionException {
+	public User createUser() {
 		String id = newId();
 
 		User user = new User();
@@ -159,7 +158,7 @@ public class TestHelper {
 		return user;
 	}
 
-	public Team createTeam() throws InterruptedException, ExecutionException {
+	public Team createTeam() {
 		String id = newId();
 
 		Team team = new Team();
@@ -172,15 +171,15 @@ public class TestHelper {
 		return team;
 	}
 
-	public Channel createPublicChannel() throws InterruptedException, ExecutionException {
+	public Channel createPublicChannel() {
 		return createChannel(ChannelType.Open);
 	}
 
-	public Channel createPrivateChannel() throws InterruptedException, ExecutionException {
+	public Channel createPrivateChannel() {
 		return createChannel(ChannelType.Private);
 	}
 
-	protected Channel createChannel(ChannelType type) throws InterruptedException, ExecutionException {
+	protected Channel createChannel(ChannelType type) {
 		String id = newId();
 
 		Channel channel = new Channel();
@@ -193,7 +192,7 @@ public class TestHelper {
 		return channel;
 	}
 
-	public Post createPost(Channel channel) throws InterruptedException, ExecutionException {
+	public Post createPost(Channel channel) {
 		String id = newId();
 
 		Post post = new Post();
@@ -204,7 +203,7 @@ public class TestHelper {
 		return post;
 	}
 
-	public Post createPinnedPost(String channelId) throws InterruptedException, ExecutionException {
+	public Post createPinnedPost(String channelId) {
 		String id = newId();
 
 		Post post = new Post();
@@ -236,47 +235,47 @@ public class TestHelper {
 		return RandomStringUtils.randomAlphanumeric(length).toLowerCase();
 	}
 
-	public TestHelper loginTeamAdmin() throws InterruptedException, ExecutionException {
+	public TestHelper loginTeamAdmin() {
 		loginAs(teamAdminUser);
 		return this;
 	}
 
-	public TestHelper loginBasic() throws InterruptedException, ExecutionException {
+	public TestHelper loginBasic() {
 		loginAs(basicUser);
 		return this;
 	}
 
-	public TestHelper loginBasic2() throws InterruptedException, ExecutionException {
+	public TestHelper loginBasic2() {
 		loginAs(basicUser2);
 		return this;
 	}
 
-	public TestHelper loginSystemAdmin() throws InterruptedException, ExecutionException {
+	public TestHelper loginSystemAdmin() {
 		loginAs(systemAdminUser);
 		return this;
 	}
 
-	public TestHelper logout() throws InterruptedException, ExecutionException {
+	public TestHelper logout() {
 		client.logout();
 		return this;
 	}
 
-	protected TestHelper loginAs(User user) throws InterruptedException, ExecutionException {
+	protected TestHelper loginAs(User user) {
 		client.login(user.getEmail(), user.getPassword());
 		return this;
 	}
 
-	protected TestHelper linkUserToTeam(User user, Team team) throws InterruptedException, ExecutionException {
+	protected TestHelper linkUserToTeam(User user, Team team) {
 		checkNoError(client.addTeamMembers(team.getId(), user.getId()));
 		return this;
 	}
 
-	public TestHelper updateUserRoles(String userId, Role... roles) throws InterruptedException, ExecutionException {
+	public TestHelper updateUserRoles(String userId, Role... roles) {
 		checkNoError(client.updateUserRoles(userId, roles));
 		return this;
 	}
 
-	public TestHelper updateUserToNonTeamAdmin(User user, Team team) throws InterruptedException, ExecutionException {
+	public TestHelper updateUserToNonTeamAdmin(User user, Team team) {
 		checkNoError(client.updateTeamMemberRoles(team.getId(), user.getId(), Role.ROLE_TEAM_USER));
 		return this;
 	}

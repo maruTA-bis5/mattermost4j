@@ -42,8 +42,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
@@ -76,17 +74,22 @@ import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Session;
+import net.bis5.mattermost.model.SessionList;
 import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.TeamExists;
+import net.bis5.mattermost.model.TeamList;
 import net.bis5.mattermost.model.TeamMember;
+import net.bis5.mattermost.model.TeamMemberList;
 import net.bis5.mattermost.model.TeamPatch;
 import net.bis5.mattermost.model.TeamSearch;
 import net.bis5.mattermost.model.TeamStats;
 import net.bis5.mattermost.model.TeamType;
 import net.bis5.mattermost.model.TeamUnread;
+import net.bis5.mattermost.model.TeamUnreadList;
 import net.bis5.mattermost.model.User;
 import net.bis5.mattermost.model.UserAutocomplete;
+import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
 
@@ -107,30 +110,26 @@ public class MattermostApiTest {
 	}
 
 	@BeforeClass
-	public static void initHelper() throws InterruptedException, ExecutionException {
+	public static void initHelper() {
 		th = new TestHelper(new MattermostClient(APPLICATION)).setup();
 	}
 
 	@Before
-	public void setup() throws InterruptedException, ExecutionException {
+	public void setup() {
 		client = new MattermostClient(APPLICATION);
 		th.changeClient(client).initBasic();
 	}
 
 	@After
-	public void tearDown() throws InterruptedException, ExecutionException {
-		try {
-			th.logout();
-		} catch (InterruptedException | ExecutionException ex) {
-			// avoid errors
-		}
+	public void tearDown() {
+		th.logout();
 	}
 
-	private <T> ApiResponse<T> checkNoError(ApiResponse<T> response) {
+	private <T> ApiResponse<T> assertNoError(ApiResponse<T> response) {
 		return th.checkNoError(response);
 	}
 
-	private <T> ApiResponse<T> checkStatus(ApiResponse<T> response, Status status) {
+	private <T> ApiResponse<T> assertStatus(ApiResponse<T> response, Status status) {
 		Response rawResponse = response.getRawResponse();
 
 		assertThat(rawResponse.getStatus(), is(status.getStatusCode()));
@@ -172,13 +171,13 @@ public class MattermostApiTest {
 	// Channels
 
 	@Test
-	public void testChannels_CreateChannel_Open_Required() throws InterruptedException, ExecutionException {
+	public void testChannels_CreateChannel_Open_Required() {
 		Channel channel = new Channel("DisplayName", "name", ChannelType.Open, th.basicTeam().getId());
 		testChannels_CreateChannel_Success(channel);
 	}
 
 	@Test
-	public void testChannels_CreateChannel_Open_All() throws InterruptedException, ExecutionException {
+	public void testChannels_CreateChannel_Open_All() {
 		Channel channel = new Channel("DisplayName", "name", ChannelType.Open, th.basicTeam().getId());
 		channel.setPurpose("purpose");
 		channel.setHeader("header");
@@ -186,13 +185,13 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testChannels_CreateChannel_Private_Required() throws InterruptedException, ExecutionException {
+	public void testChannels_CreateChannel_Private_Required() {
 		Channel channel = new Channel("DisplayName", "name", ChannelType.Private, th.basicTeam().getId());
 		testChannels_CreateChannel_Success(channel);
 	}
 
 	@Test
-	public void testChannels_CreateChannel_Private_All() throws InterruptedException, ExecutionException {
+	public void testChannels_CreateChannel_Private_All() {
 		Channel channel = new Channel("DisplayName", "name", ChannelType.Private, th.basicTeam().getId());
 		channel.setPurpose("purpose");
 		channel.setHeader("header");
@@ -203,11 +202,10 @@ public class MattermostApiTest {
 	public void testChannels_CreateChannel_Fail_Direct() {
 		Channel channel = new Channel("DisplayName", "name", ChannelType.Direct, th.basicTeam().getId());
 
-		client.createChannel(channel)
-				.thenApply(r -> checkStatus(r, Status.BAD_REQUEST));
+		assertStatus(client.createChannel(channel), Status.BAD_REQUEST);
 	}
 
-	private void testChannels_CreateChannel_Success(Channel channel) throws InterruptedException, ExecutionException {
+	private void testChannels_CreateChannel_Success(Channel channel) {
 		String teamId = channel.getTeamId();
 		String name = channel.getName();
 		String displayName = channel.getDisplayName();
@@ -215,10 +213,8 @@ public class MattermostApiTest {
 		String purpose = channel.getPurpose();
 		String header = channel.getHeader();
 
-		channel = client.createChannel(channel)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Channel> response = assertNoError(client.createChannel(channel));
+		channel = response.readEntity();
 
 		assertThat(channel.getTeamId(), is(teamId));
 		assertThat(channel.getName(), is(name));
@@ -230,63 +226,57 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testChannels_CreateDirectChannel() throws InterruptedException, ExecutionException {
+	public void testChannels_CreateDirectChannel() {
 		User user1 = th.basicUser();
 		User user2 = th.basicUser2();
 
-		Channel channel = client.createDirectChannel(user1.getId(), user2.getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Channel> response = assertNoError(client.createDirectChannel(user1.getId(), user2.getId()));
+		Channel channel = response.readEntity();
 
 		assertThat(channel, is(notNullValue()));
 	}
 
 	@Test
-	public void testChannels_CreateDirectChannel_OneUser() throws InterruptedException, ExecutionException {
-		client.createDirectChannel(th.basicUser().getId(), null)
-				.thenApply(r -> this.checkStatus(r, Status.BAD_REQUEST))
-				.toCompletableFuture().get();
+	public void testChannels_CreateDirectChannel_OneUser() {
+		assertStatus(client.createDirectChannel(th.basicUser().getId(), null), Status.BAD_REQUEST);
 	}
 
 	@Test
-	public void testChannels_CreateGroupChannel() throws InterruptedException, ExecutionException {
+	public void testChannels_CreateGroupChannel() {
 		User user1 = th.basicUser();
 		User user2 = th.basicUser2();
 		User user3 = th.createUser();
 		th.loginSystemAdmin().linkUserToTeam(user3, th.basicTeam()).loginBasic();
 
-		client.createGroupChannel(user1.getId(), user2.getId(), user3.getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Channel> response = assertNoError(
+				client.createGroupChannel(user1.getId(), user2.getId(), user3.getId()));
+		Channel channel = response.readEntity();
+
+		assertThat(channel, is(notNullValue()));
 	}
 
 	@Test
-	public void testChannels_CreateGroupChannel_Fail_TwoUsers() throws InterruptedException, ExecutionException {
+	public void testChannels_CreateGroupChannel_Fail_TwoUsers() {
 		User user1 = th.basicUser();
 		User user2 = th.basicUser2();
 
-		client.createGroupChannel(user1.getId(), user2.getId())
-				.thenApply(r -> checkStatus(r, Status.BAD_REQUEST))
-				.toCompletableFuture().get();
+		assertStatus(client.createGroupChannel(user1.getId(), user2.getId()), Status.BAD_REQUEST);
 	}
 
 	@Test
-	public void testChannels_ChannelListByTeamId() throws InterruptedException, ExecutionException {
+	public void testChannels_ChannelListByTeamId() {
 		Team theTeam = th.loginSystemAdmin().createTeam();
 		User theUser = th.createUser();
 		th.linkUserToTeam(theUser, theTeam);
 		Channel channel1 = new Channel("displayname1", "name1", ChannelType.Open, theTeam.getId());
 		Channel channel2 = new Channel("displayname2", "name2", ChannelType.Open, theTeam.getId());
-		channel1 = client.createChannel(channel1).thenApply(ApiResponse::readEntity).toCompletableFuture().get();
-		channel2 = client.createChannel(channel2).thenApply(ApiResponse::readEntity).toCompletableFuture().get();
+		channel1 = client.createChannel(channel1).readEntity();
+		channel2 = client.createChannel(channel2).readEntity();
 		th.loginAs(theUser);
 
-		ChannelList channels = client.getPublicChannelsByIdsForTeam(theTeam.getId(), channel1.getId(), channel2.getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelList> response = assertNoError(
+				client.getPublicChannelsByIdsForTeam(theTeam.getId(), channel1.getId(), channel2.getId()));
+		ChannelList channels = response.readEntity();
 
 		List<String> ids = channels.stream()
 				.map(Channel::getId)
@@ -296,19 +286,17 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testChannels_GetAChannel() throws InterruptedException, ExecutionException {
+	public void testChannels_GetAChannel() {
 		String channelId = th.basicChannel().getId();
 
-		Channel channel = client.getChannel(channelId, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Channel> response = assertNoError(client.getChannel(channelId, null));
+		Channel channel = response.readEntity();
 
 		assertThat(channel.getId(), is(channelId));
 	}
 
 	@Test
-	public void testChannels_UpdateChannel() throws InterruptedException, ExecutionException {
+	public void testChannels_UpdateChannel() {
 		String channelId = th.basicChannel().getId();
 		String newName = "new-channel-name";
 		String newDispName = "New Display Name";
@@ -321,10 +309,8 @@ public class MattermostApiTest {
 		newChannel.setPurpose(newPurpose);
 		newChannel.setHeader(newHeader);
 
-		newChannel = client.updateChannel(newChannel)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Channel> response = assertNoError(client.updateChannel(newChannel));
+		newChannel = response.readEntity();
 
 		assertThat(newChannel.getName(), is(newName));
 		assertThat(newChannel.getDisplayName(), is(newDispName));
@@ -333,7 +319,7 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testChannels_UpdateChannel_ChannelNotFound() throws InterruptedException, ExecutionException {
+	public void testChannels_UpdateChannel_ChannelNotFound() {
 		String channelId = th.newId();
 		String newName = "new-channel-name";
 		String newDispName = "New Display Name";
@@ -346,13 +332,11 @@ public class MattermostApiTest {
 		newChannel.setPurpose(newPurpose);
 		newChannel.setHeader(newHeader);
 
-		client.updateChannel(newChannel)
-				.thenApply(r -> checkStatus(r, Status.NOT_FOUND))
-				.toCompletableFuture().get();
+		assertStatus(client.updateChannel(newChannel), Status.NOT_FOUND);
 	}
 
 	@Test
-	public void testChannels_UpdateChannel_ChangeType() throws InterruptedException, ExecutionException {
+	public void testChannels_UpdateChannel_ChangeType() {
 		String channelId = th.basicChannel().getId();
 		assertThat(th.basicChannel().getType(), is(ChannelType.Open));
 		ChannelType newType = ChannelType.Private;
@@ -360,57 +344,45 @@ public class MattermostApiTest {
 		newChannel.setId(channelId);
 		newChannel.setType(newType);
 
-		newChannel = client.updateChannel(newChannel)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Channel> response = assertNoError(client.updateChannel(newChannel));
+		newChannel = response.readEntity();
 
 		assertThat(newChannel.getType(), is(newType));
 	}
 
 	@Test
-	public void testChannels_DeleteChannel() throws InterruptedException, ExecutionException {
+	public void testChannels_DeleteChannel() {
 		String channelId = th.basicChannel().getId();
 
-		boolean deleteResult = client.deleteChannel(channelId)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> deleteResponse = assertNoError(client.deleteChannel(channelId));
+		boolean deleteResult = deleteResponse.readEntity().booleanValue();
 
 		assertThat(deleteResult, is(true));
-		client.getChannel(channelId, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenAccept(ch -> assertThat(ch.getDeleteAt(), is(greaterThan(0l))))
-				.toCompletableFuture().get();
+		ApiResponse<Channel> response = assertNoError(client.getChannel(channelId, null));
+		assertThat(response.readEntity().getDeleteAt(), is(greaterThan(0l)));
 	}
 
 	@Test
-	public void testChannels_PatchChannel() throws InterruptedException, ExecutionException {
+	public void testChannels_PatchChannel() {
 		String channelId = th.basicChannel().getId();
 		String newDispName = "new Display name";
 		ChannelPatch patch = new ChannelPatch();
 		patch.setDisplayName(newDispName);
 
-		Channel newChannel = client.patchChannel(channelId, patch)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Channel> response = assertNoError(client.patchChannel(channelId, patch));
+		Channel newChannel = response.readEntity();
 
 		assertThat(newChannel.getDisplayName(), is(newDispName));
 	}
 
 	@Test
-	public void testChannels_PatchChannel_ChannelNotFound() throws InterruptedException, ExecutionException {
+	public void testChannels_PatchChannel_ChannelNotFound() {
 		String channelId = th.newId();
 		String newDispName = "new Display name";
 		ChannelPatch patch = new ChannelPatch();
 		patch.setDisplayName(newDispName);
 
-		client.patchChannel(channelId, patch)
-				.thenApply(r -> checkStatus(r, Status.NOT_FOUND))
-				.toCompletableFuture().get();
+		assertStatus(client.patchChannel(channelId, patch), Status.NOT_FOUND);
 	}
 
 	@Test
@@ -420,101 +392,84 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testChannels_GetChannelStatistics() throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelStatistics() {
 		String channelId = th.basicChannel().getId();
 
-		ChannelStats stats = client.getChannelStats(channelId, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelStats> response = assertNoError(client.getChannelStats(channelId, null));
+		ChannelStats stats = response.readEntity();
 
 		assertThat(stats.getChannelId(), is(channelId));
 	}
 
 	@Test
-	public void testChannels_GetChannelPinnedPosts() throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelPinnedPosts() {
 		String channelId = th.basicChannel().getId();
 		Post pinned = th.createPinnedPost(channelId);
 
-		PostList posts = client.getPinnedPosts(channelId, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<PostList> response = assertNoError(client.getPinnedPosts(channelId, null));
+		PostList posts = response.readEntity();
 
 		assertThat(posts.size(), is(1));
 		assertThat(posts.getPosts().get(pinned.getId()), is(notNullValue()));
 	}
 
 	@Test
-	public void testChannels_GetChannelByName() throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelByName() {
 		String channelName = th.basicChannel().getName();
 
-		Channel channel = client.getChannelByName(channelName, th.basicTeam().getId(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Channel> response = assertNoError(
+				client.getChannelByName(channelName, th.basicTeam().getId(), null));
+		Channel channel = response.readEntity();
 
 		assertThat(channel.getId(), is(th.basicChannel().getId()));
 	}
 
 	@Test
-	public void testChannels_GetChannelByName_ChannelNotFound() throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelByName_ChannelNotFound() {
 		String channelName = "fake-channel-name";
 
-		client.getChannelByName(channelName, th.basicTeam().getId(), null)
-				.thenApply(r -> checkStatus(r, Status.NOT_FOUND))
-				.toCompletableFuture().get();
+		assertStatus(client.getChannelByName(channelName, th.basicTeam().getId(), null), Status.NOT_FOUND);
 	}
 
 	@Test
-	public void testChannels_GetChannelByNameAndTeamName() throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelByNameAndTeamName() {
 		String channelName = th.basicChannel().getName();
 		String teamName = th.basicTeam().getName();
 
-		Channel channel = client.getChannelByNameForTeamName(channelName, teamName, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Channel> response = assertNoError(client.getChannelByNameForTeamName(channelName, teamName, null));
+		Channel channel = response.readEntity();
 
 		assertThat(channel.getId(), is(th.basicChannel().getId()));
 	}
 
 	@Test
-	public void testChannels_GetChannelByNameAndTeamName_ChannelNotFound()
-			throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelByNameAndTeamName_ChannelNotFound() {
 		String channelName = "fake-channel-name";
 		String teamName = th.basicTeam().getName();
 
-		client.getChannelByNameForTeamName(channelName, teamName, null)
-				.thenApply(r -> checkStatus(r, Status.NOT_FOUND))
-				.toCompletableFuture().get();
+		assertStatus(client.getChannelByNameForTeamName(channelName, teamName, null), Status.NOT_FOUND);
 	}
 
 	@Test
-	public void testChannels_GetChannelByNameAndTeamName_TeamNotFound()
-			throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelByNameAndTeamName_TeamNotFound() {
 		String channelName = "fake-channel-name";
 		String teamName = "fake-team-name";
 
-		client.getChannelByNameForTeamName(channelName, teamName, null)
-				.thenApply(r -> checkStatus(r, Status.NOT_FOUND))
-				.toCompletableFuture().get();
+		assertStatus(client.getChannelByNameForTeamName(channelName, teamName, null), Status.NOT_FOUND);
 	}
 
 	@Test
-	public void testChannels_GetChannelMembers() throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelMembers() {
 		User user1 = th.createUser();
 		User user2 = th.createUser();
 		th.loginSystemAdmin().linkUserToTeam(user1, th.basicTeam()).linkUserToTeam(user2, th.basicTeam())
 				.loginAs(user1);
 		Channel channel = th.createPublicChannel();
-		CompletableFuture.allOf(client.addChannelMember(channel.getId(), user1.getId()).toCompletableFuture(),
-				client.addChannelMember(channel.getId(), user2.getId()).toCompletableFuture()).get();
+		client.addChannelMember(channel.getId(), user1.getId());
+		client.addChannelMember(channel.getId(), user2.getId());
 
-		ChannelMembers members = client.getChannelMembers(channel.getId(), 0, 60, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelMembers> response = assertNoError(client.getChannelMembers(channel.getId(), 0, 60, null));
+		ChannelMembers members = response.readEntity();
 
 		assertThat(members.size(), is(2));
 		assertThat(members.stream().map(m -> m.getUserId()).collect(Collectors.toSet()),
@@ -522,33 +477,30 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testChannels_AddUser() throws InterruptedException, ExecutionException {
+	public void testChannels_AddUser() {
 		Channel channel = th.basicChannel();
 		User user = th.createUser();
 		th.loginSystemAdmin().linkUserToTeam(user, th.basicTeam()).loginBasic();
 
-		ChannelMember member = client.addChannelMember(channel.getId(), user.getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelMember> response = assertNoError(client.addChannelMember(channel.getId(), user.getId()));
+		ChannelMember member = response.readEntity();
 
 		assertThat(member.getChannelId(), is(channel.getId()));
 		assertThat(member.getUserId(), is(user.getId()));
 	}
 
 	@Test
-	public void testChannels_GetChannelMembersByIds() throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelMembersByIds() {
 		Channel channel = th.createPublicChannel();
 		User user1 = th.createUser();
 		User user2 = th.createUser();
 		th.loginSystemAdmin().linkUserToTeam(user1, th.basicTeam()).linkUserToTeam(user2, th.basicTeam()).loginBasic();
-		CompletableFuture.allOf(client.addChannelMember(channel.getId(), user1.getId()).toCompletableFuture(),
-				client.addChannelMember(channel.getId(), user2.getId()).toCompletableFuture()).get();
+		client.addChannelMember(channel.getId(), user1.getId());
+		client.addChannelMember(channel.getId(), user2.getId());
 
-		ChannelMembers members = client.getChannelMembersByIds(channel.getId(), user1.getId(), user2.getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelMembers> response = assertNoError(
+				client.getChannelMembersByIds(channel.getId(), user1.getId(), user2.getId()));
+		ChannelMembers members = response.readEntity();
 
 		assertThat(members.size(), is(2));
 		assertThat(members.stream().map(m -> m.getUserId()).collect(Collectors.toSet()),
@@ -556,49 +508,42 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testChannels_GetChannelMember() throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelMember() {
 		Channel channel = th.basicChannel();
 		User user = th.basicUser();
 
-		ChannelMember member = client.getChannelMember(channel.getId(), user.getId(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelMember> response = assertNoError(
+				client.getChannelMember(channel.getId(), user.getId(), null));
+		ChannelMember member = response.readEntity();
 
 		assertThat(member.getChannelId(), is(channel.getId()));
 		assertThat(member.getUserId(), is(user.getId()));
 	}
 
 	@Test
-	public void testChannels_RemoveUserFromChannel() throws InterruptedException, ExecutionException {
+	public void testChannels_RemoveUserFromChannel() {
 		Channel channel = th.basicChannel();
 		User user = th.basicUser2();
 
 		// logged-in as basicUser
 
-		boolean result = client.removeUserFromChannel(channel.getId(), user.getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.removeUserFromChannel(channel.getId(), user.getId()));
+		boolean result = response.readEntity().booleanValue();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testChannels_UpdateChannelRoles() throws InterruptedException, ExecutionException {
+	public void testChannels_UpdateChannelRoles() {
 		User channelAdmin = th.basicUser();
 		User channelUser = th.basicUser2();
 		Channel channel = th.loginAs(channelAdmin).createPublicChannel();
-		client.addChannelMember(channel.getId(), channelUser.getId()).toCompletableFuture().get();
+		client.addChannelMember(channel.getId(), channelUser.getId());
 
-		boolean result = client
-				.updateChannelRoles(channel.getId(), channelUser.getId(), Role.ROLE_CHANNEL_ADMIN,
-						Role.ROLE_CHANNEL_USER)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(
+				client.updateChannelRoles(channel.getId(), channelUser.getId(), Role.ROLE_CHANNEL_ADMIN,
+						Role.ROLE_CHANNEL_USER));
+		boolean result = response.readEntity().booleanValue();
 
 		assertThat(result, is(true));
 	}
@@ -610,65 +555,58 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testChannels_ViewChannel() throws InterruptedException, ExecutionException {
+	public void testChannels_ViewChannel() {
 		User user = th.basicUser();
 		Channel channel = th.basicChannel2();
 		ChannelView view = new ChannelView(channel.getId());
 
-		boolean result = client.viewChannel(user.getId(), view)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.viewChannel(user.getId(), view));
+		boolean result = response.readEntity().booleanValue();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testChannels_GetChannelMembersForUser() throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelMembersForUser() {
 		User user = th.createUser();
 		th.loginSystemAdmin().linkUserToTeam(user, th.basicTeam()).loginAs(user);
 		Channel channel1 = th.createPublicChannel();
 		Channel channel2 = th.createPublicChannel();
-		CompletableFuture.allOf(client.addChannelMember(channel1.getId(), user.getId()).toCompletableFuture(),
-				client.addChannelMember(channel2.getId(), user.getId()).toCompletableFuture()).get();
+		client.addChannelMember(channel1.getId(), user.getId());
+		client.addChannelMember(channel2.getId(), user.getId());
 
-		ChannelMembers members = client.getChannelMembersForUser(user.getId(), th.basicTeam().getId(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelMembers> response = assertNoError(
+				client.getChannelMembersForUser(user.getId(), th.basicTeam().getId(), null));
+		ChannelMembers members = response.readEntity();
 
 		assertThat(members.stream().map(m -> m.getChannelId()).collect(Collectors.toSet()),
 				hasItems(channel1.getId(), channel2.getId()));
 	}
 
 	@Test
-	public void testChannels_GetChannelsForUser() throws InterruptedException, ExecutionException {
+	public void testChannels_GetChannelsForUser() {
 		User user = th.createUser();
 		th.loginSystemAdmin().linkUserToTeam(user, th.basicTeam()).loginAs(user);
 		Channel channel1 = th.createPublicChannel();
 		Channel channel2 = th.createPublicChannel();
-		CompletableFuture.allOf(client.addChannelMember(channel1.getId(), user.getId()).toCompletableFuture(),
-				client.addChannelMember(channel2.getId(), user.getId()).toCompletableFuture()).get();
+		client.addChannelMember(channel1.getId(), user.getId());
+		client.addChannelMember(channel2.getId(), user.getId());
 
-		ChannelList channels = client.getChannelsForTeamForUser(th.basicTeam().getId(), user.getId(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelList> response = assertNoError(
+				client.getChannelsForTeamForUser(th.basicTeam().getId(), user.getId(), null));
+		ChannelList channels = response.readEntity();
 
 		assertThat(channels.stream().map(c -> c.getId()).collect(Collectors.toSet()),
 				hasItems(channel1.getId(), channel2.getId()));
 	}
 
 	@Test
-	public void testChannels_GetUnreadMessages() throws InterruptedException, ExecutionException {
+	public void testChannels_GetUnreadMessages() {
 		User user = th.basicUser();
 		Channel channel = th.basicChannel();
 
-		ChannelUnread unread = client.getChannelUnread(channel.getId(), user.getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelUnread> response = assertNoError(client.getChannelUnread(channel.getId(), user.getId()));
+		ChannelUnread unread = response.readEntity();
 
 		assertThat(unread.getChannelId(), is(channel.getId()));
 	}
@@ -676,75 +614,65 @@ public class MattermostApiTest {
 	// Users
 
 	@Test
-	public void testUsers_CreateUser() throws InterruptedException, ExecutionException {
+	public void testUsers_CreateUser() {
 		User user = new User();
 		user.setEmail(th.generateTestEmail());
 		user.setUsername(th.generateTestUsername());
 		user.setPassword("PASSWD");
 
-		User created = client.createUser(user)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<User> response = assertNoError(client.createUser(user));
+		User created = response.readEntity();
 
 		assertThat(created.getEmail(), is(user.getEmail()));
 		assertThat(created.getUsername(), is(user.getUsername()));
 	}
 
 	@Test
-	public void testUsers_GetUsers() throws InterruptedException, ExecutionException {
-		List<User> users = client.getUsers(0, 60, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+	public void testUsers_GetUsers() {
+		ApiResponse<UserList> response = assertNoError(client.getUsers(0, 60, null));
+		List<User> users = response.readEntity();
 
 		assertThat(users, is(not(emptyIterable())));
 	}
 
 	@Test
-	public void testUsers_GetUsers_InChannel() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUsers_InChannel() {
 		th.loginBasic();
 		Channel channel = th.createPublicChannel();
-		client.addChannelMember(channel.getId(), th.basicUser2().getId()).thenApply(this::checkNoError)
-				.toCompletableFuture().get();
+		assertNoError(client.addChannelMember(channel.getId(), th.basicUser2().getId()));
 
-		List<User> users = client.getUsersInChannel(channel.getId(), 0, 60, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<UserList> response = assertNoError(client.getUsersInChannel(channel.getId(), 0, 60, null));
+		List<User> users = response.readEntity();
 
 		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
 				containsInAnyOrder(th.basicUser().getId(), th.basicUser2().getId()));
 	}
 
 	@Test
-	public void testUsers_GetUsers_NotInChannel() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUsers_NotInChannel() {
 		Set<String> notInChannelUserIds = new HashSet<>(Arrays.asList(th.basicUser().getId(), th.basicUser2().getId(),
 				th.teamAdminUser().getId()));
 		th.loginBasic();
 		Channel channel = th.createPublicChannel();
 		notInChannelUserIds.remove(th.basicUser().getId());
 
-		List<User> users = client.getUsersNotInChannel(th.basicTeam().getId(), channel.getId(), 0, 60, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<UserList> response = assertNoError(
+				client.getUsersNotInChannel(th.basicTeam().getId(), channel.getId(), 0, 60, null));
+		List<User> users = response.readEntity();
 
 		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
 				hasItems(notInChannelUserIds.toArray(new String[0])));
 	}
 
 	@Test
-	public void testUsers_GetUsers_InTeam() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUsers_InTeam() {
 		User notInTeamUser = th.loginSystemAdmin().createUser();
 		Set<String> inTeamUserIds = new HashSet<>(Arrays.asList(th.basicUser().getId(), th.basicUser2().getId(),
 				th.teamAdminUser().getId()));
 		th.loginBasic();
 
-		List<User> users = client.getUsersInTeam(th.basicTeam().getId(), 0, 60, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<UserList> response = assertNoError(client.getUsersInTeam(th.basicTeam().getId(), 0, 60, null));
+		List<User> users = response.readEntity();
 
 		Set<String> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
 		assertThat(userIds, not(hasItems(notInTeamUser.getId())));
@@ -752,106 +680,93 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testUsers_GetUsers_NotInTeam() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUsers_NotInTeam() {
 		th.loginBasic();
 		Set<String> inTeamUserIds = new HashSet<>(Arrays.asList(th.basicUser().getId(), th.basicUser2().getId(),
 				th.systemAdminUser().getId(), th.teamAdminUser().getId()));
 
-		List<User> users = client.getUsersNotInTeam(th.basicTeam().getId(), 0, 60, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<UserList> response = assertNoError(client.getUsersNotInTeam(th.basicTeam().getId(), 0, 60, null));
+		List<User> users = response.readEntity();
 
 		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
 				not(hasItems(inTeamUserIds.toArray(new String[0]))));
 	}
 
 	@Test
-	public void testUsers_GetUsers_WithoutTeam() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUsers_WithoutTeam() {
 		User withoutTeamUser = th.loginSystemAdmin().createUser();
 		th.loginSystemAdmin();
 
-		List<User> users = client.getUsersWithoutTeam(0, 60, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<UserList> response = assertNoError(client.getUsersWithoutTeam(0, 60, null));
+		List<User> users = response.readEntity();
 
 		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
 				hasItem(withoutTeamUser.getId()));
 	}
 
 	@Test
-	public void testUsers_GetUsersByIds() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUsersByIds() {
 
-		List<User> users = client.getUsersByIds(th.basicUser().getId(), th.basicUser2().getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
-
-		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
-				containsInAnyOrder(th.basicUser().getId(), th.basicUser2().getId()));
-	}
-
-	@Test
-	public void testUsers_GetUsersByUsernames() throws InterruptedException, ExecutionException {
-
-		List<User> users = client.getUsersByUsernames(th.basicUser().getUsername(), th.basicUser2().getUsername())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<UserList> response = assertNoError(
+				client.getUsersByIds(th.basicUser().getId(), th.basicUser2().getId()));
+		List<User> users = response.readEntity();
 
 		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
 				containsInAnyOrder(th.basicUser().getId(), th.basicUser2().getId()));
 	}
 
 	@Test
-	public void testUsers_SearchUsers() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUsersByUsernames() {
+
+		ApiResponse<UserList> response = assertNoError(
+				client.getUsersByUsernames(th.basicUser().getUsername(), th.basicUser2().getUsername()));
+		List<User> users = response.readEntity();
+
+		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
+				containsInAnyOrder(th.basicUser().getId(), th.basicUser2().getId()));
+	}
+
+	@Test
+	public void testUsers_SearchUsers() {
 		UserSearch criteria = UserSearch.builder().term(th.basicUser().getUsername()).teamId(th.basicTeam().getId())
 				.build();
 
-		List<User> users = client.searchUsers(criteria)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<UserList> response = assertNoError(client.searchUsers(criteria));
+		List<User> users = response.readEntity();
 
 		assertThat(users.stream().map(User::getUsername).collect(Collectors.toSet()),
 				hasItem(th.basicUser().getUsername()));
 	}
 
 	@Test
-	public void testUsers_AutocompleteUsers() throws InterruptedException, ExecutionException {
+	public void testUsers_AutocompleteUsers() {
 
-		UserAutocomplete autocompleteUsers = client.autocompleteUsers(th.basicUser().getUsername(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
-
-		assertThat(autocompleteUsers.getUsers().stream().map(User::getId).collect(Collectors.toSet()),
-				hasItem(th.basicUser().getId()));
-	}
-
-	@Test
-	public void testUsers_AutocompleteUsers_InTeam() throws InterruptedException, ExecutionException {
-
-		UserAutocomplete autocompleteUsers = client
-				.autocompleteUsersInTeam(th.basicTeam().getId(), th.basicUser().getUsername(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<UserAutocomplete> response = assertNoError(
+				client.autocompleteUsers(th.basicUser().getUsername(), null));
+		UserAutocomplete autocompleteUsers = response.readEntity();
 
 		assertThat(autocompleteUsers.getUsers().stream().map(User::getId).collect(Collectors.toSet()),
 				hasItem(th.basicUser().getId()));
 	}
 
 	@Test
-	public void testUsers_AutocompleteUsers_InChannel() throws InterruptedException, ExecutionException {
+	public void testUsers_AutocompleteUsers_InTeam() {
+
+		ApiResponse<UserAutocomplete> response = assertNoError(
+				client.autocompleteUsersInTeam(th.basicTeam().getId(), th.basicUser().getUsername(), null));
+		UserAutocomplete autocompleteUsers = response.readEntity();
+
+		assertThat(autocompleteUsers.getUsers().stream().map(User::getId).collect(Collectors.toSet()),
+				hasItem(th.basicUser().getId()));
+	}
+
+	@Test
+	public void testUsers_AutocompleteUsers_InChannel() {
 		Channel channel = th.createPublicChannel();
 
-		UserAutocomplete autocompleteUsers = client
-				.autocompleteUsersInChannel(th.basicTeam().getId(), channel.getId(), null, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<UserAutocomplete> response = assertNoError(
+				client.autocompleteUsersInChannel(th.basicTeam().getId(), channel.getId(), null, null));
+		UserAutocomplete autocompleteUsers = response.readEntity();
 
 		assertThat(autocompleteUsers.getUsers().stream().map(User::getId).collect(Collectors.toSet()),
 				hasItem(th.basicUser().getId()));
@@ -860,97 +775,81 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testUsers_GetUser() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUser() {
 		String userId = th.basicUser().getId();
 
-		User user = client.getUser(userId, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<User> response = assertNoError(client.getUser(userId, null));
+		User user = response.readEntity();
 
 		assertThat(user.getId(), is(userId));
 	}
 
 	@Test
-	public void testUsers_UpdateUser() throws InterruptedException, ExecutionException {
+	public void testUsers_UpdateUser() {
 		User user = th.basicUser();
 		String firstName = "newFirst" + user.getFirstName();
 		String lastName = "newLast" + user.getLastName();
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
 
-		user = client.updateUser(user)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<User> response = assertNoError(client.updateUser(user));
+		user = response.readEntity();
 
 		assertThat(user.getFirstName(), is(firstName));
 		assertThat(user.getLastName(), is(lastName));
 	}
 
 	@Test
-	public void testUsers_Deactivate() throws InterruptedException, ExecutionException {
+	public void testUsers_Deactivate() {
 		th.loginSystemAdmin();
 		String userId = th.basicUser().getId();
 
-		boolean result = client.deleteUser(userId)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.deleteUser(userId));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testUsers_PatchUser() throws InterruptedException, ExecutionException {
+	public void testUsers_PatchUser() {
 		UserPatch patch = new UserPatch();
 		String firstName = "newFirst" + th.basicUser().getFirstName();
 		String lastName = "newLast" + th.basicUser().getLastName();
 		patch.setFirstName(firstName);
 		patch.setLastName(lastName);
 
-		User user = client.patchUser(th.basicUser().getId(), patch)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<User> response = assertNoError(client.patchUser(th.basicUser().getId(), patch));
+		User user = response.readEntity();
 
 		assertThat(user.getFirstName(), is(firstName));
 		assertThat(user.getLastName(), is(lastName));
 	}
 
 	@Test
-	public void testUsers_UpdateUserRoles() throws InterruptedException, ExecutionException {
+	public void testUsers_UpdateUserRoles() {
 		th.loginSystemAdmin();
 
-		boolean result = client.updateUserRoles(th.basicUser().getId(), Role.ROLE_SYSTEM_ADMIN, Role.ROLE_SYSTEM_USER)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(
+				client.updateUserRoles(th.basicUser().getId(), Role.ROLE_SYSTEM_ADMIN, Role.ROLE_SYSTEM_USER));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testUsers_UpdateUserActiveStatus() throws InterruptedException, ExecutionException {
+	public void testUsers_UpdateUserActiveStatus() {
 
-		boolean result = client.updateUserActive(th.basicUser().getId(), false)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.updateUserActive(th.basicUser().getId(), false));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testUsers_GetUserProfileImage()
-			throws InterruptedException, ExecutionException, FileNotFoundException, IOException {
+	public void testUsers_GetUserProfileImage() throws FileNotFoundException, IOException {
 
-		byte[] image = client.getProfileImage(th.basicUser().getId(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<byte[]> response = assertNoError(client.getProfileImage(th.basicUser().getId(), null));
+		byte[] image = response.readEntity();
 
 		Path tempFile = Files.createTempFile("mm", ".png");
 		System.out.println(tempFile);
@@ -960,182 +859,146 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testUsers_SetUserProfileImage() throws InterruptedException, ExecutionException, URISyntaxException {
+	public void testUsers_SetUserProfileImage() throws URISyntaxException {
 		Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
 
-		boolean result = client.setProfileImage(th.basicUser().getId(), image)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.setProfileImage(th.basicUser().getId(), image));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testUsers_GetUserByName() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUserByName() {
 		String username = th.basicUser().getUsername();
 
-		User user = client.getUserByUsername(username, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<User> response = assertNoError(client.getUserByUsername(username, null));
+		User user = response.readEntity();
 
 		assertThat(user.getId(), is(th.basicUser().getId()));
 	}
 
 	@Test
-	public void testUsers_ResetPassword() throws InterruptedException, ExecutionException {
+	public void testUsers_ResetPassword() {
 
-		client.resetPassword(th.newRandomString(64), "passwd")
-				// invalid token
-				.thenApply(r -> checkStatus(r, Status.BAD_REQUEST))
-				.toCompletableFuture().get();
+		// invalid token
+		assertStatus(client.resetPassword(th.newRandomString(64), "passwd"), Status.BAD_REQUEST);
 	}
 
 	@Test
-	public void testUsers_UpdateUserMfa() throws InterruptedException, ExecutionException {
+	public void testUsers_UpdateUserMfa() {
 
-		client.updateUserMfa(th.basicUser().getId(), null, false)
-				// Enterprise Edition required
-				.thenApply(r -> checkStatus(r, Status.NOT_IMPLEMENTED))
-				.toCompletableFuture().get();
+		// Enterprise Edition required
+		assertStatus(client.updateUserMfa(th.basicUser().getId(), null, false), Status.NOT_IMPLEMENTED);
 	}
 
 	@Test
-	public void testUsers_GenerateMfaSecret() throws InterruptedException, ExecutionException {
+	public void testUsers_GenerateMfaSecret() {
 		th.loginSystemAdmin();
 
-		client.generateMfaSecret(th.basicUser().getId())
-				// Enterprise Edition required
-				.thenApply(r -> checkStatus(r, Status.NOT_IMPLEMENTED))
-				.toCompletableFuture().get();
+		// Enterprise Edition required
+		assertStatus(client.generateMfaSecret(th.basicUser().getId()), Status.NOT_IMPLEMENTED);
 	}
 
 	@Test
-	public void testUsers_CheckMfa() throws InterruptedException, ExecutionException {
-		boolean mfaRequired = client.checkUserMfa(th.basicUser().getId())
-				.toCompletableFuture().get();
+	public void testUsers_CheckMfa() {
+		boolean mfaRequired = client.checkUserMfa(th.basicUser().getId());
 
 		assertThat(mfaRequired, is(false));
 	}
 
 	@Test
-	public void testUsers_UpdateUserPassword() throws InterruptedException, ExecutionException {
+	public void testUsers_UpdateUserPassword() {
 		String userId = th.basicUser().getId();
 		String currentPassword = th.basicUser().getPassword();
 		String newPassword = "new" + currentPassword;
 
-		boolean result = client.updateUserPassword(userId, currentPassword, newPassword)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.updateUserPassword(userId, currentPassword, newPassword));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testUsers_SendPasswordResetEmail() throws InterruptedException, ExecutionException {
+	public void testUsers_SendPasswordResetEmail() {
 		String email = th.basicUser().getEmail();
 
-		boolean result = client.sendPasswordResetEmail(email)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.sendPasswordResetEmail(email));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testUsers_GetUserByEmail() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUserByEmail() {
 		String email = th.basicUser().getEmail();
 
-		User user = client.getUserByEmail(email, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<User> response = assertNoError(client.getUserByEmail(email, null));
+		User user = response.readEntity();
 
 		assertThat(user.getId(), is(th.basicUser().getId()));
 	}
 
 	@Test
-	public void testUsers_GetUserSessions() throws InterruptedException, ExecutionException {
+	public void testUsers_GetUserSessions() {
 		String userId = th.basicUser().getId();
 
-		List<Session> sessions = client.getSessions(userId, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<SessionList> response = assertNoError(client.getSessions(userId, null));
+		List<Session> sessions = response.readEntity();
 
 		assertThat(sessions.stream().findAny().map(Session::getUserId).get(), is(userId));
 	}
 
 	@Test
-	public void testUsers_RevokeUserSession() throws InterruptedException, ExecutionException {
-		Session session = client.getSessions(th.basicUser().getId(), null)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get()
+	public void testUsers_RevokeUserSession() {
+		ApiResponse<SessionList> response = assertNoError(client.getSessions(th.basicUser().getId(), null));
+		Session session = response.readEntity()
 				.stream()
 				.findAny()
 				.get();
 
-		boolean result = client.revokeSession(session.getUserId(), session.getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response2 = assertNoError(client.revokeSession(session.getUserId(), session.getId()));
+		boolean result = response2.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testUsers_AttachMobileDevice() throws InterruptedException, ExecutionException {
-		boolean result = client.attachDeviceId(th.newId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+	public void testUsers_AttachMobileDevice() {
+		ApiResponse<Boolean> response = assertNoError(client.attachDeviceId(th.newId()));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testUsers_GetAudits() throws InterruptedException, ExecutionException {
+	public void testUsers_GetAudits() {
 
-		Audits audits = client.getUserAudits(th.basicUser().getId(), 0, 50, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Audits> response = assertNoError(client.getUserAudits(th.basicUser().getId(), 0, 50, null));
+		Audits audits = response.readEntity();
 
 		assertThat(audits.stream().findAny().map(Audit::getId).get(), is(not(nullValue())));
 	}
 
 	@Test
-	public void testUsers_VerifyEmail() throws InterruptedException, ExecutionException {
+	public void testUsers_VerifyEmail() {
 
-		client.verifyUserEmail(th.newId())
-				// invalid token
-				.thenApply(r -> checkStatus(r, Status.BAD_REQUEST))
-				.toCompletableFuture().get();
+		// invalid token
+		assertStatus(client.verifyUserEmail(th.newId()), Status.BAD_REQUEST);
 	}
 
 	@Test
-	public void testUsers_SendVerificationEmail() throws InterruptedException, ExecutionException {
+	public void testUsers_SendVerificationEmail() {
 
-		boolean result = client.sendVerificationEmail(th.basicUser().getEmail())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.sendVerificationEmail(th.basicUser().getEmail()));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void testUsers_SwitchLoginMethod() throws InterruptedException, ExecutionException {
+	public void testUsers_SwitchLoginMethod() {
 		SwitchRequest request = new SwitchRequest();
 		request.setCurrentService(AuthService.Email);
 		request.setNewService(AuthService.GitLab);
@@ -1144,15 +1007,13 @@ public class MattermostApiTest {
 		request.setPassword(th.basicUser().getPassword()); // for 4.0+
 		th.loginBasic();
 
-		client.switchAccountType(request)
-				.thenApply(r -> checkStatus(r, Status.NOT_IMPLEMENTED))
-				.toCompletableFuture().get();
+		assertStatus(client.switchAccountType(request), Status.NOT_IMPLEMENTED);
 	}
 
 	// Teams
 
 	@Test
-	public void testTeams_CreateTeam() throws InterruptedException, ExecutionException {
+	public void testTeams_CreateTeam() {
 		th.loginSystemAdmin();
 		Team team = new Team();
 		final String teamName = th.generateTestTeamName();
@@ -1161,10 +1022,8 @@ public class MattermostApiTest {
 		team.setDisplayName(teamDisplayName);
 		team.setType(TeamType.OPEN);
 
-		team = client.createTeam(team)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Team> response = assertNoError(client.createTeam(team));
+		team = response.readEntity();
 
 		assertThat(team.getName(), is(teamName));
 		assertThat(team.getDisplayName(), is(teamDisplayName));
@@ -1173,169 +1032,142 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testTeams_GetTeams() throws InterruptedException, ExecutionException {
+	public void testTeams_GetTeams() {
 		Team team = th.loginSystemAdmin().createTeam();
 
-		List<Team> teams = client.getAllTeams(null, 0, 60)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamList> response = assertNoError(client.getAllTeams(null, 0, 60));
+		List<Team> teams = response.readEntity();
 
 		assertThat(teams.stream().map(Team::getId).collect(Collectors.toSet()), hasItem(team.getId()));
 	}
 
 	@Test
-	public void testTeams_getTeam() throws InterruptedException, ExecutionException {
+	public void testTeams_getTeam() {
 
-		Team team = client.getTeam(th.basicTeam().getId(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Team> response = assertNoError(client.getTeam(th.basicTeam().getId(), null));
+		Team team = response.readEntity();
 
 		assertThat(team.getId(), is(th.basicTeam().getId()));
 	}
 
 	@Test
-	public void testTeams_UpdateTeam() throws InterruptedException, ExecutionException {
+	public void testTeams_UpdateTeam() {
 		th.loginTeamAdmin();
 		Team team = th.basicTeam();
 		final String teamId = team.getId();
 		final String newDispName = "new" + team.getDisplayName();
 		team.setDisplayName(newDispName);
 
-		team = client.updateTeam(team)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Team> response = assertNoError(client.updateTeam(team));
+		team = response.readEntity();
 
 		assertThat(team.getId(), is(teamId));
 		assertThat(team.getDisplayName(), is(newDispName));
 	}
 
 	@Test
-	public void testTeams_DeleteTeam_Soft() throws InterruptedException, ExecutionException {
+	public void testTeams_DeleteTeam_Soft() {
 		th.loginSystemAdmin();
 
-		boolean result = client.deleteTeam(th.basicTeam().getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.deleteTeam(th.basicTeam().getId()));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testTeams_DeleteTeam_Permanent() throws InterruptedException, ExecutionException {
+	public void testTeams_DeleteTeam_Permanent() {
 		th.loginSystemAdmin();
 
-		boolean result = client.deleteTeam(th.basicTeam().getId(), true)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.deleteTeam(th.basicTeam().getId(), true));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testTeams_PatchTeam() throws InterruptedException, ExecutionException {
+	public void testTeams_PatchTeam() {
 		th.loginTeamAdmin();
 		TeamPatch patch = new TeamPatch();
 		final String newDisplayName = "new" + th.basicTeam().getDisplayName();
 		patch.setDisplayName(newDisplayName);
 
-		Team team = client.patchTeam(th.basicTeam().getId(), patch)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Team> response = assertNoError(client.patchTeam(th.basicTeam().getId(), patch));
+		Team team = response.readEntity();
 
 		assertThat(team.getDisplayName(), is(newDisplayName));
 	}
 
 	@Test
-	public void testTeams_GetTeamByName() throws InterruptedException, ExecutionException {
+	public void testTeams_GetTeamByName() {
 		final String teamId = th.basicTeam().getId();
 		final String teamName = th.basicTeam().getName();
 
-		Team team = client.getTeamByName(teamName, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Team> response = assertNoError(client.getTeamByName(teamName, null));
+		Team team = response.readEntity();
 
 		assertThat(team.getId(), is(teamId));
 	}
 
 	@Test
-	public void testTeams_SearchTeams() throws InterruptedException, ExecutionException {
+	public void testTeams_SearchTeams() {
 		TeamSearch search = new TeamSearch();
 		search.setTerm(th.basicTeam().getName());
 
-		List<Team> teams = client.searchTeams(search)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamList> response = assertNoError(client.searchTeams(search));
+		List<Team> teams = response.readEntity();
 
 		assertThat(teams.stream().map(Team::getId).collect(Collectors.toSet()), hasItem(th.basicTeam().getId()));
 	}
 
 	@Test
-	public void testTeams_TeamExists_Exists() throws InterruptedException, ExecutionException {
+	public void testTeams_TeamExists_Exists() {
 
-		TeamExists exists = client.teamExists(th.basicTeam().getName(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamExists> response = assertNoError(client.teamExists(th.basicTeam().getName(), null));
+		TeamExists exists = response.readEntity();
 
 		assertThat(exists.isExists(), is(true));
 	}
 
 	@Test
-	public void testTeams_TeamExists_NotExists() throws InterruptedException, ExecutionException {
+	public void testTeams_TeamExists_NotExists() {
 
-		TeamExists exists = client.teamExists("fake" + th.generateTestTeamName(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamExists> response = assertNoError(client.teamExists("fake" + th.generateTestTeamName(), null));
+		TeamExists exists = response.readEntity();
 
 		assertThat(exists.isExists(), is(false));
 	}
 
 	@Test
-	public void testTeams_GetUsersTeams() throws InterruptedException, ExecutionException {
+	public void testTeams_GetUsersTeams() {
 		String userId = th.basicUser().getId();
 
-		List<Team> teams = client.getTeamsForUser(userId, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamList> response = assertNoError(client.getTeamsForUser(userId, null));
+		List<Team> teams = response.readEntity();
 
 		assertThat(teams.stream().map(Team::getId).collect(Collectors.toSet()), hasItem(th.basicTeam().getId()));
 	}
 
 	@Test
-	public void testTeams_GetTeamMembers() throws InterruptedException, ExecutionException {
+	public void testTeams_GetTeamMembers() {
 
-		List<TeamMember> teamMembers = client.getTeamMembers(th.basicTeam().getId(), 0, 60, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamMemberList> response = assertNoError(
+				client.getTeamMembers(th.basicTeam().getId(), 0, 60, null));
+		List<TeamMember> teamMembers = response.readEntity();
 
 		assertThat(teamMembers.stream().map(TeamMember::getUserId).collect(Collectors.toSet()),
 				hasItems(th.basicUser().getId(), th.basicUser2().getId()));
 	}
 
 	@Test
-	public void testTeams_AddUserToTeam() throws InterruptedException, ExecutionException {
+	public void testTeams_AddUserToTeam() {
 		th.loginSystemAdmin();
 		User user = th.createUser();
 		th.loginTeamAdmin();
 		TeamMember teamMemberToAdd = new TeamMember(th.basicTeam().getId(), user.getId());
 
-		TeamMember teamMember = client.addTeamMember(teamMemberToAdd)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamMember> response = assertNoError(client.addTeamMember(teamMemberToAdd));
+		TeamMember teamMember = response.readEntity();
 
 		assertThat(teamMember.getTeamId(), is(teamMemberToAdd.getTeamId()));
 		assertThat(teamMember.getUserId(), is(teamMemberToAdd.getUserId()));
@@ -1343,140 +1175,117 @@ public class MattermostApiTest {
 
 	@Test
 	@Ignore // API for 4.0+
-	public void testTeams_AddUserToTeamFromInvite() throws InterruptedException, ExecutionException {
+	public void testTeams_AddUserToTeamFromInvite() {
 
-		client.addTeamMember("hash", "dataToHash", "inviteId")
-				.thenApply(r -> checkStatus(r, Status.BAD_REQUEST))
-				.toCompletableFuture().get();
-
+		assertStatus(client.addTeamMember("hash", "dataToHash", "inviteId"), Status.BAD_REQUEST);
 	}
 
 	@Test
-	public void testTeams_AddMultipleUsersToTeam() throws InterruptedException, ExecutionException {
+	public void testTeams_AddMultipleUsersToTeam() {
 		th.loginSystemAdmin();
 		User user1 = th.createUser();
 		User user2 = th.createUser();
 		th.loginTeamAdmin();
 
-		List<TeamMember> members = client.addTeamMembers(th.basicTeam().getId(), user1.getId(), user2.getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamMemberList> response = assertNoError(
+				client.addTeamMembers(th.basicTeam().getId(), user1.getId(), user2.getId()));
+		List<TeamMember> members = response.readEntity();
 
 		assertThat(members.stream().map(TeamMember::getUserId).collect(Collectors.toSet()),
 				containsInAnyOrder(user1.getId(), user2.getId()));
 	}
 
 	@Test
-	public void testTeams_GetTeamMembersForUser() throws InterruptedException, ExecutionException {
+	public void testTeams_GetTeamMembersForUser() {
 
-		List<TeamMember> members = client.getTeamMembersForUser(th.basicUser().getId(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamMemberList> response = assertNoError(
+				client.getTeamMembersForUser(th.basicUser().getId(), null));
+		List<TeamMember> members = response.readEntity();
 
 		assertThat(members.stream().map(TeamMember::getUserId).collect(Collectors.toSet()),
 				hasItems(th.basicUser().getId()));
 	}
 
 	@Test
-	public void testTeams_GetTeamMember() throws InterruptedException, ExecutionException {
+	public void testTeams_GetTeamMember() {
 		String teamId = th.basicTeam().getId();
 		String userId = th.basicUser2().getId();
 
-		TeamMember member = client.getTeamMember(teamId, userId, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamMember> response = assertNoError(client.getTeamMember(teamId, userId, null));
+		TeamMember member = response.readEntity();
 
 		assertThat(member.getTeamId(), is(teamId));
 		assertThat(member.getUserId(), is(userId));
 	}
 
 	@Test
-	public void testTeams_RemoveUserFromTeam() throws InterruptedException, ExecutionException {
+	public void testTeams_RemoveUserFromTeam() {
 		th.loginTeamAdmin();
 		String teamId = th.basicTeam().getId();
 		String userId = th.basicUser2().getId();
 
-		boolean result = client.removeTeamMember(teamId, userId)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.removeTeamMember(teamId, userId));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testTeams_GetTeamMembersByIds() throws InterruptedException, ExecutionException {
+	public void testTeams_GetTeamMembersByIds() {
 
-		List<TeamMember> members = client
-				.getTeamMembersByIds(th.basicTeam().getId(), th.basicUser().getId(), th.basicUser2().getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamMemberList> response = assertNoError(
+				client.getTeamMembersByIds(th.basicTeam().getId(), th.basicUser().getId(), th.basicUser2().getId()));
+		List<TeamMember> members = response.readEntity();
 
 		assertThat(members.stream().map(TeamMember::getUserId).collect(Collectors.toSet()),
 				hasItems(th.basicUser().getId(), th.basicUser2().getId()));
 	}
 
 	@Test
-	public void testTeams_GetTeamStats() throws InterruptedException, ExecutionException {
+	public void testTeams_GetTeamStats() {
 
-		TeamStats stats = client.getTeamStats(th.basicTeam().getId(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamStats> response = assertNoError(client.getTeamStats(th.basicTeam().getId(), null));
+		TeamStats stats = response.readEntity();
 
 		assertThat(stats.getTeamId(), is(th.basicTeam().getId()));
 	}
 
 	@Test
-	public void testTeams_UpdateTeamMemberRoles() throws InterruptedException, ExecutionException {
+	public void testTeams_UpdateTeamMemberRoles() {
 		th.loginTeamAdmin();
 
-		boolean result = client
-				.updateTeamMemberRoles(th.basicTeam().getId(), th.basicUser().getId(), Role.ROLE_TEAM_ADMIN)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(
+				client.updateTeamMemberRoles(th.basicTeam().getId(), th.basicUser().getId(), Role.ROLE_TEAM_ADMIN));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testTeams_GetTeamUnreadsForUser() throws InterruptedException, ExecutionException {
+	public void testTeams_GetTeamUnreadsForUser() {
 
-		List<TeamUnread> unreads = client.getTeamUnreadForUser(th.basicUser().getId(), null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamUnreadList> response = assertNoError(client.getTeamUnreadForUser(th.basicUser().getId(), null));
+		List<TeamUnread> unreads = response.readEntity();
 
 		unreads.stream().findFirst().ifPresent(u -> assertThat(u.getTeamId(), is(th.basicTeam().getId())));
 	}
 
 	@Test
-	public void testTeams_GetTeamUnreadsForTeam() throws InterruptedException, ExecutionException {
+	public void testTeams_GetTeamUnreadsForTeam() {
 
-		TeamUnread unread = client.getTeamUnread(th.basicTeam().getId(), th.basicUser().getId())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<TeamUnread> response = assertNoError(
+				client.getTeamUnread(th.basicTeam().getId(), th.basicUser().getId()));
+		TeamUnread unread = response.readEntity();
 
 		assertThat(unread.getTeamId(), is(th.basicTeam().getId()));
 	}
 
 	@Test
-	public void testTeams_InviteUsersToTheTeamByEmail() throws InterruptedException, ExecutionException {
+	public void testTeams_InviteUsersToTheTeamByEmail() {
 
-		boolean result = client
-				.inviteUsersToTeam(th.basicTeam().getId(), Collections.singletonList(th.generateTestEmail()))
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.thenApply(Boolean::booleanValue)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(
+				client.inviteUsersToTeam(th.basicTeam().getId(), Collections.singletonList(th.generateTestEmail())));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
@@ -1487,25 +1296,22 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testTeams_GetPublicChannels() throws InterruptedException, ExecutionException {
+	public void testTeams_GetPublicChannels() {
 
-		List<Channel> channels = client.getPublicChannelsForTeam(th.basicTeam().getId(), 0, 60, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelList> response = assertNoError(
+				client.getPublicChannelsForTeam(th.basicTeam().getId(), 0, 60, null));
+		List<Channel> channels = response.readEntity();
 
 		assertThat(channels.stream().findAny().get().getTeamId(), is(th.basicTeam().getId()));
 	}
 
 	@Test
-	public void testTeams_SearchChannels() throws InterruptedException, ExecutionException {
+	public void testTeams_SearchChannels() {
 		ChannelSearch search = new ChannelSearch();
 		search.setTerm(th.basicChannel().getName());
 
-		List<Channel> channels = client.searchChannels(th.basicTeam().getId(), search)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<ChannelList> response = assertNoError(client.searchChannels(th.basicTeam().getId(), search));
+		List<Channel> channels = response.readEntity();
 
 		assertThat(channels.stream().findAny().get().getTeamId(), is(th.basicTeam().getId()));
 	}
@@ -1513,79 +1319,67 @@ public class MattermostApiTest {
 	// Posts
 
 	@Test
-	public void testPosts_CreatePost() throws InterruptedException, ExecutionException {
+	public void testPosts_CreatePost() {
 		Post post = new Post();
 		post.setChannelId(th.basicChannel().getId());
 		post.setMessage("Hello World!");
 
-		Post postedPost = client.createPost(post)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Post> response = assertNoError(client.createPost(post));
+		Post postedPost = response.readEntity();
 
 		assertThat(postedPost.getMessage(), is(post.getMessage()));
 		assertThat(postedPost.getChannelId(), is(post.getChannelId()));
 	}
 
 	@Test
-	public void testPosts_GetPost() throws InterruptedException, ExecutionException {
+	public void testPosts_GetPost() {
 		String postId = th.basicPost().getId();
 
-		Post post = client.getPost(postId, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Post> response = assertNoError(client.getPost(postId, null));
+		Post post = response.readEntity();
 
 		assertThat(post.getId(), is(postId));
 	}
 
 	@Test
-	public void testPosts_DeletePost() throws InterruptedException, ExecutionException {
+	public void testPosts_DeletePost() {
 		String postId = th.createPost(th.basicChannel()).getId();
 
-		boolean result = client.deletePost(postId)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Boolean> response = assertNoError(client.deletePost(postId));
+		boolean result = response.readEntity();
 
 		assertThat(result, is(true));
 	}
 
 	@Test
-	public void testPosts_UpdatePost() throws InterruptedException, ExecutionException {
+	public void testPosts_UpdatePost() {
 		Post post = th.createPost(th.basicChannel());
 		post.setMessage("UPDATE:" + post.getMessage());
 
-		Post updatedPost = client.updatePost(post.getId(), post)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Post> response = assertNoError(client.updatePost(post.getId(), post));
+		Post updatedPost = response.readEntity();
 
 		assertThat(updatedPost.getMessage(), is(post.getMessage()));
 	}
 
 	@Test
-	public void testPosts_PatchPost() throws InterruptedException, ExecutionException {
+	public void testPosts_PatchPost() {
 		String postId = th.createPost(th.basicChannel()).getId();
 		PostPatch patch = new PostPatch();
 		patch.setMessage("NEW MESSAGE");
 
-		Post updatedPost = client.patchPost(postId, patch)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<Post> response = assertNoError(client.patchPost(postId, patch));
+		Post updatedPost = response.readEntity();
 
 		assertThat(updatedPost.getMessage(), is(patch.getMessage()));
 	}
 
 	@Test
-	public void testPosts_GetThread() throws InterruptedException, ExecutionException {
+	public void testPosts_GetThread() {
 		String postId = th.basicPost().getId();
 
-		PostList posts = client.getPostThread(postId, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<PostList> response = assertNoError(client.getPostThread(postId, null));
+		PostList posts = response.readEntity();
 
 		assertThat(posts.getPosts().values().stream().map(Post::getId).collect(Collectors.toSet()), hasItem(postId));
 	}
@@ -1601,27 +1395,23 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	public void testPosts_GetPostsForChannel() throws InterruptedException, ExecutionException {
+	public void testPosts_GetPostsForChannel() {
 		String channelId = th.basicChannel().getId();
 
-		PostList posts = client.getPostsForChannel(channelId, 0, 60, null)
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<PostList> response = assertNoError(client.getPostsForChannel(channelId, 0, 60, null));
+		PostList posts = response.readEntity();
 
 		assertThat(posts.getPosts().values().stream().map(Post::getChannelId).collect(Collectors.toSet()),
 				hasItem(channelId));
 	}
 
 	@Test
-	public void testPosts_GetPostsForChannel_Since() throws InterruptedException, ExecutionException {
+	public void testPosts_GetPostsForChannel_Since() {
 		String channelId = th.basicChannel().getId();
 
-		PostList posts = client
-				.getPostsSince(channelId, OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toEpochSecond())
-				.thenApply(this::checkNoError)
-				.thenApply(ApiResponse::readEntity)
-				.toCompletableFuture().get();
+		ApiResponse<PostList> response = assertNoError(client.getPostsSince(channelId,
+				OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toEpochSecond()));
+		PostList posts = response.readEntity();
 
 		assertThat(posts.getPosts().values().stream().map(Post::getChannelId).collect(Collectors.toSet()),
 				hasItem(channelId));
