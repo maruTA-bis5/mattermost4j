@@ -16,6 +16,8 @@
  */
 package net.bis5.mattermost.client4;
 
+import java.util.Map;
+
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
@@ -56,6 +58,27 @@ public abstract class ApiResponse<T> {
 
 	public String getEtag() {
 		return response.getHeaderString("Etag");
+	}
+
+	protected static final String STATUS = "status";
+	protected static final String STATUS_OK = "ok";
+
+	/**
+	 * a convenience function for checking the standard OK response from the web
+	 * service.
+	 * 
+	 * @param apiResponse
+	 * @return
+	 */
+	protected ApiResponse<Boolean> checkStatusOK() {
+		Response response = getRawResponse();
+		response.bufferEntity();
+		Map<String, String> m = response.readEntity(new GenericType<Map<String, String>>() {
+		});
+		if (m != null && m.getOrDefault(STATUS, "").equalsIgnoreCase(STATUS_OK)) {
+			return ApiResponse.of(response, true);
+		}
+		return ApiResponse.of(response, false);
 	}
 
 	public static <T> ApiResponse<T> of(Response response, Class<T> entityClass) {
