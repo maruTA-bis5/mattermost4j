@@ -121,8 +121,9 @@ public class MattermostApiTest {
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		th.logout();
+		client.close();
 	}
 
 	private <T> ApiResponse<T> assertNoError(ApiResponse<T> response) {

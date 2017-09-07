@@ -116,7 +116,7 @@ import net.bis5.mattermost.model.license.MfaSecret;
  * @author Maruyama Takayuki
  * @since 2017/06/10
  */
-public class MattermostClient {
+public class MattermostClient implements AutoCloseable {
 
 	protected static final String API_URL_SUFFIX = "/api/v4";
 	private final String url;
@@ -134,6 +134,14 @@ public class MattermostClient {
 								1000))
 				.register(MultiPartFeature.class)
 				.build();
+	}
+
+	/**
+	 * @see java.lang.AutoCloseable#close()
+	 */
+	@Override
+	public void close() throws Exception {
+		httpClient.close();
 	}
 
 	public MattermostClient(String url) {
