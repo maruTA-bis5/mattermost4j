@@ -19,7 +19,6 @@ package net.bis5.mattermost.client4.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
-import lombok.Value;
 
 /**
  * TODO 型の説明
@@ -27,7 +26,6 @@ import lombok.Value;
  * @author Maruyama Takayuki
  * @since 2017/06/17
  */
-@Value
 @Builder
 public class SearchPostsRequest {
 	@JsonProperty("terms")

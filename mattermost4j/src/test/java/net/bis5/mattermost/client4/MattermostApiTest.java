@@ -1409,13 +1409,109 @@ public class MattermostApiTest {
 	@Test
 	public void testPosts_GetPostsForChannel_Since() {
 		String channelId = th.basicChannel().getId();
+		OffsetDateTime since = OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
 
-		ApiResponse<PostList> response = assertNoError(client.getPostsSince(channelId,
-				OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC).toEpochSecond()));
+		ApiResponse<PostList> response = assertNoError(client.getPostsSince(channelId, since.toEpochSecond()));
 		PostList posts = response.readEntity();
 
 		assertThat(posts.getPosts().values().stream().map(Post::getChannelId).collect(Collectors.toSet()),
 				hasItem(channelId));
+	}
+
+	@Test
+	public void testPosts_GetPostsForChannel_Before() {
+		String channelId = th.basicChannel().getId();
+		Post post1 = th.createPost(th.basicChannel());
+		Post post2 = th.createPost(th.basicChannel());
+		Post post3 = th.createPost(th.basicChannel());
+
+		ApiResponse<PostList> response = assertNoError(client.getPostsBefore(channelId, post2.getId(), 0, 60, null));
+		PostList posts = response.readEntity();
+
+		Set<String> channelIds = posts.getPosts().values().stream().map(Post::getChannelId).collect(Collectors.toSet());
+		Set<String> postIds = posts.getPosts().values().stream().map(Post::getId).collect(Collectors.toSet());
+		assertThat(channelIds, hasItem(channelId));
+		assertThat(postIds, hasItem(post1.getId()));
+		assertThat(postIds, not(hasItem(post2.getId())));
+		assertThat(postIds, not(hasItem(post3.getId())));
+	}
+
+	@Test
+	public void testPosts_GetPostsForChannel_After() {
+		String channelId = th.basicChannel().getId();
+		Post post1 = th.createPost(th.basicChannel());
+		Post post2 = th.createPost(th.basicChannel());
+		Post post3 = th.createPost(th.basicChannel());
+
+		ApiResponse<PostList> response = assertNoError(client.getPostsAfter(channelId, post2.getId(), 0, 60, null));
+		PostList posts = response.readEntity();
+
+		Set<String> channelIds = posts.getPosts().values().stream().map(Post::getChannelId).collect(Collectors.toSet());
+		Set<String> postIds = posts.getPosts().values().stream().map(Post::getId).collect(Collectors.toSet());
+		assertThat(channelIds, hasItem(channelId));
+		assertThat(postIds, not(hasItem(post1.getId())));
+		assertThat(postIds, not(hasItem(post2.getId())));
+		assertThat(postIds, hasItem(post3.getId()));
+	}
+
+	@Test
+	@Ignore // FIXME work correctly from 4.0
+	public void testPosts_SearchForTeamPosts() {
+		String teamId = th.basicTeam().getId();
+		String channelId = th.basicChannel().getId();
+		Post post1 = new Post(channelId, "hello");
+		Post post2 = new Post(channelId, "mattermost");
+		Post post3 = new Post(channelId, "world");
+		post1 = assertNoError(client.createPost(post1)).readEntity();
+		post2 = assertNoError(client.createPost(post2)).readEntity();
+		post3 = assertNoError(client.createPost(post3)).readEntity();
+
+		ApiResponse<PostList> response = assertNoError(client.searchPosts(teamId, "hello", false));
+		PostList posts = response.readEntity();
+
+		assertThat(posts.getPosts().keySet(), hasItem(post1.getId()));
+		assertThat(posts.getPosts().keySet(), not(hasItems(post2.getId(), post3.getId())));
+
+		response = assertNoError(client.searchPosts(teamId, "hello world", true));
+		posts = response.readEntity();
+
+		assertThat(posts.getPosts().keySet(), hasItems(post1.getId(), post2.getId()));
+		assertThat(posts.getPosts().keySet(), not(hasItem(post3.getId())));
+	}
+
+	@Test
+	public void testPosts_PinPostToChannel() {
+		Post post = th.createPost(th.basicChannel());
+
+		ApiResponse<Boolean> response = assertNoError(client.pinPost(post.getId()));
+		boolean result = response.readEntity();
+
+		assertThat(result, is(true));
+
+		Post pinnedPost = post;
+
+		response = assertNoError(client.pinPost(pinnedPost.getId()));
+		result = response.readEntity();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testPosts_UnPinPost() {
+		Post post = th.createPost(th.basicChannel());
+		assertNoError(client.pinPost(post.getId()));
+
+		ApiResponse<Boolean> response = assertNoError(client.unpinPost(post.getId()));
+		boolean result = response.readEntity();
+
+		assertThat(result, is(true));
+
+		Post unpinnedPost = post;
+
+		response = assertNoError(client.unpinPost(unpinnedPost.getId()));
+		result = response.readEntity();
+
+		assertThat(result, is(true));
 	}
 
 }
