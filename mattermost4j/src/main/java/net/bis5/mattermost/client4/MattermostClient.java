@@ -2476,7 +2476,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param perPage
 	 * @return
 	 */
-	public ApiResponse<List<OAuthApp>> getAuthorizedPAuthAppsForUser(String userId, int page, int perPage) {
+	public ApiResponse<List<OAuthApp>> getAuthorizedOAuthAppsForUser(String userId, int page, int perPage) {
 		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
 		return doApiGet(getUserRoute(userId) + "/oauth/apps/authorized" + query, null, listType());
 	}
