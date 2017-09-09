@@ -1041,7 +1041,7 @@ public class MattermostApiTest {
 	public void testTeams_GetTeams() {
 		Team team = th.loginSystemAdmin().createTeam();
 
-		ApiResponse<TeamList> response = assertNoError(client.getAllTeams(null, Pager.of(0, 60)));
+		ApiResponse<TeamList> response = assertNoError(client.getAllTeams(Pager.of(0, 60), null));
 		List<Team> teams = response.readEntity();
 
 		assertThat(teams.stream().map(Team::getId).collect(Collectors.toSet()), hasItem(team.getId()));

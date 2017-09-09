@@ -21,11 +21,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.HttpMethod;
@@ -43,6 +43,27 @@ import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
+import net.bis5.mattermost.client4.api.AuditsApi;
+import net.bis5.mattermost.client4.api.AuthenticationApi;
+import net.bis5.mattermost.client4.api.BrandApi;
+import net.bis5.mattermost.client4.api.ChannelApi;
+import net.bis5.mattermost.client4.api.ClusterApi;
+import net.bis5.mattermost.client4.api.CommandsApi;
+import net.bis5.mattermost.client4.api.ComplianceApi;
+import net.bis5.mattermost.client4.api.EmojiApi;
+import net.bis5.mattermost.client4.api.GeneralApi;
+import net.bis5.mattermost.client4.api.LdapApi;
+import net.bis5.mattermost.client4.api.LogsApi;
+import net.bis5.mattermost.client4.api.OAuthApi;
+import net.bis5.mattermost.client4.api.PostApi;
+import net.bis5.mattermost.client4.api.PreferencesApi;
+import net.bis5.mattermost.client4.api.ReactionApi;
+import net.bis5.mattermost.client4.api.SamlApi;
+import net.bis5.mattermost.client4.api.StatusApi;
+import net.bis5.mattermost.client4.api.TeamApi;
+import net.bis5.mattermost.client4.api.UserApi;
+import net.bis5.mattermost.client4.api.WebhookApi;
+import net.bis5.mattermost.client4.api.WebrtcApi;
 import net.bis5.mattermost.client4.model.AddChannelMemberRequest;
 import net.bis5.mattermost.client4.model.AttachDeviceIdRequest;
 import net.bis5.mattermost.client4.model.CheckUserMfaRequest;
@@ -86,6 +107,7 @@ import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
 import net.bis5.mattermost.model.Preference;
+import net.bis5.mattermost.model.Preferences;
 import net.bis5.mattermost.model.Reaction;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.SamlCertificateStatus;
@@ -116,7 +138,9 @@ import net.bis5.mattermost.model.license.MfaSecret;
  * @author Maruyama Takayuki
  * @since 2017/06/10
  */
-public class MattermostClient implements AutoCloseable {
+public class MattermostClient implements AutoCloseable, AuditsApi, AuthenticationApi, BrandApi, ChannelApi, ClusterApi,
+		CommandsApi, ComplianceApi, EmojiApi, GeneralApi, LdapApi, LogsApi, OAuthApi, PostApi, PreferencesApi,
+		ReactionApi, SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
 
 	protected static final String API_URL_SUFFIX = "/api/v4";
 	private final String url;
@@ -455,6 +479,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param password
 	 * @return
 	 */
+	@Override
 	public User loginById(String id, String password) {
 		return login(LoginRequest.builder().id(id).password(password).build());
 	}
@@ -467,6 +492,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param password
 	 * @return
 	 */
+	@Override
 	public User login(String loginId, String password) {
 		return login(LoginRequest.builder().loginId(loginId).password(password).build());
 	}
@@ -478,6 +504,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param password
 	 * @return
 	 */
+	@Override
 	public User loginByLdap(String loginId, String password) {
 		return login(LoginRequest.builder().loginId(loginId).password(password).ldapOnly(true).build());
 	}
@@ -492,6 +519,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param deviceId
 	 * @return
 	 */
+	@Override
 	public User loginWithDevice(String loginId, String password, String deviceId) {
 		return login(LoginRequest.builder().loginId(loginId).password(password).deviceId(deviceId).build());
 	}
@@ -513,6 +541,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> logout() {
 		return onLogout(doApiPost("/users/logout", ""));
 	}
@@ -529,6 +558,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<SwitchAccountTypeResult> switchAccountType(SwitchRequest switchRequest) {
 		return doApiPost(getUsersRoute() + "/login/switch", switchRequest, SwitchAccountTypeResult.class);
 	}
@@ -541,6 +571,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param user
 	 * @return
 	 */
+	@Override
 	public ApiResponse<User> createUser(User user) {
 		return doApiPost(getUsersRoute(), user, User.class);
 	}
@@ -551,6 +582,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<User> getMe(String etag) {
 		return doApiGet(getUserRoute(ME), etag, User.class);
 	}
@@ -564,6 +596,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<User> getUser(String userId, String etag) {
 		return doApiGet(getUserRoute(userId), etag, User.class);
 	}
@@ -575,6 +608,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<User> getUserByUsername(String userName, String etag) {
 		return doApiGet(getUserByUsernameRoute(userName), etag, User.class);
 	}
@@ -586,6 +620,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<User> getUserByEmail(String email, String etag) {
 		return doApiGet(getUserByEmailRoute(email), etag, User.class);
 	}
@@ -598,6 +633,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserAutocomplete> autocompleteUsersInTeam(String teamId, String username,
 			String etag) {
 		String query = new QueryBuilder().append("in_team", teamId).append("name", username).toString();
@@ -613,6 +649,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserAutocomplete> autocompleteUsersInChannel(String teamId, String channelId,
 			String username, String etag) {
 		String query = new QueryBuilder().append("in_team", teamId).append("in_channel", channelId)
@@ -627,6 +664,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserAutocomplete> autocompleteUsers(String username, String etag) {
 		String query = new QueryBuilder().append("name", username).toString();
 		return doApiGet(getUsersRoute() + "/autocomplete" + query, etag, UserAutocomplete.class);
@@ -640,6 +678,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<byte[]> getProfileImage(String userId, String etag) {
 		// XXX byte[]で返すの微妙・・・というかreadEntityでこけない?
 		return doApiGet(getUserRoute(userId) + "/image", etag, byte[].class);
@@ -662,6 +701,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserList> getUsers(Pager pager, String etag) {
 		return doApiGet(getUsersRoute() + pager.toQuery(), etag, UserList.class);
 	}
@@ -674,6 +714,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserList> getUsersInTeam(String teamId, Pager pager, String etag) {
 		String query = new QueryBuilder().append("in_team", teamId).toString();
 		return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
@@ -687,6 +728,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserList> getUsersNotInTeam(String teamId, Pager pager, String etag) {
 		String query = new QueryBuilder().append("not_in_team", teamId).toString();
 		return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
@@ -700,6 +742,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserList> getUsersInChannel(String channelId, Pager pager, String etag) {
 		String query = new QueryBuilder().append("in_channel", channelId).toString();
 		return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
@@ -714,6 +757,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserList> getUsersNotInChannel(String teamId, String channelId, Pager pager, String etag) {
 		String query = new QueryBuilder().append("in_team", teamId).append("not_in_channel", channelId).toString();
 		return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
@@ -727,6 +771,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserList> getUsersWithoutTeam(Pager pager, String etag) {
 		String query = new QueryBuilder().append("without_team", 1).toString();
 		return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
@@ -738,6 +783,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userIds
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserList> getUsersByIds(String... userIds) {
 		return doApiPost(getUsersRoute() + "/ids", userIds, UserList.class);
 	}
@@ -748,6 +794,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param usernames
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserList> getUsersByUsernames(String... usernames) {
 		return doApiPost(getUsersRoute() + "/usernames", usernames, UserList.class);
 	}
@@ -758,6 +805,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param search
 	 * @return
 	 */
+	@Override
 	public ApiResponse<UserList> searchUsers(UserSearch search) {
 		return doApiPost(getUsersRoute() + "/search", search, UserList.class);
 	}
@@ -768,6 +816,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param user
 	 * @return
 	 */
+	@Override
 	public ApiResponse<User> updateUser(User user) {
 		return doApiPut(getUserRoute(user.getId()), user, User.class);
 	}
@@ -780,6 +829,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param patch
 	 * @return
 	 */
+	@Override
 	public ApiResponse<User> patchUser(String userId, UserPatch patch) {
 		return doApiPut(getUserRoute(userId) + "/patch", patch, User.class);
 	}
@@ -794,6 +844,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param activate
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> updateUserMfa(String userId, String code, boolean activate) {
 		UpdateUserMfaRequest request = UpdateUserMfaRequest.builder().activate(activate).code(code).build();
 		return doApiPut(getUserRoute(userId) + "/mfa", request).checkStatusOK();
@@ -806,7 +857,8 @@ public class MattermostClient implements AutoCloseable {
 	 * @param loginId
 	 * @return
 	 */
-	public Boolean checkUserMfa(String loginId) {
+	@Override
+	public boolean checkUserMfa(String loginId) {
 		CheckUserMfaRequest request = CheckUserMfaRequest.builder().loginId(loginId).build();
 		return Boolean.valueOf(
 				doApiPost(getUsersRoute() + "/mfa", request, stringMapType())
@@ -821,6 +873,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<MfaSecret> generateMfaSecret(String userId) {
 		return doApiPost(getUserRoute(userId) + "/mfa/generate", null, MfaSecret.class);
 	}
@@ -834,6 +887,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param newPassword
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> updateUserPassword(String userId, String currentPassword,
 			String newPassword) {
 		UpdateUserPasswordRequest request = UpdateUserPasswordRequest.builder().currentPassword(currentPassword)
@@ -849,6 +903,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param role
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> updateUserRoles(String userId, Role... roles) {
 		UpdateRolesRequest request = new UpdateRolesRequest(roles);
 		return doApiPut(getUserRoute(userId) + "/roles", request).checkStatusOK();
@@ -861,6 +916,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param active
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> updateUserActive(String userId, boolean active) {
 		UpdateUserActiveRequest request = UpdateUserActiveRequest.builder().active(active).build();
 		return doApiPut(getUserRoute(userId) + "/active", request).checkStatusOK();
@@ -872,6 +928,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteUser(String userId) {
 		return doApiDelete(getUserRoute(userId)).checkStatusOK();
 	}
@@ -883,6 +940,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param email
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> sendPasswordResetEmail(String email) {
 		SendPasswordResetEmailRequest request = SendPasswordResetEmailRequest.builder().email(email).build();
 		return doApiPost(getUsersRoute() + "/password/reset/send", request).checkStatusOK();
@@ -895,6 +953,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param newPassword
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> resetPassword(String token, String newPassword) {
 		ResetPasswordRequest request = ResetPasswordRequest.builder().token(token).newPassword(newPassword).build();
 		return doApiPost(getUsersRoute() + "/password/reset", request).checkStatusOK();
@@ -907,6 +966,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<SessionList> getSessions(String userId, String etag) {
 		return doApiGet(getUserRoute(userId) + "/sessions", etag, SessionList.class);
 	}
@@ -919,6 +979,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param sessionId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> revokeSession(String userId, String sessionId) {
 		RevokeSessionRequest request = RevokeSessionRequest.builder().sessionId(sessionId).build();
 		return doApiPost(getUserRoute(userId) + "/sessions/revoke", request).checkStatusOK();
@@ -930,6 +991,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param deviceId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> attachDeviceId(String deviceId) {
 		AttachDeviceIdRequest request = AttachDeviceIdRequest.builder().deviceId(deviceId).build();
 		return doApiPut(getUsersRoute() + "/sessions/device", request).checkStatusOK();
@@ -945,6 +1007,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param teamIdToExclude
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamUnreadList> getTeamUnreadForUser(String userId, String teamIdToExclude) {
 		String optional = "";
 		if (teamIdToExclude != null) { // TODO use StringUtils.isNotEmpty
@@ -966,6 +1029,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Audits> getUserAudits(String userId, Pager pager, String etag) {
 		return doApiGet(getUserRoute(userId) + "/audits" + pager.toQuery(), etag, Audits.class);
 	}
@@ -976,6 +1040,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param token
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> verifyUserEmail(String token) {
 		VerifyUserEmailRequest request = VerifyUserEmailRequest.builder().token(token).build();
 		return doApiPost(getUsersRoute() + "/email/verify", request).checkStatusOK();
@@ -989,6 +1054,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param email
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> sendVerificationEmail(String email) {
 		SendVerificationEmailRequest request = SendVerificationEmailRequest.builder().email(email).build();
 		return doApiPost(getUsersRoute() + "/email/verify/send", request).checkStatusOK();
@@ -1001,6 +1067,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param imageFilePath
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> setProfileImage(String userId, Path imageFilePath) {
 		MultiPart multiPart = new MultiPart();
 		multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
@@ -1019,6 +1086,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param team
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Team> createTeam(Team team) {
 		return doApiPost(getTeamsRoute(), team, Team.class);
 	}
@@ -1030,6 +1098,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Team> getTeam(String teamId, String etag) {
 		return doApiGet(getTeamRoute(teamId), etag, Team.class);
 	}
@@ -1037,11 +1106,12 @@ public class MattermostClient implements AutoCloseable {
 	/**
 	 * returns all teams based on permssions.
 	 * 
-	 * @param etag
 	 * @param pager
+	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<TeamList> getAllTeams(String etag, Pager pager) {
+	@Override
+	public ApiResponse<TeamList> getAllTeams(Pager pager, String etag) {
 		return doApiGet(getTeamsRoute() + pager.toQuery(), etag, TeamList.class);
 	}
 
@@ -1052,6 +1122,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Team> getTeamByName(String name, String etag) {
 		return doApiGet(getTeamByNameRoute(name), etag, Team.class);
 	}
@@ -1062,6 +1133,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param search
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamList> searchTeams(TeamSearch search) {
 		return doApiPost(getTeamsRoute() + "/search", search, TeamList.class);
 	}
@@ -1073,6 +1145,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamExists> teamExists(String name, String etag) {
 		return doApiGet(getTeamByNameRoute(name) + "/exists", etag, TeamExists.class);
 	}
@@ -1085,6 +1158,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamList> getTeamsForUser(String userId, String etag) {
 		return doApiGet(getUserRoute(userId) + "/teams", etag, TeamList.class);
 	}
@@ -1097,6 +1171,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamMember> getTeamMember(String teamId, String userId, String etag) {
 		return doApiGet(getTeamMemberRoute(teamId, userId), etag, TeamMember.class);
 	}
@@ -1109,6 +1184,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param newRoles
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> updateTeamMemberRoles(String teamId, String userId, Role... newRoles) {
 		UpdateRolesRequest request = new UpdateRolesRequest(newRoles);
 		return doApiPut(getTeamMemberRoute(teamId, userId) + "/roles", request).checkStatusOK();
@@ -1120,6 +1196,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param team
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Team> updateTeam(Team team) {
 		return doApiPut(getTeamRoute(team.getId()), team, Team.class);
 	}
@@ -1131,6 +1208,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param patch
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Team> patchTeam(String teamId, TeamPatch patch) {
 		return doApiPut(getTeamRoute(teamId) + "/patch", patch, Team.class);
 	}
@@ -1142,6 +1220,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @see {@link #deleteTeam(String, boolean)}
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteTeam(String teamId) {
 		return doApiDelete(getTeamRoute(teamId)).checkStatusOK();
 	}
@@ -1156,6 +1235,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @see {@link #deleteTeam(String)}
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteTeam(String teamId, boolean permanent) {
 		String query = new QueryBuilder().append("permanent", Boolean.toString(permanent)).toString();
 		return doApiDelete(getTeamRoute(teamId) + query).checkStatusOK();
@@ -1169,6 +1249,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamMemberList> getTeamMembers(String teamId, Pager pager, String etag) {
 		return doApiGet(getTeamMembersRoute(teamId) + pager.toQuery(), etag, TeamMemberList.class);
 	}
@@ -1180,6 +1261,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamMemberList> getTeamMembersForUser(String userId, String etag) {
 		return doApiGet(getUserRoute(userId) + "/teams/members", etag, TeamMemberList.class);
 	}
@@ -1192,6 +1274,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userIds
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamMemberList> getTeamMembersByIds(String teamId, String... userIds) {
 		String url = String.format("/teams/%s/members/ids", teamId);
 		return doApiPost(url, userIds, TeamMemberList.class);
@@ -1203,6 +1286,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param teamMemberToAdd
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamMember> addTeamMember(TeamMember teamMemberToAdd) {
 		return doApiPost(getTeamMembersRoute(teamMemberToAdd.getTeamId()), teamMemberToAdd, TeamMember.class);
 	}
@@ -1217,6 +1301,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @deprecated API Change on Mattermost 4.0
 	 */
 	@Deprecated
+	@Override
 	public ApiResponse<TeamMember> addTeamMember(String teamId, String userId, String hash,
 			String dataToHash, String inviteId) {
 		QueryBuilder query = new QueryBuilder();
@@ -1240,6 +1325,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @return
 	 * @since Mattermost 4.0
 	 */
+	@Override
 	public ApiResponse<TeamMember> addTeamMember(String hash, String dataToHash, String inviteId) {
 		QueryBuilder query = new QueryBuilder();
 		if (StringUtils.isNotEmpty(inviteId)) {
@@ -1259,6 +1345,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userIds
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamMemberList> addTeamMembers(String teamId, String... userIds) {
 		List<TeamMember> members = Arrays.stream(userIds)
 				.map(u -> new TeamMember(teamId, u))
@@ -1274,6 +1361,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> removeTeamMember(String teamId, String userId) {
 		return doApiDelete(getTeamMemberRoute(teamId, userId)).checkStatusOK();
 	}
@@ -1285,6 +1373,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamStats> getTeamStats(String teamId, String etag) {
 		return doApiGet(getTeamStatsRoute(teamId), etag, TeamStats.class);
 	}
@@ -1298,6 +1387,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<TeamUnread> getTeamUnread(String teamId, String userId) {
 		return doApiGet(getUserRoute(userId) + getTeamRoute(teamId) + "/unread", null, TeamUnread.class);
 	}
@@ -1312,6 +1402,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param teamId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<byte[]> importTeam(byte[] data, int filesize, String importFrom,
 			String fileName,
 			String teamId) {
@@ -1326,7 +1417,8 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userEmails
 	 * @return
 	 */
-	public ApiResponse<Boolean> inviteUsersToTeam(String teamId, List<String> userEmails) {
+	@Override
+	public ApiResponse<Boolean> inviteUsersToTeam(String teamId, Collection<String> userEmails) {
 		return doApiPost(getTeamRoute(teamId) + "/invite/email", userEmails).checkStatusOK();
 	}
 
@@ -1338,6 +1430,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param channel
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Channel> createChannel(Channel channel) {
 		return doApiPost(getChannelsRoute(), channel, Channel.class);
 	}
@@ -1348,6 +1441,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param channel
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Channel> updateChannel(Channel channel) {
 		return doApiPut(getChannelRoute(channel.getId()), channel, Channel.class);
 	}
@@ -1359,6 +1453,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param patch
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Channel> patchChannel(String channelId, ChannelPatch patch) {
 		return doApiPut(getChannelRoute(channelId) + "/patch", patch, Channel.class);
 	}
@@ -1370,6 +1465,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userId2
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Channel> createDirectChannel(String userId1, String userId2) {
 		return doApiPost(getChannelsRoute() + "/direct", Arrays.asList(userId1, userId2), Channel.class);
 	}
@@ -1380,6 +1476,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userIds
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Channel> createGroupChannel(String... userIds) {
 		return doApiPost(getChannelsRoute() + "/group", userIds, Channel.class);
 	}
@@ -1391,6 +1488,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Channel> getChannel(String channelId, String etag) {
 		return doApiGet(getChannelRoute(channelId), etag, Channel.class);
 	}
@@ -1402,6 +1500,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelStats> getChannelStats(String channelId, String etag) {
 		return doApiGet(getChannelRoute(channelId) + "/stats", etag, ChannelStats.class);
 	}
@@ -1413,6 +1512,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<PostList> getPinnedPosts(String channelId, String etag) {
 		return doApiGet(getChannelRoute(channelId) + "/pinned", etag, PostList.class);
 	}
@@ -1425,6 +1525,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelList> getPublicChannelsForTeam(String teamId, Pager pager, String etag) {
 		return doApiGet(getChannelsForTeamRoute(teamId) + pager.toQuery(), etag, ChannelList.class);
 	}
@@ -1436,6 +1537,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param channelIds
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelList> getPublicChannelsByIdsForTeam(String teamId, String... channelIds) {
 		return doApiPost(getChannelsForTeamRoute(teamId) + "/ids", channelIds, ChannelList.class);
 	}
@@ -1448,6 +1550,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelList> getChannelsForTeamForUser(String teamId, String userId, String etag) {
 		return doApiGet(getUserRoute(userId) + getTeamRoute(teamId) + "/channels", etag, ChannelList.class);
 	}
@@ -1459,6 +1562,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param search
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelList> searchChannels(String teamId, ChannelSearch search) {
 		return doApiPost(getChannelsForTeamRoute(teamId) + "/search", search, ChannelList.class);
 	}
@@ -1469,6 +1573,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param channelId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteChannel(String channelId) {
 		return doApiDelete(getChannelRoute(channelId)).checkStatusOK();
 	}
@@ -1481,6 +1586,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Channel> getChannelByName(String channelName, String teamId, String etag) {
 		return doApiGet(getChannelByNameRoute(channelName, teamId), etag, Channel.class);
 	}
@@ -1494,6 +1600,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Channel> getChannelByNameForTeamName(String channelName, String teamName, String etag) {
 		return doApiGet(getChannelByNameForTeamNameRoute(channelName, teamName), etag, Channel.class);
 	}
@@ -1504,6 +1611,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param channelId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelMembers> getChannelMembers(String channelId, Pager pager, String etag) {
 		return doApiGet(getChannelMembersRoute(channelId) + pager.toQuery(), etag, ChannelMembers.class);
 	}
@@ -1515,6 +1623,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userIds
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelMembers> getChannelMembersByIds(String channelId, String... userIds) {
 		return doApiPost(getChannelMembersRoute(channelId) + "/ids", userIds, ChannelMembers.class);
 	}
@@ -1527,6 +1636,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelMember> getChannelMember(String channelId, String userId, String etag) {
 		return doApiGet(getChannelMemberRoute(channelId, userId), etag, ChannelMember.class);
 	}
@@ -1539,6 +1649,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelMembers> getChannelMembersForUser(String userId, String teamId, String etag) {
 		return doApiGet(getUserRoute(userId) + String.format("/teams/%s/channels/members", teamId), etag,
 				ChannelMembers.class);
@@ -1552,6 +1663,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param view
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> viewChannel(String userId, ChannelView view) {
 		String url = String.format(getChannelsRoute() + "/members/%s/view", userId);
 		return doApiPost(url, view).checkStatusOK();
@@ -1565,6 +1677,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelUnread> getChannelUnread(String channelId, String userId) {
 		return doApiGet(getUserRoute(userId) + getChannelRoute(channelId) + "/unread", null, ChannelUnread.class);
 	}
@@ -1577,6 +1690,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param roles
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> updateChannelRoles(String channelId, String userId, Role... roles) {
 		UpdateRolesRequest request = new UpdateRolesRequest(roles);
 		return doApiPut(getChannelMemberRoute(channelId, userId) + "/roles", request).checkStatusOK();
@@ -1590,6 +1704,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param props
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> updateChannelNotifyProps(String channelId, String userId,
 			Map<String, String> props) {
 		return doApiPut(getChannelMemberRoute(channelId, userId) + "/notify_props", props).checkStatusOK();
@@ -1602,6 +1717,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<ChannelMember> addChannelMember(String channelId, String userId) {
 		AddChannelMemberRequest request = AddChannelMemberRequest.builder().userId(userId).build();
 		return doApiPost(getChannelMembersRoute(channelId), request, ChannelMember.class);
@@ -1615,6 +1731,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> removeUserFromChannel(String channelId, String userId) {
 		return doApiDelete(getChannelMemberRoute(channelId, userId)).checkStatusOK();
 	}
@@ -1627,6 +1744,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param post
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Post> createPost(Post post) {
 		return doApiPost(getPostsRoute(), post, Post.class);
 	}
@@ -1638,6 +1756,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param post
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Post> updatePost(String postId, Post post) {
 		return doApiPut(getPostRoute(postId), post, Post.class);
 	}
@@ -1649,6 +1768,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param patch
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Post> patchPost(String postId, PostPatch patch) {
 		return doApiPut(getPostRoute(postId) + "/patch", patch, Post.class);
 	}
@@ -1659,6 +1779,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param postId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> pinPost(String postId) {
 		return doApiPost(getPostRoute(postId) + "/pin", null).checkStatusOK();
 	}
@@ -1669,6 +1790,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param postId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> unpinPost(String postId) {
 		return doApiPost(getPostRoute(postId) + "/unpin", null).checkStatusOK();
 	}
@@ -1680,6 +1802,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Post> getPost(String postId, String etag) {
 		return doApiGet(getPostRoute(postId), etag, Post.class);
 	}
@@ -1690,6 +1813,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param postId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deletePost(String postId) {
 		return doApiDelete(getPostRoute(postId)).checkStatusOK();
 	}
@@ -1701,6 +1825,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<PostList> getPostThread(String postId, String etag) {
 		return doApiGet(getPostRoute(postId) + "/thread", etag, PostList.class);
 	}
@@ -1713,6 +1838,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<PostList> getPostsForChannel(String channelId, Pager pager, String etag) {
 		return doApiGet(getChannelRoute(channelId) + "/posts" + pager.toQuery(), etag, PostList.class);
 	}
@@ -1724,6 +1850,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param pager
 	 * @return
 	 */
+	@Override
 	public ApiResponse<PostList> getFlaggedPostsForUser(String userId, Pager pager) {
 		return doApiGet(getUserRoute(userId) + "/posts/flagged" + pager.toQuery(), null, PostList.class);
 	}
@@ -1736,6 +1863,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param pager
 	 * @return
 	 */
+	@Override
 	public ApiResponse<PostList> getFlaggedPostsForUserInTeam(String userId, String teamId, Pager pager) {
 		// TODO teamId length validation
 
@@ -1750,6 +1878,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param pager
 	 * @return
 	 */
+	@Override
 	public ApiResponse<PostList> getFlaggedPostsForUserInChannel(String userId, String channelId, Pager pager) {
 		// TODO channelId length validation
 		String query = new QueryBuilder().append("in_channel", channelId).toString();
@@ -1763,6 +1892,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param time
 	 * @return
 	 */
+	@Override
 	public ApiResponse<PostList> getPostsSince(String channelId, long time) {
 		String query = String.format("?since=%d", time);
 		return doApiGet(getChannelRoute(channelId) + "/posts" + query, null, PostList.class);
@@ -1777,6 +1907,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<PostList> getPostsAfter(String channelId, String postId, Pager pager, String etag) {
 		String query = new QueryBuilder().append("after", postId).toString();
 		return doApiGet(getChannelRoute(channelId) + "/posts" + query + pager.toQuery(false), etag, PostList.class);
@@ -1791,6 +1922,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<PostList> getPostsBefore(String channelId, String postId, Pager pager, String etag) {
 		String query = new QueryBuilder().append("before", postId).toString();
 		return doApiGet(getChannelRoute(channelId) + "/posts" + query + pager.toQuery(false), etag, PostList.class);
@@ -1804,6 +1936,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param isOrSearch
 	 * @return
 	 */
+	@Override
 	public ApiResponse<PostList> searchPosts(String teamId, String terms, boolean isOrSearch) {
 		SearchPostsRequest request = SearchPostsRequest.builder().terms(terms).isOrSearch(isOrSearch).build();
 		return doApiPost(getTeamRoute(teamId) + "/posts/search", request, PostList.class);
@@ -1818,6 +1951,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> getPing() {
 		return doApiGet(getSystemRoute() + "/ping", null).checkStatusOK();
 	}
@@ -1827,6 +1961,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> testEmail() {
 		return doApiPost(getTestEmailRoute(), null).checkStatusOK();
 	}
@@ -1836,6 +1971,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Config> getConfig() {
 		return doApiGet(getConfigRoute(), null, Config.class);
 	}
@@ -1845,6 +1981,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> reloadConfig() {
 		return doApiPost(getConfigRoute() + "/reload", null).checkStatusOK();
 	}
@@ -1856,6 +1993,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Map<String, String>> getOldClientConfig(String etag) {
 		return doApiGet(getConfigRoute() + "/client?format=old", etag, stringMapType());
 	}
@@ -1867,6 +2005,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Map<String, String>> getOldClientLicense(String etag) {
 		return doApiGet(getLicenseRoute() + "/client?format=old", etag, stringMapType());
 	}
@@ -1876,6 +2015,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> databaseRecycle() {
 		return doApiPost(getDatabaseRoute() + "/recycle", null).checkStatusOK();
 	}
@@ -1885,6 +2025,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> invalidateCaches() {
 		return doApiPost(getCacheRoute() + "/invalidate", null).checkStatusOK();
 	}
@@ -1895,6 +2036,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param config
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Config> updateConfig(Config config) {
 		return doApiPut(getConfigRoute(), config, Config.class);
 	}
@@ -1907,6 +2049,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param hook
 	 * @return
 	 */
+	@Override
 	public ApiResponse<IncomingWebhook> createIncomingWebhook(IncomingWebhook hook) {
 		return doApiPost(getIncomingWebhooksRoute(), hook, IncomingWebhook.class);
 	}
@@ -1917,6 +2060,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param hook
 	 * @return
 	 */
+	@Override
 	public ApiResponse<IncomingWebhook> updateIncomingWebhook(IncomingWebhook hook) {
 		return doApiPut(getIncomingWebhookRoute(hook.getId()), hook, IncomingWebhook.class);
 	}
@@ -1929,6 +2073,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<IncomingWebhook>> getIncomingWebhooks(Pager pager, String etag) {
 		return doApiGet(getIncomingWebhooksRoute() + pager.toQuery(), etag, listType());
 	}
@@ -1942,6 +2087,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<IncomingWebhook>> getIncomingWebhooksForTeam(String teamId, Pager pager, String etag) {
 		String query = new QueryBuilder().append("team_id", teamId)
 				.toString();
@@ -1955,6 +2101,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<IncomingWebhook> getIncomingWebhook(String hookId, String etag) {
 		return doApiGet(getIncomingWebhookRoute(hookId), etag, IncomingWebhook.class);
 	}
@@ -1965,6 +2112,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param hookId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteIncomingWebhook(String hookId) {
 		return doApiDelete(getIncomingWebhookRoute(hookId)).checkStatusOK();
 	}
@@ -1975,6 +2123,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param hook
 	 * @return
 	 */
+	@Override
 	public ApiResponse<OutgoingWebhook> createOutgoingWebhook(OutgoingWebhook hook) {
 		return doApiPost(getOutgoingWebhooksRoute(), hook, OutgoingWebhook.class);
 	}
@@ -1985,6 +2134,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param hook
 	 * @return
 	 */
+	@Override
 	public ApiResponse<OutgoingWebhook> updateOutgoingWebhook(OutgoingWebhook hook) {
 		return doApiPut(getOutgoingWebhookRoute(hook.getId()), hook, OutgoingWebhook.class);
 	}
@@ -1997,6 +2147,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooks(Pager pager, String etag) {
 		return doApiGet(getOutgoingWebhooksRoute() + pager.toQuery(), etag, listType());
 	}
@@ -2007,6 +2158,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param hookId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<OutgoingWebhook> getOutgoingWebhook(String hookId) {
 		return doApiGet(getOutgoingWebhookRoute(hookId), null, OutgoingWebhook.class);
 	}
@@ -2020,6 +2172,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForChannel(String channelId, Pager pager,
 			String etag) {
 		String query = new QueryBuilder().append("channel_id", channelId).toString();
@@ -2035,6 +2188,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForTeam(String teamId, Pager pager, String etag) {
 		String query = new QueryBuilder().append("team_id", teamId)
 				.toString();
@@ -2047,6 +2201,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param hookId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<OutgoingWebhook> regenOutgoingHookToken(String hookId) {
 		return doApiPost(getOutgoingWebhookRoute(hookId) + "/regen_token", null, OutgoingWebhook.class);
 	}
@@ -2057,6 +2212,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param hookId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteOutgoingWebhook(String hookId) {
 		return doApiDelete(getOutgoingWebhookRoute(hookId)).checkStatusOK();
 	}
@@ -2069,6 +2225,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Preferences> getPreferences(String userId) {
 		return doApiGet(getPreferencesRoute(userId), null, Preferences.class);
 	}
@@ -2080,7 +2237,8 @@ public class MattermostClient implements AutoCloseable {
 	 * @param preferences
 	 * @return
 	 */
-	public Boolean updatePreferences(String userId, Preferences preferences) {
+	@Override
+	public boolean updatePreferences(String userId, Preferences preferences) {
 		// XXX always return true...
 		doApiPut(getPreferencesRoute(userId), preferences);
 		return true;
@@ -2093,7 +2251,8 @@ public class MattermostClient implements AutoCloseable {
 	 * @param preferences
 	 * @return
 	 */
-	public Boolean deletePreerences(String userId, Preferences preferences) {
+	@Override
+	public boolean deletePreferences(String userId, Preferences preferences) {
 		// XXX always return true...
 		doApiPost(getPreferencesRoute(userId) + "/delete", preferences);
 		return true;
@@ -2106,6 +2265,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param category
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Preferences> getPreferencesByCategory(String userId, String category) {
 		String url = String.format(getPreferencesRoute(userId) + "/%s", category);
 		return doApiGet(url, null, Preferences.class);
@@ -2120,6 +2280,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param preferenceName
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Preference> getPreferenceByCategoryAndName(String userId, String category,
 			String preferenceName) {
 		String url = String.format(getPreferencesRoute(userId) + "/%s/name/%s", category, preferenceName);
@@ -2131,6 +2292,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<String> getSamlMetadata() {
 		return doApiGet(getSamlRoute() + "/metadata", null, String.class);
 	}
@@ -2146,7 +2308,8 @@ public class MattermostClient implements AutoCloseable {
 	 * @param fileName
 	 * @return
 	 */
-	public Boolean uploadSamlIdpCertificate(Path dataFile, String fileName) {
+	@Override
+	public boolean uploadSamlIdpCertificate(Path dataFile, String fileName) {
 		throw new UnsupportedOperationException("not impl"); // FIXME
 	}
 
@@ -2157,7 +2320,8 @@ public class MattermostClient implements AutoCloseable {
 	 * @param fileName
 	 * @return
 	 */
-	public Boolean uploadSamlPublicCertificate(Path dataFile, String fileName) {
+	@Override
+	public boolean uploadSamlPublicCertificate(Path dataFile, String fileName) {
 		throw new UnsupportedOperationException("not impl"); // FIXME
 	}
 
@@ -2168,7 +2332,8 @@ public class MattermostClient implements AutoCloseable {
 	 * @param fileName
 	 * @return
 	 */
-	public Boolean uploadSamlPrivateCertificate(Path dataFile, String fileName) {
+	@Override
+	public boolean uploadSamlPrivateCertificate(Path dataFile, String fileName) {
 		throw new UnsupportedOperationException("not impl"); // FIXME
 	}
 
@@ -2178,6 +2343,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteSamlIdpCertificate() {
 		return doApiDelete(getSamlRoute() + "/certificate/idp").checkStatusOK();
 	}
@@ -2188,6 +2354,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteSamlPublicCertificate() {
 		return doApiDelete(getSamlRoute() + "/certificate/public").checkStatusOK();
 	}
@@ -2198,6 +2365,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteSamlPrivateCertificate() {
 		return doApiDelete(getSamlRoute() + "/certificate/private").checkStatusOK();
 	}
@@ -2207,6 +2375,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<SamlCertificateStatus> getSamlCertificateStatus() {
 		return doApiGet(getSamlRoute() + "/certificate/status", null, SamlCertificateStatus.class);
 	}
@@ -2219,6 +2388,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param report
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Compliance> createComplianceReport(Compliance report) {
 		return doApiPost(getComplianceReportsRoute(), report, Compliance.class);
 	}
@@ -2229,6 +2399,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param pager
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Compliances> getComplianceReports(Pager pager) {
 		return doApiGet(getComplianceReportsRoute() + pager.toQuery(), null, Compliances.class);
 	}
@@ -2239,6 +2410,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param reportId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Compliance> getComplianceReport(String reportId) {
 		return doApiGet(getComplianceReportRoute(reportId), null, Compliance.class);
 	}
@@ -2249,6 +2421,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param reportId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Object> downloadComplianceReport(String reportId) {
 		throw new UnsupportedOperationException("not impl"); // FIXME
 	}
@@ -2258,6 +2431,7 @@ public class MattermostClient implements AutoCloseable {
 	/**
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<ClusterInfo>> getClusterStatus() {
 		return doApiGet(getClusterRoute() + "/status", null, listType());
 	}
@@ -2269,6 +2443,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> syncLdap() {
 		return doApiPost(getLdapRoute() + "/sync", null).checkStatusOK();
 	}
@@ -2279,6 +2454,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> testLdap() {
 		return doApiPost(getLdapRoute() + "/test", null).checkStatusOK();
 	}
@@ -2292,6 +2468,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Audits> getAudits(Pager pager, String etag) {
 		return doApiGet("/audits" + pager.toQuery(), etag, Audits.class);
 	}
@@ -2303,6 +2480,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Object> getBrandImage() {
 		throw new UnsupportedOperationException("not impl"); // FIXME
 	}
@@ -2313,7 +2491,8 @@ public class MattermostClient implements AutoCloseable {
 	 * @param dataFile
 	 * @return
 	 */
-	public Boolean uploadBrandImage(Path dataFile) {
+	@Override
+	public boolean uploadBrandImage(Path dataFile) {
 		throw new UnsupportedOperationException("not impl");// FIXME
 	}
 
@@ -2325,6 +2504,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param pager
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<String>> getLogs(Pager pager) {
 		return doApiGet("/logs" + pager.toQuery(), null, listType());
 	}
@@ -2338,6 +2518,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param message
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Map<String, String>> postLog(Map<String, String> message) {
 		return doApiPost("/logs", message, stringMapType());
 	}
@@ -2351,6 +2532,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param app
 	 * @return
 	 */
+	@Override
 	public ApiResponse<OAuthApp> createOAuthApp(OAuthApp app) {
 		return doApiPost(getOAuthAppsRoute(), app, OAuthApp.class);
 	}
@@ -2362,6 +2544,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param pager
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<OAuthApp>> getOAuthApps(Pager pager) {
 		return doApiGet(getOAuthAppsRoute() + pager.toQuery(), null, listType());
 	}
@@ -2373,6 +2556,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param appId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<OAuthApp> getOAuthApp(String appId) {
 		return doApiGet(getOAuthAppRoute(appId), null, OAuthApp.class);
 	}
@@ -2384,6 +2568,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param appId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<OAuthApp> getOAuthAppInfo(String appId) {
 		return doApiGet(getOAuthAppRoute(appId) + "/info", null, OAuthApp.class);
 	}
@@ -2394,6 +2579,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param appId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteOAuthApp(String appId) {
 		return doApiDelete(getOAuthAppRoute(appId)).checkStatusOK();
 	}
@@ -2405,6 +2591,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param appId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<OAuthApp> regenerateOAuthAppSecret(String appId) {
 		return doApiPost(getOAuthAppRoute(appId) + "/regen_secret", null, OAuthApp.class);
 	}
@@ -2417,6 +2604,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param pager
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<OAuthApp>> getAuthorizedOAuthAppsForUser(String userId, Pager pager) {
 		return doApiGet(getUserRoute(userId) + "/oauth/apps/authorized" + pager.toQuery(), null, listType());
 	}
@@ -2428,6 +2616,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param authRequest
 	 * @return
 	 */
+	@Override
 	public String authorizeOAuthApp(AuthorizeRequest authRequest) {
 		return doApiRequest(HttpMethod.POST, url + "/oauth/authorize", authRequest, null, stringMapType())
 				.readEntity()
@@ -2441,6 +2630,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param appId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deauthorizeOAuthApp(String appId) {
 		DeauthorizeOAuthAppRequest request = DeauthorizeOAuthAppRequest.builder().clientId(appId).build();
 		return doApiRequest(HttpMethod.POST, url + "/oauth/deauthorize", request, null).checkStatusOK();
@@ -2454,6 +2644,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param cmd
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Command> createCommand(Command cmd) {
 		return doApiPost(getCommandsRoute(), cmd, Command.class);
 	}
@@ -2464,6 +2655,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param cmd
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Command> updateCommand(Command cmd) {
 		return doApiPut(getCommandRoute(cmd.getId()), cmd, Command.class);
 	}
@@ -2474,6 +2666,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param commandId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteCommand(String commandId) {
 		return doApiDelete(getCommandRoute(commandId)).checkStatusOK();
 	}
@@ -2485,6 +2678,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param customOnly
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<Command>> listCommands(String teamId, boolean customOnly) {
 		String query = new QueryBuilder().append("team_id", teamId).append("custom_only", customOnly).toString();
 		return doApiGet(getCommandsRoute() + query, null, listType());
@@ -2497,6 +2691,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param command
 	 * @return
 	 */
+	@Override
 	public ApiResponse<CommandResponse> executeCommand(String channelId, String command) {
 		CommandArgs args = new CommandArgs();
 		args.setChannelId(channelId);
@@ -2510,6 +2705,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param teamId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<Command>> listAutocompleteCommands(String teamId) {
 		return doApiGet(getTeamAutoCompleteCommandsRoute(teamId), null, listType());
 	}
@@ -2520,6 +2716,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param commandId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<String> regenCommandToken(String commandId) {
 		return doApiPut(getCommandRoute(commandId) + "/regen_token", null, String.class);
 	}
@@ -2533,6 +2730,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param etag
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Status> getUserStatus(String userId, String etag) {
 		return doApiGet(getUserStatusRoute(userId), etag, Status.class);
 	}
@@ -2543,6 +2741,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userIds
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<Status>> getUsersStatusesByIds(String... userIds) {
 		return doApiPost(getUserStatusesRoute() + "/ids", userIds, listType());
 	}
@@ -2554,6 +2753,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param userStatus
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Status> updateUserStatus(String userId, Status userStatus) {
 		return doApiPut(getUserStatusRoute(userId), userStatus, Status.class);
 	}
@@ -2566,6 +2766,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<WebrtcInfoResponse> getWebrtcToken() {
 		return doApiGet("/webrtc/token", null, WebrtcInfoResponse.class);
 	}
@@ -2582,6 +2783,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param fileName
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile, String fileName) {
 		throw new UnsupportedOperationException("not impl"); // FIXME
 	}
@@ -2591,6 +2793,7 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<Emoji>> getEmojiList() {
 		return doApiGet(getEmojisRoute(), null, listType());
 	}
@@ -2601,6 +2804,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param emojiId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteEmoji(String emojiId) {
 		return doApiDelete(getEmojiRoute(emojiId)).checkStatusOK();
 	}
@@ -2611,6 +2815,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param emojiId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Emoji> getEmoji(String emojiId) {
 		return doApiGet(getEmojiRoute(emojiId), null, Emoji.class);
 	}
@@ -2621,6 +2826,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param emojiId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Object> getEmojiImage(String emojiId) {
 		throw new UnsupportedOperationException("not impl");
 	}
@@ -2634,6 +2840,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param reaction
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Reaction> saveReaction(Reaction reaction) {
 		return doApiPost(getReactionsRoute(), reaction, Reaction.class);
 	}
@@ -2644,6 +2851,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param postId
 	 * @return
 	 */
+	@Override
 	public ApiResponse<List<Reaction>> getReactions(String postId) {
 		return doApiGet(getPostRoute(postId) + "/reactions", null, listType());
 	}
@@ -2654,6 +2862,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param reaction
 	 * @return
 	 */
+	@Override
 	public ApiResponse<Boolean> deleteReaction(Reaction reaction) {
 		return doApiDelete(getUserRoute(reaction.getUserId()) + getPostRoute(reaction.getPostId())
 				+ String.format("/reactions/%s", reaction.getEmojiName()))
