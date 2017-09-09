@@ -1768,7 +1768,7 @@ public class MattermostClient implements AutoCloseable {
 	 * @param perPage
 	 * @return
 	 */
-	public ApiResponse<PostList> getFlaggesPostsForUserInTeam(String userId, String teamId, int page, int perPage) {
+	public ApiResponse<PostList> getFlaggedPostsForUserInTeam(String userId, String teamId, int page, int perPage) {
 		// TODO teamId length validation
 
 		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
