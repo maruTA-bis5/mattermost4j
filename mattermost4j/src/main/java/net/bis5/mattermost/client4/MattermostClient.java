@@ -658,61 +658,51 @@ public class MattermostClient implements AutoCloseable {
 	/**
 	 * returns a page of users on the system. Page counting starts at 0.
 	 * 
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<UserList> getUsers(int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("page", page).append("Per_page", perPage).toString();
-		return doApiGet(getUsersRoute() + query, etag, UserList.class);
+	public ApiResponse<UserList> getUsers(Pager pager, String etag) {
+		return doApiGet(getUsersRoute() + pager.toQuery(), etag, UserList.class);
 	}
 
 	/**
 	 * returns a page of users on a team. Page counting starts at 0.
 	 * 
 	 * @param teamId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<UserList> getUsersInTeam(String teamId, int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("in_team", teamId).append("page", page).append("per_page", perPage)
-				.toString();
-		return doApiGet(getUsersRoute() + query, etag, UserList.class);
+	public ApiResponse<UserList> getUsersInTeam(String teamId, Pager pager, String etag) {
+		String query = new QueryBuilder().append("in_team", teamId).toString();
+		return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
 	}
 
 	/**
 	 * returns a page of users who are not in a team. Page counting starts at 0.
 	 * 
 	 * @param teamId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<UserList> getUsersNotInTeam(String teamId, int page, int perPage,
-			String etag) {
-		String query = new QueryBuilder().append("not_in_team", teamId).append("page", page).append("per_page", perPage)
-				.toString();
-		return doApiGet(getUsersRoute() + query, etag, UserList.class);
+	public ApiResponse<UserList> getUsersNotInTeam(String teamId, Pager pager, String etag) {
+		String query = new QueryBuilder().append("not_in_team", teamId).toString();
+		return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
 	}
 
 	/**
 	 * returns a page of users on a team. Page counting starts at 0.
 	 * 
 	 * @param channelId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<UserList> getUsersInChannel(String channelId, int page, int perPage,
-			String etag) {
-		String query = new QueryBuilder().append("in_channel", channelId).append("page", page)
-				.append("per_page", perPage).toString();
-		return doApiGet(getUsersRoute() + query, etag, UserList.class);
+	public ApiResponse<UserList> getUsersInChannel(String channelId, Pager pager, String etag) {
+		String query = new QueryBuilder().append("in_channel", channelId).toString();
+		return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
 	}
 
 	/**
@@ -720,32 +710,26 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @param teamId
 	 * @param channelId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<UserList> getUsersNotInChannel(String teamId, String channelId, int page,
-			int perPage,
-			String etag) {
-		String query = new QueryBuilder().append("in_team", teamId).append("not_in_channel", channelId)
-				.append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getUsersRoute() + query, etag, UserList.class);
+	public ApiResponse<UserList> getUsersNotInChannel(String teamId, String channelId, Pager pager, String etag) {
+		String query = new QueryBuilder().append("in_team", teamId).append("not_in_channel", channelId).toString();
+		return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
 	}
 
 	/**
 	 * returns a page of users on the system that aren't on any teams. Page
 	 * counting starts at 0.
 	 * 
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<UserList> getUsersWithoutTeam(int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("without_team", 1).append("page", page).append("per_page", perPage)
-				.toString();
-		return doApiGet(getUsersRoute() + query, etag, UserList.class);
+	public ApiResponse<UserList> getUsersWithoutTeam(Pager pager, String etag) {
+		String query = new QueryBuilder().append("without_team", 1).toString();
+		return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
 	}
 
 	/**
@@ -978,14 +962,12 @@ public class MattermostClient implements AutoCloseable {
 	 * returns a list of audit based on the provided user id string.
 	 * 
 	 * @param userId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<Audits> getUserAudits(String userId, int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getUserRoute(userId) + "/audits" + query, etag, Audits.class);
+	public ApiResponse<Audits> getUserAudits(String userId, Pager pager, String etag) {
+		return doApiGet(getUserRoute(userId) + "/audits" + pager.toQuery(), etag, Audits.class);
 	}
 
 	/**
@@ -1056,13 +1038,11 @@ public class MattermostClient implements AutoCloseable {
 	 * returns all teams based on permssions.
 	 * 
 	 * @param etag
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @return
 	 */
-	public ApiResponse<TeamList> getAllTeams(String etag, int page, int perPage) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getTeamsRoute() + query, etag, TeamList.class);
+	public ApiResponse<TeamList> getAllTeams(String etag, Pager pager) {
+		return doApiGet(getTeamsRoute() + pager.toQuery(), etag, TeamList.class);
 	}
 
 	/**
@@ -1185,15 +1165,12 @@ public class MattermostClient implements AutoCloseable {
 	 * returns team members based on the provided team id string.
 	 * 
 	 * @param teamId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<TeamMemberList> getTeamMembers(String teamId, int page, int perPage,
-			String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getTeamMembersRoute(teamId) + query, etag, TeamMemberList.class);
+	public ApiResponse<TeamMemberList> getTeamMembers(String teamId, Pager pager, String etag) {
+		return doApiGet(getTeamMembersRoute(teamId) + pager.toQuery(), etag, TeamMemberList.class);
 	}
 
 	/**
@@ -1444,14 +1421,12 @@ public class MattermostClient implements AutoCloseable {
 	 * returns a list of public channels based on the provided team id string.
 	 * 
 	 * @param teamId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<ChannelList> getPublicChannelsForTeam(String teamId, int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getChannelsForTeamRoute(teamId) + query, etag, ChannelList.class);
+	public ApiResponse<ChannelList> getPublicChannelsForTeam(String teamId, Pager pager, String etag) {
+		return doApiGet(getChannelsForTeamRoute(teamId) + pager.toQuery(), etag, ChannelList.class);
 	}
 
 	/**
@@ -1529,9 +1504,8 @@ public class MattermostClient implements AutoCloseable {
 	 * @param channelId
 	 * @return
 	 */
-	public ApiResponse<ChannelMembers> getChannelMembers(String channelId, int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getChannelMembersRoute(channelId) + query, etag, ChannelMembers.class);
+	public ApiResponse<ChannelMembers> getChannelMembers(String channelId, Pager pager, String etag) {
+		return doApiGet(getChannelMembersRoute(channelId) + pager.toQuery(), etag, ChannelMembers.class);
 	}
 
 	/**
@@ -1735,28 +1709,23 @@ public class MattermostClient implements AutoCloseable {
 	 * gets a page of posts with an array for ordering for a channel.
 	 * 
 	 * @param channelId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<PostList> getPostsForChannel(String channelId, int page, int perPage,
-			String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getChannelRoute(channelId) + "/posts" + query, etag, PostList.class);
+	public ApiResponse<PostList> getPostsForChannel(String channelId, Pager pager, String etag) {
+		return doApiGet(getChannelRoute(channelId) + "/posts" + pager.toQuery(), etag, PostList.class);
 	}
 
 	/**
 	 * returns flagges posts of a user based on user id string.
 	 * 
 	 * @param userId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @return
 	 */
-	public ApiResponse<PostList> getFlaggedPostsForUser(String userId, int page, int perPage) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getUserRoute(userId) + "/posts/flagged" + query, null, PostList.class);
+	public ApiResponse<PostList> getFlaggedPostsForUser(String userId, Pager pager) {
+		return doApiGet(getUserRoute(userId) + "/posts/flagged" + pager.toQuery(), null, PostList.class);
 	}
 
 	/**
@@ -1764,15 +1733,13 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @param userId
 	 * @param teamId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @return
 	 */
-	public ApiResponse<PostList> getFlaggedPostsForUserInTeam(String userId, String teamId, int page, int perPage) {
+	public ApiResponse<PostList> getFlaggedPostsForUserInTeam(String userId, String teamId, Pager pager) {
 		// TODO teamId length validation
 
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getUserRoute(userId) + "/posts/flagged" + query, null, PostList.class);
+		return doApiGet(getUserRoute(userId) + "/posts/flagged" + pager.toQuery(), null, PostList.class);
 	}
 
 	/**
@@ -1780,16 +1747,13 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @param userId
 	 * @param channelId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @return
 	 */
-	public ApiResponse<PostList> getFlaggedPostsForUserInChannel(String userId, String channelId, int page,
-			int perPage) {
+	public ApiResponse<PostList> getFlaggedPostsForUserInChannel(String userId, String channelId, Pager pager) {
 		// TODO channelId length validation
-		String query = new QueryBuilder().append("in_channel", channelId).append("page", page)
-				.append("per_page", perPage).toString();
-		return doApiGet(getUserRoute(userId) + "/posts/flagged" + query, null, PostList.class);
+		String query = new QueryBuilder().append("in_channel", channelId).toString();
+		return doApiGet(getUserRoute(userId) + "/posts/flagged" + query + pager.toQuery(false), null, PostList.class);
 	}
 
 	/**
@@ -1809,15 +1773,13 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @param channelId
 	 * @param postId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<PostList> getPostsAfter(String channelId, String postId, int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).append("after", postId)
-				.toString();
-		return doApiGet(getChannelRoute(channelId) + "/posts" + query, etag, PostList.class);
+	public ApiResponse<PostList> getPostsAfter(String channelId, String postId, Pager pager, String etag) {
+		String query = new QueryBuilder().append("after", postId).toString();
+		return doApiGet(getChannelRoute(channelId) + "/posts" + query + pager.toQuery(false), etag, PostList.class);
 	}
 
 	/**
@@ -1825,15 +1787,13 @@ public class MattermostClient implements AutoCloseable {
 	 * 
 	 * @param channelId
 	 * @param postId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<PostList> getPostsBefore(String channelId, String postId, int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).append("before", postId)
-				.toString();
-		return doApiGet(getChannelRoute(channelId) + "/posts" + query, etag, PostList.class);
+	public ApiResponse<PostList> getPostsBefore(String channelId, String postId, Pager pager, String etag) {
+		String query = new QueryBuilder().append("before", postId).toString();
+		return doApiGet(getChannelRoute(channelId) + "/posts" + query + pager.toQuery(false), etag, PostList.class);
 	}
 
 	/**
@@ -1965,14 +1925,12 @@ public class MattermostClient implements AutoCloseable {
 	 * returns a page of incoming webhooks on the system. Page counting starts
 	 * at 0.
 	 * 
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<List<IncomingWebhook>> getIncomingWebhooks(int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getIncomingWebhooksRoute() + query, etag, listType());
+	public ApiResponse<List<IncomingWebhook>> getIncomingWebhooks(Pager pager, String etag) {
+		return doApiGet(getIncomingWebhooksRoute() + pager.toQuery(), etag, listType());
 	}
 
 	/**
@@ -1980,16 +1938,14 @@ public class MattermostClient implements AutoCloseable {
 	 * 0.
 	 * 
 	 * @param teamId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<List<IncomingWebhook>> getIncomingWebhooksForTeam(String teamId, int page, int perPage,
-			String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).append("team_id", teamId)
+	public ApiResponse<List<IncomingWebhook>> getIncomingWebhooksForTeam(String teamId, Pager pager, String etag) {
+		String query = new QueryBuilder().append("team_id", teamId)
 				.toString();
-		return doApiGet(getIncomingWebhooksRoute() + query, etag, listType());
+		return doApiGet(getIncomingWebhooksRoute() + query + pager.toQuery(false), etag, listType());
 	}
 
 	/**
@@ -2037,14 +1993,12 @@ public class MattermostClient implements AutoCloseable {
 	 * returns a page of outgoing webhooks ont eh system. Page counting starts
 	 * at 0.
 	 * 
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooks(int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getOutgoingWebhooksRoute() + query, etag, listType());
+	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooks(Pager pager, String etag) {
+		return doApiGet(getOutgoingWebhooksRoute() + pager.toQuery(), etag, listType());
 	}
 
 	/**
@@ -2062,16 +2016,14 @@ public class MattermostClient implements AutoCloseable {
 	 * at 0.
 	 * 
 	 * @param channelId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForChannel(String channelId, int page, int perPage,
+	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForChannel(String channelId, Pager pager,
 			String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage)
-				.append("channel_id", channelId).toString();
-		return doApiGet(getOutgoingWebhooksRoute() + query, etag, listType());
+		String query = new QueryBuilder().append("channel_id", channelId).toString();
+		return doApiGet(getOutgoingWebhooksRoute() + query + pager.toQuery(false), etag, listType());
 	}
 
 	/**
@@ -2079,16 +2031,14 @@ public class MattermostClient implements AutoCloseable {
 	 * 0.
 	 * 
 	 * @param teamId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForTeam(String teamId, int page, int perPage,
-			String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).append("team_id", teamId)
+	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForTeam(String teamId, Pager pager, String etag) {
+		String query = new QueryBuilder().append("team_id", teamId)
 				.toString();
-		return doApiGet(getOutgoingWebhooksRoute() + query, etag, listType());
+		return doApiGet(getOutgoingWebhooksRoute() + query + pager.toQuery(false), etag, listType());
 	}
 
 	/**
@@ -2276,13 +2226,11 @@ public class MattermostClient implements AutoCloseable {
 	/**
 	 * returns list of compliance reports.
 	 * 
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @return
 	 */
-	public ApiResponse<Compliances> getComplianceReports(int page, int perPage) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getComplianceReportsRoute() + query, null, Compliances.class);
+	public ApiResponse<Compliances> getComplianceReports(Pager pager) {
+		return doApiGet(getComplianceReportsRoute() + pager.toQuery(), null, Compliances.class);
 	}
 
 	/**
@@ -2340,14 +2288,12 @@ public class MattermostClient implements AutoCloseable {
 	/**
 	 * returns a list of audits for the whole system.
 	 * 
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @param etag
 	 * @return
 	 */
-	public ApiResponse<Audits> getAudits(int page, int perPage, String etag) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet("/audits" + query, etag, Audits.class);
+	public ApiResponse<Audits> getAudits(Pager pager, String etag) {
+		return doApiGet("/audits" + pager.toQuery(), etag, Audits.class);
 	}
 
 	// Brand Section
@@ -2376,13 +2322,11 @@ public class MattermostClient implements AutoCloseable {
 	/**
 	 * page of logs as a string list.
 	 * 
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @return
 	 */
-	public ApiResponse<List<String>> getLogs(int page, int perPage) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet("/logs" + query, null, listType());
+	public ApiResponse<List<String>> getLogs(Pager pager) {
+		return doApiGet("/logs" + pager.toQuery(), null, listType());
 	}
 
 	/**
@@ -2415,13 +2359,11 @@ public class MattermostClient implements AutoCloseable {
 	 * gets a page of registered OAuth 2.0 client applications with Mattermost
 	 * acting as an OAuth 2.0 service provider.
 	 * 
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @return
 	 */
-	public ApiResponse<List<OAuthApp>> getOAuthApps(int page, int perPage) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getOAuthAppsRoute() + query, null, listType());
+	public ApiResponse<List<OAuthApp>> getOAuthApps(Pager pager) {
+		return doApiGet(getOAuthAppsRoute() + pager.toQuery(), null, listType());
 	}
 
 	/**
@@ -2472,13 +2414,11 @@ public class MattermostClient implements AutoCloseable {
 	 * access their account.
 	 * 
 	 * @param userId
-	 * @param page
-	 * @param perPage
+	 * @param pager
 	 * @return
 	 */
-	public ApiResponse<List<OAuthApp>> getAuthorizedOAuthAppsForUser(String userId, int page, int perPage) {
-		String query = new QueryBuilder().append("page", page).append("per_page", perPage).toString();
-		return doApiGet(getUserRoute(userId) + "/oauth/apps/authorized" + query, null, listType());
+	public ApiResponse<List<OAuthApp>> getAuthorizedOAuthAppsForUser(String userId, Pager pager) {
+		return doApiGet(getUserRoute(userId) + "/oauth/apps/authorized" + pager.toQuery(), null, listType());
 	}
 
 	/**

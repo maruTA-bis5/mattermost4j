@@ -469,7 +469,8 @@ public class MattermostApiTest {
 		client.addChannelMember(channel.getId(), user1.getId());
 		client.addChannelMember(channel.getId(), user2.getId());
 
-		ApiResponse<ChannelMembers> response = assertNoError(client.getChannelMembers(channel.getId(), 0, 60, null));
+		ApiResponse<ChannelMembers> response = assertNoError(
+				client.getChannelMembers(channel.getId(), Pager.of(0, 60), null));
 		ChannelMembers members = response.readEntity();
 
 		assertThat(members.size(), is(2));
@@ -630,7 +631,7 @@ public class MattermostApiTest {
 
 	@Test
 	public void testUsers_GetUsers() {
-		ApiResponse<UserList> response = assertNoError(client.getUsers(0, 60, null));
+		ApiResponse<UserList> response = assertNoError(client.getUsers(Pager.of(0, 60), null));
 		List<User> users = response.readEntity();
 
 		assertThat(users, is(not(emptyIterable())));
@@ -642,7 +643,8 @@ public class MattermostApiTest {
 		Channel channel = th.createPublicChannel();
 		assertNoError(client.addChannelMember(channel.getId(), th.basicUser2().getId()));
 
-		ApiResponse<UserList> response = assertNoError(client.getUsersInChannel(channel.getId(), 0, 60, null));
+		ApiResponse<UserList> response = assertNoError(
+				client.getUsersInChannel(channel.getId(), Pager.of(0, 60), null));
 		List<User> users = response.readEntity();
 
 		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
@@ -658,7 +660,7 @@ public class MattermostApiTest {
 		notInChannelUserIds.remove(th.basicUser().getId());
 
 		ApiResponse<UserList> response = assertNoError(
-				client.getUsersNotInChannel(th.basicTeam().getId(), channel.getId(), 0, 60, null));
+				client.getUsersNotInChannel(th.basicTeam().getId(), channel.getId(), Pager.of(0, 60), null));
 		List<User> users = response.readEntity();
 
 		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
@@ -672,7 +674,8 @@ public class MattermostApiTest {
 				th.teamAdminUser().getId()));
 		th.loginBasic();
 
-		ApiResponse<UserList> response = assertNoError(client.getUsersInTeam(th.basicTeam().getId(), 0, 60, null));
+		ApiResponse<UserList> response = assertNoError(
+				client.getUsersInTeam(th.basicTeam().getId(), Pager.of(0, 60), null));
 		List<User> users = response.readEntity();
 
 		Set<String> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
@@ -686,7 +689,8 @@ public class MattermostApiTest {
 		Set<String> inTeamUserIds = new HashSet<>(Arrays.asList(th.basicUser().getId(), th.basicUser2().getId(),
 				th.systemAdminUser().getId(), th.teamAdminUser().getId()));
 
-		ApiResponse<UserList> response = assertNoError(client.getUsersNotInTeam(th.basicTeam().getId(), 0, 60, null));
+		ApiResponse<UserList> response = assertNoError(
+				client.getUsersNotInTeam(th.basicTeam().getId(), Pager.of(0, 60), null));
 		List<User> users = response.readEntity();
 
 		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
@@ -698,7 +702,7 @@ public class MattermostApiTest {
 		User withoutTeamUser = th.loginSystemAdmin().createUser();
 		th.loginSystemAdmin();
 
-		ApiResponse<UserList> response = assertNoError(client.getUsersWithoutTeam(0, 60, null));
+		ApiResponse<UserList> response = assertNoError(client.getUsersWithoutTeam(Pager.of(0, 60), null));
 		List<User> users = response.readEntity();
 
 		assertThat(users.stream().map(User::getId).collect(Collectors.toSet()),
@@ -975,7 +979,8 @@ public class MattermostApiTest {
 	@Test
 	public void testUsers_GetAudits() {
 
-		ApiResponse<Audits> response = assertNoError(client.getUserAudits(th.basicUser().getId(), 0, 50, null));
+		ApiResponse<Audits> response = assertNoError(
+				client.getUserAudits(th.basicUser().getId(), Pager.of(0, 50), null));
 		Audits audits = response.readEntity();
 
 		assertThat(audits.stream().findAny().map(Audit::getId).get(), is(not(nullValue())));
@@ -1036,7 +1041,7 @@ public class MattermostApiTest {
 	public void testTeams_GetTeams() {
 		Team team = th.loginSystemAdmin().createTeam();
 
-		ApiResponse<TeamList> response = assertNoError(client.getAllTeams(null, 0, 60));
+		ApiResponse<TeamList> response = assertNoError(client.getAllTeams(null, Pager.of(0, 60)));
 		List<Team> teams = response.readEntity();
 
 		assertThat(teams.stream().map(Team::getId).collect(Collectors.toSet()), hasItem(team.getId()));
@@ -1153,7 +1158,7 @@ public class MattermostApiTest {
 	public void testTeams_GetTeamMembers() {
 
 		ApiResponse<TeamMemberList> response = assertNoError(
-				client.getTeamMembers(th.basicTeam().getId(), 0, 60, null));
+				client.getTeamMembers(th.basicTeam().getId(), Pager.of(0, 60), null));
 		List<TeamMember> teamMembers = response.readEntity();
 
 		assertThat(teamMembers.stream().map(TeamMember::getUserId).collect(Collectors.toSet()),
@@ -1300,7 +1305,7 @@ public class MattermostApiTest {
 	public void testTeams_GetPublicChannels() {
 
 		ApiResponse<ChannelList> response = assertNoError(
-				client.getPublicChannelsForTeam(th.basicTeam().getId(), 0, 60, null));
+				client.getPublicChannelsForTeam(th.basicTeam().getId(), Pager.of(0, 60), null));
 		List<Channel> channels = response.readEntity();
 
 		assertThat(channels.stream().findAny().get().getTeamId(), is(th.basicTeam().getId()));
@@ -1399,7 +1404,7 @@ public class MattermostApiTest {
 	public void testPosts_GetPostsForChannel() {
 		String channelId = th.basicChannel().getId();
 
-		ApiResponse<PostList> response = assertNoError(client.getPostsForChannel(channelId, 0, 60, null));
+		ApiResponse<PostList> response = assertNoError(client.getPostsForChannel(channelId, Pager.of(0, 60), null));
 		PostList posts = response.readEntity();
 
 		assertThat(posts.getPosts().values().stream().map(Post::getChannelId).collect(Collectors.toSet()),
@@ -1425,7 +1430,8 @@ public class MattermostApiTest {
 		Post post2 = th.createPost(th.basicChannel());
 		Post post3 = th.createPost(th.basicChannel());
 
-		ApiResponse<PostList> response = assertNoError(client.getPostsBefore(channelId, post2.getId(), 0, 60, null));
+		ApiResponse<PostList> response = assertNoError(
+				client.getPostsBefore(channelId, post2.getId(), Pager.of(0, 60), null));
 		PostList posts = response.readEntity();
 
 		Set<String> channelIds = posts.getPosts().values().stream().map(Post::getChannelId).collect(Collectors.toSet());
@@ -1443,7 +1449,8 @@ public class MattermostApiTest {
 		Post post2 = th.createPost(th.basicChannel());
 		Post post3 = th.createPost(th.basicChannel());
 
-		ApiResponse<PostList> response = assertNoError(client.getPostsAfter(channelId, post2.getId(), 0, 60, null));
+		ApiResponse<PostList> response = assertNoError(
+				client.getPostsAfter(channelId, post2.getId(), Pager.of(0, 60), null));
 		PostList posts = response.readEntity();
 
 		Set<String> channelIds = posts.getPosts().values().stream().map(Post::getChannelId).collect(Collectors.toSet());
