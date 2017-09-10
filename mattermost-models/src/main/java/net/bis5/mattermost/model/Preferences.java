@@ -16,10 +16,7 @@
  */
 package net.bis5.mattermost.model;
 
-import java.util.Iterator;
-import java.util.List;
-
-import lombok.Data;
+import java.util.ArrayList;
 
 /**
  * TODO 型の説明
@@ -27,17 +24,9 @@ import lombok.Data;
  * @author Maruyama Takayuki
  * @since 2017/06/09
  */
-@Data
-public class Preferences implements Iterable<Preference> {
+public class Preferences extends ArrayList<Preference> {
 
-	private List<Preference> preferences;
-
-	/**
-	 * @see java.lang.Iterable#iterator()
-	 */
-	@Override
-	public Iterator<Preference> iterator() {
-		return preferences.iterator();
-	}
+	/** serial */
+	private static final long serialVersionUID = 1L;
 
 }

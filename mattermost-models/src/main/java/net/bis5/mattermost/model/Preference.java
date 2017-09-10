@@ -19,6 +19,8 @@ package net.bis5.mattermost.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * TODO 型の説明
@@ -38,4 +40,11 @@ public class Preference {
 	@JsonProperty("value")
 	private String value;
 
+	@RequiredArgsConstructor
+	public static enum Name {
+		CollapseSetting("collapse_previews"), DisplayNameFormat("name_format"), LastChannel("channel"), LastTeam(
+				"team"), EmailInterval("email_interval"), ChannelDisplayMode("channel_display_mode");
+		@Getter
+		private final String key;
+	}
 }

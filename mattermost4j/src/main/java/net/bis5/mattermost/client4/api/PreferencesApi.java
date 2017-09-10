@@ -18,6 +18,7 @@ package net.bis5.mattermost.client4.api;
 
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.model.Preference;
+import net.bis5.mattermost.model.PreferenceCategory;
 import net.bis5.mattermost.model.Preferences;
 
 /**
@@ -30,11 +31,12 @@ public interface PreferencesApi {
 
 	ApiResponse<Preferences> getPreferences(String userId);
 
-	boolean updatePreferences(String userId, Preferences perferences);
+	ApiResponse<Boolean> updatePreferences(String userId, Preferences perferences);
 
-	boolean deletePreferences(String userId, Preferences preferences);
+	ApiResponse<Boolean> deletePreferences(String userId, Preferences preferences);
 
-	ApiResponse<Preferences> getPreferencesByCategory(String userId, String category);
+	ApiResponse<Preferences> getPreferencesByCategory(String userId, PreferenceCategory category);
 
-	ApiResponse<Preference> getPreferenceByCategoryAndName(String userId, String category, String preferenceName);
+	ApiResponse<Preference> getPreferenceByCategoryAndName(String userId, PreferenceCategory category,
+			String preferenceName);
 }

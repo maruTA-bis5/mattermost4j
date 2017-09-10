@@ -72,6 +72,9 @@ import net.bis5.mattermost.model.ChannelView;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
+import net.bis5.mattermost.model.Preference;
+import net.bis5.mattermost.model.PreferenceCategory;
+import net.bis5.mattermost.model.Preferences;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SessionList;
@@ -1519,6 +1522,85 @@ public class MattermostApiTest {
 		result = response.readEntity();
 
 		assertThat(result, is(true));
+	}
+
+	// Preferences
+
+	@Test
+	public void testPreferences_GetPreferences() {
+		String userId = th.basicUser().getId();
+
+		ApiResponse<Preferences> response = assertNoError(client.getPreferences(userId));
+		Preferences preferences = response.readEntity();
+
+		assertThat(preferences.isEmpty(), is(false));
+		assertThat(preferences.stream().map(Preference::getUserid).collect(Collectors.toSet()),
+				containsInAnyOrder(userId));
+	}
+
+	@Test
+	public void testPreferences_SavePreferences() {
+		String userId = th.basicUser().getId();
+		Preferences preferences = client.getPreferences(userId).readEntity();
+		Preference preference = preferences.stream().filter(p -> p.getCategory() == PreferenceCategory.TUTORIAL_STEPS)
+				.findAny().get();
+		preference.setValue("1"); // 2nd tutorial step
+
+		ApiResponse<Boolean> response = assertNoError(client.updatePreferences(userId, preferences));
+		boolean result = response.readEntity();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testPreferences_DeletePreference() {
+		String userId = th.basicUser().getId();
+		Preferences currentPreferences = client.getPreferences(userId).readEntity();
+		Preference tutorial = currentPreferences.stream()
+				.filter(p -> p.getCategory() == PreferenceCategory.TUTORIAL_STEPS).findAny().get();
+
+		Preferences deleteTargets = new Preferences();
+		deleteTargets.add(tutorial);
+		ApiResponse<Boolean> response = assertNoError(client.deletePreferences(userId, deleteTargets));
+		boolean result = response.readEntity();
+
+		assertThat(result, is(true));
+	}
+
+	@Test
+	public void testPreferences_GetPreferencesByCategory() {
+		String userId = th.basicUser().getId();
+		PreferenceCategory category = PreferenceCategory.TUTORIAL_STEPS;
+
+		ApiResponse<Preferences> response = assertNoError(client.getPreferencesByCategory(userId, category));
+		Preferences preferences = response.readEntity();
+
+		assertThat(preferences.isEmpty(), is(false));
+	}
+
+	@Test
+	public void testPreferences_GetPreference() {
+		String userId = th.basicUser().getId();
+		PreferenceCategory category = PreferenceCategory.DISPLAY_SETTINGS;
+		String name = Preference.Name.ChannelDisplayMode.getKey();
+		String value = "full";
+		{
+			Preference preference = new Preference();
+			preference.setUserid(userId);
+			preference.setCategory(category);
+			preference.setName(name);
+			preference.setValue(value);
+			Preferences preferences = new Preferences();
+			preferences.add(preference);
+			assertNoError(client.updatePreferences(userId, preferences));
+		}
+
+		ApiResponse<Preference> response = assertNoError(client.getPreferenceByCategoryAndName(userId, category, name));
+		Preference preference = response.readEntity();
+
+		assertThat(preference.getCategory(), is(PreferenceCategory.DISPLAY_SETTINGS));
+		assertThat(preference.getName(), is(name));
+		assertThat(preference.getValue(), is(value));
 	}
 
 }

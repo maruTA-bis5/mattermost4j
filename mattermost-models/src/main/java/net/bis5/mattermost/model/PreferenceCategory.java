@@ -41,7 +41,7 @@ import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 @Getter
 public enum PreferenceCategory implements HasCode<PreferenceCategory> {
 
-	DIRECT_CHANNEL_SHOW("direct_channel_show"), TUTORIAL_STEPS("tutorial_steps"), ADVANCED_SETTINGS(
+	DIRECT_CHANNEL_SHOW("direct_channel_show"), TUTORIAL_STEPS("tutorial_step"), ADVANCED_SETTINGS(
 			"advanced_settings"), FLAGGED_POST("flagged_post"), //
 	DISPLAY_SETTINGS("display_settings"), THEME("theme"), AUTHORIZED_OAUTH_APP("oauth_app"), LAST(
 			"last"), NOTIFICATIONS("notifications");

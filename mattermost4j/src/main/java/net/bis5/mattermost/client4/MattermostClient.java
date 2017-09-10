@@ -107,6 +107,7 @@ import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
 import net.bis5.mattermost.model.Preference;
+import net.bis5.mattermost.model.PreferenceCategory;
 import net.bis5.mattermost.model.Preferences;
 import net.bis5.mattermost.model.Reaction;
 import net.bis5.mattermost.model.Role;
@@ -2238,10 +2239,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public boolean updatePreferences(String userId, Preferences preferences) {
-		// XXX always return true...
-		doApiPut(getPreferencesRoute(userId), preferences);
-		return true;
+	public ApiResponse<Boolean> updatePreferences(String userId, Preferences preferences) {
+		return doApiPut(getPreferencesRoute(userId), preferences).checkStatusOK();
 	}
 
 	/**
@@ -2252,10 +2251,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public boolean deletePreferences(String userId, Preferences preferences) {
-		// XXX always return true...
-		doApiPost(getPreferencesRoute(userId) + "/delete", preferences);
-		return true;
+	public ApiResponse<Boolean> deletePreferences(String userId, Preferences preferences) {
+		return doApiPost(getPreferencesRoute(userId) + "/delete", preferences).checkStatusOK();
 	}
 
 	/**
@@ -2266,8 +2263,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<Preferences> getPreferencesByCategory(String userId, String category) {
-		String url = String.format(getPreferencesRoute(userId) + "/%s", category);
+	public ApiResponse<Preferences> getPreferencesByCategory(String userId, PreferenceCategory category) {
+		String url = String.format(getPreferencesRoute(userId) + "/%s", category.getCode());
 		return doApiGet(url, null, Preferences.class);
 	}
 
@@ -2281,9 +2278,9 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<Preference> getPreferenceByCategoryAndName(String userId, String category,
+	public ApiResponse<Preference> getPreferenceByCategoryAndName(String userId, PreferenceCategory category,
 			String preferenceName) {
-		String url = String.format(getPreferencesRoute(userId) + "/%s/name/%s", category, preferenceName);
+		String url = String.format(getPreferencesRoute(userId) + "/%s/name/%s", category.getCode(), preferenceName);
 		return doApiGet(url, null, Preference.class);
 	}
 
