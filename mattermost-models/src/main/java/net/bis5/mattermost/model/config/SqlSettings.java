@@ -40,5 +40,6 @@ public class SqlSettings {
 	private int maxOpenConns;
 	private boolean trace;
 	private String atRestEncryptKey;
-
+	/** @since Mattermost Server 3.10 */
+	private int queryTimeout;
 }
