@@ -80,5 +80,7 @@ public class ServiceSettings {
 	private boolean enableUserTypingMessages;
 	private boolean enableUserStatuses;
 	private int clusterLogTimeoutMilliseconds;
+	/** @since Mattermost Server 3.10 */
+	private int goroutineHealthThreshould;
 
 }

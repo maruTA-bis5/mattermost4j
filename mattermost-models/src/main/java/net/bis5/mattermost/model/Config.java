@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import net.bis5.mattermost.model.config.AnalyticsSettings;
+import net.bis5.mattermost.model.config.AnnouncementSettings;
 import net.bis5.mattermost.model.config.ClusterSettings;
 import net.bis5.mattermost.model.config.ComplianceSettings;
 import net.bis5.mattermost.model.config.EmailSettings;
@@ -72,5 +73,7 @@ public class Config {
 	private MetricsSettings metricsSettings;
 	private AnalyticsSettings analyticsSettings;
 	private WebrtcSettings webrtcSettings;
+	/** @since Mattermost Server 3.10 (E10) */
+	private AnnouncementSettings announcementSettings;
 
 }

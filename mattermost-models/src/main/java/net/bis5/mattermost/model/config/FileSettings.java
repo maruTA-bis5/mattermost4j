@@ -49,5 +49,7 @@ public class FileSettings {
 	private String amazonS3Region;
 	private String amazonS3Endpoint;
 	private boolean amazonS3SSL;
+	/** @since Mattermost Server 3.10 */
+	private boolean amazonS3SignV2;
 
 }

@@ -1,6 +1,6 @@
 /*
- * @(#) net.bis5.mattermost.model.config.SqlSettings
- * Copyright (c) 2016-present, Maruyama Takayuki
+ * @(#) net.bis5.mattermost.model.config.AnnouncementSettings
+ * Copyright (c) 2017 Maruyama Takayuki
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,20 @@
  */
 package net.bis5.mattermost.model.config;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 
 /**
  * TODO 型の説明
  * 
- * @author takayuki
- * @since 2016/10/09
+ * @author Maruyama Takayuki
+ * @since Mattermost Server 3.10 (E10)
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class SqlSettings {
+public class AnnouncementSettings {
 
-	private String driverName;
-	private String dataSource;
-	private List<String> dataSourceReplicas;
-	private List<String> dataSourceSearchReplicas;
-	private int maxIdleConns;
-	private int maxOpenConns;
-	private boolean trace;
-	private String atRestEncryptKey;
-	/** @since Mattermost Server 3.10 */
-	private int queryTimeout;
+	private boolean enableBanner;
+	private String bannerText;
+	private String bannerColor;
+	private String bannerTextColor;
+	private boolean allowBannerDismissal;
 }
