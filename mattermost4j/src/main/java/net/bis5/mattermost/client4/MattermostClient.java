@@ -184,6 +184,16 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 		this.authType = AuthType.BEARER;
 	}
 
+	/**
+	 * @param token
+	 *            Personal Access Token to access Mattermost API
+	 * @since Mattermost Server 4.1
+	 */
+	public void setAccessToken(String token) {
+		this.authToken = token;
+		this.authType = AuthType.BEARER;
+	}
+
 	public String getUsersRoute() {
 		return "/users";
 	}
