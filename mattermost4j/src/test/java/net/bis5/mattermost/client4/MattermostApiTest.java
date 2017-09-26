@@ -69,6 +69,8 @@ import net.bis5.mattermost.model.ChannelStats;
 import net.bis5.mattermost.model.ChannelType;
 import net.bis5.mattermost.model.ChannelUnread;
 import net.bis5.mattermost.model.ChannelView;
+import net.bis5.mattermost.model.Emoji;
+import net.bis5.mattermost.model.EmojiList;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
@@ -1603,4 +1605,80 @@ public class MattermostApiTest {
 		assertThat(preference.getValue(), is(value));
 	}
 
+	// Emoji
+
+	@Test
+	public void testEmoji_CreateCustomEmoji() throws URISyntaxException {
+		Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+		Emoji emoji = new Emoji();
+		String emojiName = "custom" + th.newId();
+		emoji.setName(emojiName);
+		emoji.setCreatorId(th.basicUser().getId());
+
+		ApiResponse<Emoji> response = assertNoError(client.createEmoji(emoji, image));
+		Emoji createdEmoji = response.readEntity();
+
+		assertThat(createdEmoji.getName(), is(emojiName));
+		assertThat(createdEmoji.getId(), is(not(nullValue())));
+	}
+
+	@Test
+	public void testEmoji_GetCustomEmojiList() throws URISyntaxException {
+		Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+		Emoji emoji1 = new Emoji();
+		emoji1.setName("custom" + th.newId());
+		emoji1.setCreatorId(th.basicUser().getId());
+		emoji1 = client.createEmoji(emoji1, image).readEntity();
+		Emoji emoji2 = new Emoji();
+		emoji2.setName("custom" + th.newId());
+		emoji2.setCreatorId(th.basicUser().getId());
+		emoji2 = client.createEmoji(emoji2, image).readEntity();
+
+		ApiResponse<EmojiList> response = assertNoError(client.getEmojiList());
+		List<Emoji> emojiList = response.readEntity();
+
+		assertThat(emojiList.stream().map(Emoji::getId).collect(Collectors.toSet()),
+				hasItems(emoji1.getId(), emoji2.getId()));
+	}
+
+	@Test
+	public void testEmoji_GetCustomEmoji() throws URISyntaxException {
+		Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+		Emoji emoji = new Emoji();
+		emoji.setName("custom" + th.newId());
+		emoji.setCreatorId(th.basicUser().getId());
+		emoji = client.createEmoji(emoji, image).readEntity();
+		String emojiId = emoji.getId();
+
+		ApiResponse<Emoji> response = assertNoError(client.getEmoji(emojiId));
+		Emoji responseEmoji = response.readEntity();
+
+		assertThat(responseEmoji.getName(), is(emoji.getName()));
+	}
+
+	@Test
+	public void testEmoji_DeleteCustomEmoji() throws URISyntaxException {
+		Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+		Emoji emoji = new Emoji();
+		emoji.setName("custom" + th.newId());
+		emoji.setCreatorId(th.basicUser().getId());
+		emoji = client.createEmoji(emoji, image).readEntity();
+		String emojiId = emoji.getId();
+
+		ApiResponse<Boolean> response = assertNoError(client.deleteEmoji(emojiId));
+		Boolean result = response.readEntity();
+
+		assertThat(result, is(true));
+		assertThat( //
+				client.getEmojiList().readEntity() //
+						.stream() //
+						.map(Emoji::getId) //
+						.collect(Collectors.toSet()), //
+				is(not(hasItem(emojiId))));
+	}
+
+	@Test
+	@Ignore // TODO
+	public void testEmoji_GetCustomEmojiImage() {
+	}
 }

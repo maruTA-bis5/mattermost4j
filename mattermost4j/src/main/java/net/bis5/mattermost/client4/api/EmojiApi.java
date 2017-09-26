@@ -17,11 +17,11 @@
 package net.bis5.mattermost.client4.api;
 
 import java.nio.file.Path;
-import java.util.List;
 
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.Pager;
 import net.bis5.mattermost.model.Emoji;
+import net.bis5.mattermost.model.EmojiList;
 
 /**
  * TODO 型の説明
@@ -33,7 +33,7 @@ public interface EmojiApi {
 
 	ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile);
 
-	default ApiResponse<List<Emoji>> getEmojiList() {
+	default ApiResponse<EmojiList> getEmojiList() {
 		return getEmojiList(Pager.defaultPager());
 	}
 
@@ -42,7 +42,7 @@ public interface EmojiApi {
 	 *            add in Mattermost Server 4.1, in older version, ignore.
 	 * @return
 	 */
-	ApiResponse<List<Emoji>> getEmojiList(Pager pager);
+	ApiResponse<EmojiList> getEmojiList(Pager pager);
 
 	ApiResponse<Boolean> deleteEmoji(String emojiId);
 

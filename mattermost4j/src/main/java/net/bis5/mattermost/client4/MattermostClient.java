@@ -101,6 +101,7 @@ import net.bis5.mattermost.model.Compliance;
 import net.bis5.mattermost.model.Compliances;
 import net.bis5.mattermost.model.Config;
 import net.bis5.mattermost.model.Emoji;
+import net.bis5.mattermost.model.EmojiList;
 import net.bis5.mattermost.model.IncomingWebhook;
 import net.bis5.mattermost.model.OAuthApp;
 import net.bis5.mattermost.model.OutgoingWebhook;
@@ -2813,8 +2814,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<List<Emoji>> getEmojiList(Pager pager) {
-		return doApiGet(getEmojisRoute() + pager.toQuery(), null, listType());
+	public ApiResponse<EmojiList> getEmojiList(Pager pager) {
+		return doApiGet(getEmojisRoute() + pager.toQuery(), null, EmojiList.class);
 	}
 
 	/**
