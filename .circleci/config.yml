@@ -5,6 +5,7 @@ workflows:
       - test-mattermost-3.9
       - test-mattermost-3.10
       - test-mattermost-4.0
+      - test-mattermost-4.1
  
 version: 2
 jobs:
@@ -33,3 +34,8 @@ jobs:
     docker:
       - image: circleci/openjdk:8-jdk
       - image: mattermost/mattermost-preview:4.0
+  test-mattermost-4.1:
+    <<: *test-mattermost-base
+    docker:
+      - image: circleci/openjdk:8-jdk
+      - image: mattermost/mattermost-preview:4.1
