@@ -36,11 +36,23 @@ public class FileSettings {
 	private String directory;
 	private boolean enablePublicLink;
 	private String publicLinkSalt;
+	/** @deprecated removed in Mattermost Server 4.0 */
+	@Deprecated
 	private int thumbnailWidth;
+	/** @deprecated removed in Mattermost Server 4.0 */
+	@Deprecated
 	private int thumbnailHeight;
+	/** @deprecated removed in Mattermost Server 4.0 */
+	@Deprecated
 	private int previewWidth;
+	/** @deprecated removed in Mattermost Server 4.0 */
+	@Deprecated
 	private int previewHeight;
+	/** @deprecated removed in Mattermost Server 4.0 */
+	@Deprecated
 	private int profileWidth;
+	/** @deprecated removed in Mattermost Server 4.0 */
+	@Deprecated
 	private int profileHeight;
 	private String initialFont;
 	private String amazonS3AccessKeyId;

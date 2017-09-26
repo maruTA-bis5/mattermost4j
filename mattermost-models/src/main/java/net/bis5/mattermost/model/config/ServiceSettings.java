@@ -82,5 +82,11 @@ public class ServiceSettings {
 	private int clusterLogTimeoutMilliseconds;
 	/** @since Mattermost Server 3.10 */
 	private int goroutineHealthThreshould;
+	/** @since Mattermost Server 4.0 */
+	private boolean enableEmojiPicker;
+	/** @since Mattermost Server 4.0 */
+	private boolean enableChannelViewedMessages;
+	/** @since Mattermost Server 4.0 */
+	private boolean enableAPIv3;
 
 }

@@ -33,7 +33,23 @@ import lombok.Data;
 public class ClusterSettings {
 
 	private boolean enable;
+	/** @deprecated removed in Mattermost Server 4.0 */
+	@Deprecated
 	private String interNodeListenAddress;
 	private List<String> interNodeUrls;
+	/** @since Mattermost Server 4.0 */
+	private String clusterName;
+	/** @since Mattermost Server 4.0 */
+	private String overrideHostname;
+	/** @since Mattermost Server 4.0 */
+	private boolean useIpAddress;
+	/** @since Mattermost Server 4.0 */
+	private boolean useExperimentalGossip;
+	/** @since Mattermost Server 4.0 */
+	private boolean readOnlyConfig;
+	/** @since Mattermost Server 4.0 */
+	private int gossipPort;
+	/** @since Mattermost Server 4.0 */
+	private int streamingPort;
 
 }
