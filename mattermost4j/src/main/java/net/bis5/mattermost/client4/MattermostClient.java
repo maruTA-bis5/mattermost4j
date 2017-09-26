@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
@@ -414,13 +415,17 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 		return doApiRequest(HttpMethod.POST, apiUrl + url, data, null);
 	}
 
-	protected <T> ApiResponse<Void> doApiPostMultiPart(String url, MultiPart multiPart) {
+	protected ApiResponse<Void> doApiPostMultiPart(String url, MultiPart multiPart) {
+		return doApiPostMultiPart(url, multiPart, Void.class);
+	}
+
+	protected <T> ApiResponse<T> doApiPostMultiPart(String url, MultiPart multiPart, Class<T> responseType) {
 		return ApiResponse.of(
 				httpClient.target(apiUrl + url)
 						.request(MediaType.APPLICATION_JSON_TYPE)
 						.header(HEADER_AUTH, getAuthority())
 						.method(HttpMethod.POST, Entity.entity(multiPart, multiPart.getMediaType())),
-				Void.class);
+				responseType);
 	}
 
 	protected <T, U> ApiResponse<T> doApiPut(String url, U data, Class<T> responseType) {
@@ -2787,12 +2792,19 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * 
 	 * @param emoji
 	 * @param imageFile
-	 * @param fileName
 	 * @return
 	 */
 	@Override
-	public ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile, String fileName) {
-		throw new UnsupportedOperationException("not impl"); // FIXME
+	public ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile) {
+		FormDataMultiPart multiPart = new FormDataMultiPart();
+		multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+		FileDataBodyPart body = new FileDataBodyPart("image", imageFile.toFile());
+		multiPart.bodyPart(body);
+
+		multiPart.field("emoji", emoji, MediaType.APPLICATION_JSON_TYPE);
+
+		return doApiPostMultiPart(getEmojisRoute(), multiPart, Emoji.class);
 	}
 
 	/**
@@ -2801,8 +2813,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<List<Emoji>> getEmojiList() {
-		return doApiGet(getEmojisRoute(), null, listType());
+	public ApiResponse<List<Emoji>> getEmojiList(Pager pager) {
+		return doApiGet(getEmojisRoute() + pager.toQuery(), null, listType());
 	}
 
 	/**

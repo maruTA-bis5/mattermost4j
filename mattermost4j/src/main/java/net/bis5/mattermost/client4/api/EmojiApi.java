@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import net.bis5.mattermost.client4.ApiResponse;
+import net.bis5.mattermost.client4.Pager;
 import net.bis5.mattermost.model.Emoji;
 
 /**
@@ -30,9 +31,18 @@ import net.bis5.mattermost.model.Emoji;
  */
 public interface EmojiApi {
 
-	ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile, String fileName);
+	ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile);
 
-	ApiResponse<List<Emoji>> getEmojiList();
+	default ApiResponse<List<Emoji>> getEmojiList() {
+		return getEmojiList(Pager.defaultPager());
+	}
+
+	/**
+	 * @param pager
+	 *            add in Mattermost Server 4.1, in older version, ignore.
+	 * @return
+	 */
+	ApiResponse<List<Emoji>> getEmojiList(Pager pager);
 
 	ApiResponse<Boolean> deleteEmoji(String emojiId);
 
