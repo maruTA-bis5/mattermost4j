@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.Permissions;
+import net.bis5.mattermost.model.config.consts.TeammateNameDisplay;
 
 /**
  * TODO 型の説明
@@ -52,5 +53,7 @@ public class TeamSettings {
 	private long userStatusAwayTimeout;
 	private long maxChannelsPerTeam;
 	private long MaxNotificationsPerChannel;
+	/** @since Mattermost Server 4.0 */
+	private TeammateNameDisplay teammateNameDisplay;
 
 }
