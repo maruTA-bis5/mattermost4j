@@ -71,6 +71,7 @@ public class TestHelper {
 		Config config = client.getConfig().readEntity();
 		config.getTeamSettings().setMaxUsersPerTeam(50);
 		config.getRateLimitSettings().setEnable(false);
+		config.getServiceSettings().setEnableCustomEmoji(true);
 		// TODO un-comment these lines when Dockerfile setup.
 		// config.getEmailSettings().setSendEmailNotifications(true);
 		// config.getEmailSettings().setSmtpServer("localhost");
