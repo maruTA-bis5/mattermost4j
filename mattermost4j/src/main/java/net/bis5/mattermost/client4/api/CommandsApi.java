@@ -16,10 +16,9 @@
  */
 package net.bis5.mattermost.client4.api;
 
-import java.util.List;
-
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.model.Command;
+import net.bis5.mattermost.model.CommandList;
 import net.bis5.mattermost.model.CommandResponse;
 
 /**
@@ -36,11 +35,15 @@ public interface CommandsApi {
 
 	ApiResponse<Boolean> deleteCommand(String commandId);
 
-	ApiResponse<List<Command>> listCommands(String teamId, boolean customOnly);
+	default ApiResponse<CommandList> listCommands(String teamId) {
+		return listCommands(teamId, false);
+	}
+
+	ApiResponse<CommandList> listCommands(String teamId, boolean customOnly);
 
 	ApiResponse<CommandResponse> executeCommand(String channelId, String command);
 
-	ApiResponse<List<Command>> listAutocompleteCommands(String teamId);
+	ApiResponse<CommandList> listAutocompleteCommands(String teamId);
 
 	ApiResponse<String> regenCommandToken(String commandId);
 

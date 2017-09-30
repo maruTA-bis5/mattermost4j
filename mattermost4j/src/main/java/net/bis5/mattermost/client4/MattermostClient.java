@@ -36,6 +36,7 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
@@ -96,6 +97,7 @@ import net.bis5.mattermost.model.ChannelView;
 import net.bis5.mattermost.model.ClusterInfo;
 import net.bis5.mattermost.model.Command;
 import net.bis5.mattermost.model.CommandArgs;
+import net.bis5.mattermost.model.CommandList;
 import net.bis5.mattermost.model.CommandResponse;
 import net.bis5.mattermost.model.Compliance;
 import net.bis5.mattermost.model.Compliances;
@@ -162,6 +164,9 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 						new LoggingFeature(Logger.getLogger(getClass().getName()), Level.SEVERE, Verbosity.PAYLOAD_ANY,
 								1000))
 				.register(MultiPartFeature.class)
+				// needs for PUT request with null entity
+				// (/commands/{command_id}/regen_token)
+				.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true)
 				.build();
 	}
 
@@ -2694,9 +2699,9 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<List<Command>> listCommands(String teamId, boolean customOnly) {
+	public ApiResponse<CommandList> listCommands(String teamId, boolean customOnly) {
 		String query = new QueryBuilder().append("team_id", teamId).append("custom_only", customOnly).toString();
-		return doApiGet(getCommandsRoute() + query, null, listType());
+		return doApiGet(getCommandsRoute() + query, null, CommandList.class);
 	}
 
 	/**
@@ -2721,8 +2726,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<List<Command>> listAutocompleteCommands(String teamId) {
-		return doApiGet(getTeamAutoCompleteCommandsRoute(teamId), null, listType());
+	public ApiResponse<CommandList> listAutocompleteCommands(String teamId) {
+		return doApiGet(getTeamAutoCompleteCommandsRoute(teamId), null, CommandList.class);
 	}
 
 	/**
