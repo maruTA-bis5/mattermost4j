@@ -72,6 +72,10 @@ public class TestHelper {
 		config.getTeamSettings().setMaxUsersPerTeam(50);
 		config.getRateLimitSettings().setEnable(false);
 		config.getServiceSettings().setEnableCustomEmoji(true);
+		config.getServiceSettings().setEnableOnlyAdminIntegrations(false);
+		config.getServiceSettings().setEnableIncomingWebhooks(true);
+		config.getServiceSettings().setEnableOutgoingWebhooks(true);
+		config.getServiceSettings().setEnableCommands(true);
 		// TODO un-comment these lines when Dockerfile setup.
 		// config.getEmailSettings().setSendEmailNotifications(true);
 		// config.getEmailSettings().setSmtpServer("localhost");

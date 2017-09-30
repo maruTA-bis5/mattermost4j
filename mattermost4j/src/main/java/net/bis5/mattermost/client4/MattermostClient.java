@@ -103,8 +103,10 @@ import net.bis5.mattermost.model.Config;
 import net.bis5.mattermost.model.Emoji;
 import net.bis5.mattermost.model.EmojiList;
 import net.bis5.mattermost.model.IncomingWebhook;
+import net.bis5.mattermost.model.IncomingWebhookList;
 import net.bis5.mattermost.model.OAuthApp;
 import net.bis5.mattermost.model.OutgoingWebhook;
+import net.bis5.mattermost.model.OutgoingWebhookList;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
@@ -2091,8 +2093,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<List<IncomingWebhook>> getIncomingWebhooks(Pager pager, String etag) {
-		return doApiGet(getIncomingWebhooksRoute() + pager.toQuery(), etag, listType());
+	public ApiResponse<IncomingWebhookList> getIncomingWebhooks(Pager pager, String etag) {
+		return doApiGet(getIncomingWebhooksRoute() + pager.toQuery(), etag, IncomingWebhookList.class);
 	}
 
 	/**
@@ -2105,10 +2107,10 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<List<IncomingWebhook>> getIncomingWebhooksForTeam(String teamId, Pager pager, String etag) {
+	public ApiResponse<IncomingWebhookList> getIncomingWebhooksForTeam(String teamId, Pager pager, String etag) {
 		String query = new QueryBuilder().append("team_id", teamId)
 				.toString();
-		return doApiGet(getIncomingWebhooksRoute() + query + pager.toQuery(false), etag, listType());
+		return doApiGet(getIncomingWebhooksRoute() + query + pager.toQuery(false), etag, IncomingWebhookList.class);
 	}
 
 	/**
@@ -2165,8 +2167,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooks(Pager pager, String etag) {
-		return doApiGet(getOutgoingWebhooksRoute() + pager.toQuery(), etag, listType());
+	public ApiResponse<OutgoingWebhookList> getOutgoingWebhooks(Pager pager, String etag) {
+		return doApiGet(getOutgoingWebhooksRoute() + pager.toQuery(), etag, OutgoingWebhookList.class);
 	}
 
 	/**
@@ -2190,10 +2192,10 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForChannel(String channelId, Pager pager,
+	public ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForChannel(String channelId, Pager pager,
 			String etag) {
 		String query = new QueryBuilder().append("channel_id", channelId).toString();
-		return doApiGet(getOutgoingWebhooksRoute() + query + pager.toQuery(false), etag, listType());
+		return doApiGet(getOutgoingWebhooksRoute() + query + pager.toQuery(false), etag, OutgoingWebhookList.class);
 	}
 
 	/**
@@ -2206,10 +2208,10 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForTeam(String teamId, Pager pager, String etag) {
+	public ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForTeam(String teamId, Pager pager, String etag) {
 		String query = new QueryBuilder().append("team_id", teamId)
 				.toString();
-		return doApiGet(getOutgoingWebhooksRoute() + query + pager.toQuery(false), etag, listType());
+		return doApiGet(getOutgoingWebhooksRoute() + query + pager.toQuery(false), etag, OutgoingWebhookList.class);
 	}
 
 	/**

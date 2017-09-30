@@ -50,7 +50,7 @@ public class OutgoingWebhook {
 	@JsonProperty("trigger_words")
 	private List<String> triggerWords;
 	@JsonProperty("trigger_when")
-	private int triggerWhen;
+	private TriggerWhen triggerWhen;
 	@JsonProperty("callback_urls")
 	private List<String> callbackUrls;
 	@JsonProperty("display_name")
@@ -58,6 +58,6 @@ public class OutgoingWebhook {
 	@JsonProperty("description")
 	private String description;
 	@JsonProperty("content_type")
-	private String contentType;
+	private ContentType contentType;
 
 }
