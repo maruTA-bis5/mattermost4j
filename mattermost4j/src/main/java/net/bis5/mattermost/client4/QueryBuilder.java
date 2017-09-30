@@ -38,7 +38,7 @@ public class QueryBuilder {
 		if (StringUtils.isEmpty(key)) {
 			throw new IllegalArgumentException("key");
 		}
-		parameters.put(key, value);
+		parameters.put(key, StringUtils.stripToEmpty(value));
 		return this;
 	}
 
