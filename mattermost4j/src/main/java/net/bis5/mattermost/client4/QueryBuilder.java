@@ -16,6 +16,10 @@
  */
 package net.bis5.mattermost.client4;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -23,25 +27,18 @@ import org.apache.commons.lang3.StringUtils;
  * 
  * @author Maruyama Takayuki
  */
-class QueryBuilder {
+public class QueryBuilder {
 
 	private static final String PREFIX = "?";
 	private static final String DELIMITER = "&";
 	private static final String EQUALS = "=";
-	private final StringBuilder builder = new StringBuilder(PREFIX);
-
-	private boolean isFirst = true;
+	private final Map<String, String> parameters = new HashMap<>();
 
 	public QueryBuilder append(String key, String value) {
 		if (StringUtils.isEmpty(key)) {
 			throw new IllegalArgumentException("key");
 		}
-		if (!isFirst) {
-			builder.append(DELIMITER);
-		} else {
-			isFirst = false;
-		}
-		builder.append(key).append(EQUALS).append(StringUtils.defaultString(value));
+		parameters.put(key, value);
 		return this;
 	}
 
@@ -58,7 +55,9 @@ class QueryBuilder {
 	 */
 	@Override
 	public String toString() {
-		return builder.toString();
+		return parameters.entrySet().stream()
+				.map(e -> e.getKey() + EQUALS + e.getValue())
+				.collect(Collectors.joining(DELIMITER, PREFIX, ""));
 	}
 
 }
