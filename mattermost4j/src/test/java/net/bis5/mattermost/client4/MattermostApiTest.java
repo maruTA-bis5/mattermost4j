@@ -70,10 +70,13 @@ import net.bis5.mattermost.model.ChannelStats;
 import net.bis5.mattermost.model.ChannelType;
 import net.bis5.mattermost.model.ChannelUnread;
 import net.bis5.mattermost.model.ChannelView;
+import net.bis5.mattermost.model.ContentType;
 import net.bis5.mattermost.model.Emoji;
 import net.bis5.mattermost.model.EmojiList;
 import net.bis5.mattermost.model.IncomingWebhook;
 import net.bis5.mattermost.model.IncomingWebhookList;
+import net.bis5.mattermost.model.OutgoingWebhook;
+import net.bis5.mattermost.model.OutgoingWebhookList;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
@@ -95,6 +98,7 @@ import net.bis5.mattermost.model.TeamStats;
 import net.bis5.mattermost.model.TeamType;
 import net.bis5.mattermost.model.TeamUnread;
 import net.bis5.mattermost.model.TeamUnreadList;
+import net.bis5.mattermost.model.TriggerWhen;
 import net.bis5.mattermost.model.User;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
@@ -1784,4 +1788,192 @@ public class MattermostApiTest {
 		assertThat(updatedWebhook.getChannelId(), is(webhook.getChannelId()));
 	}
 
+	@Test
+	public void testWebhooks_CreateOutgoingWebhook() {
+		String teamId = th.basicTeam().getId();
+		String channelId = th.basicChannel().getId();
+		String description = th.newRandomString(32);
+		String displayName = th.newRandomString(32);
+		String triggerWord = "trigger";
+		TriggerWhen triggerWhen = TriggerWhen.CONTAINS;
+		String callbackUrl = "http://callback-url";
+		ContentType contentType = ContentType.FORM;
+		OutgoingWebhook webhook = new OutgoingWebhook();
+		webhook.setTeamId(teamId);
+		webhook.setChannelId(channelId);
+		webhook.setDescription(description);
+		webhook.setDisplayName(displayName);
+		webhook.setTriggerWords(Arrays.asList(triggerWord));
+		webhook.setTriggerWhen(triggerWhen);
+		webhook.setCallbackUrls(Arrays.asList(callbackUrl));
+		webhook.setContentType(contentType);
+
+		ApiResponse<OutgoingWebhook> response = assertNoError(client.createOutgoingWebhook(webhook));
+		OutgoingWebhook created = response.readEntity();
+
+		assertThat(created.getId(), is(not(nullValue())));
+		assertThat(created.getTeamId(), is(webhook.getTeamId()));
+		assertThat(created.getChannelId(), is(webhook.getChannelId()));
+		assertThat(created.getDescription(), is(webhook.getDescription()));
+		assertThat(created.getDisplayName(), is(webhook.getDisplayName()));
+		assertThat(created.getTriggerWords(), containsInAnyOrder(webhook.getTriggerWords().toArray()));
+		assertThat(created.getTriggerWhen(), is(webhook.getTriggerWhen()));
+		assertThat(created.getCallbackUrls(), containsInAnyOrder(webhook.getCallbackUrls().toArray()));
+		assertThat(created.getContentType(), is(webhook.getContentType()));
+	}
+
+	@Test
+	public void testWebhooks_ListOutgoingWebhooks() {
+		String teamId = th.basicTeam().getId();
+		String displayName = th.newRandomString(32);
+		List<String> callbackUrls = Arrays.asList("http://callback-url");
+		OutgoingWebhook webhook1 = new OutgoingWebhook();
+		webhook1.setTeamId(teamId);
+		webhook1.setDisplayName(displayName);
+		webhook1.setTriggerWords(Arrays.asList("trigger" + th.newRandomString(10)));
+		webhook1.setCallbackUrls(callbackUrls);
+		webhook1 = assertNoError(client.createOutgoingWebhook(webhook1)).readEntity();
+		OutgoingWebhook webhook2 = new OutgoingWebhook();
+		webhook2.setTeamId(teamId);
+		webhook2.setDisplayName(displayName);
+		webhook2.setTriggerWords(Arrays.asList("trigger" + th.newRandomString(10)));
+		webhook2.setCallbackUrls(callbackUrls);
+		webhook2 = assertNoError(client.createOutgoingWebhook(webhook2)).readEntity();
+
+		th.loginSystemAdmin(); // needs permission for get other team's webhooks
+		ApiResponse<OutgoingWebhookList> response = assertNoError(client.getOutgoingWebhooks());
+		List<OutgoingWebhook> webhooks = response.readEntity();
+
+		assertThat(webhooks.stream().map(OutgoingWebhook::getId).collect(Collectors.toSet()),
+				hasItems(webhook1.getId(), webhook2.getId()));
+	}
+
+	@Test
+	public void testWebhooks_ListOutgoingWebhooksForTeam() {
+		String teamId = th.basicTeam().getId();
+		String displayName = th.newRandomString(32);
+		List<String> triggerWords = Arrays.asList("trigger");
+		List<String> callbackUrls = Arrays.asList("http://callback-url");
+		OutgoingWebhook webhook = new OutgoingWebhook();
+		webhook.setTeamId(teamId);
+		webhook.setDisplayName(displayName);
+		webhook.setTriggerWords(triggerWords);
+		webhook.setCallbackUrls(callbackUrls);
+		webhook = assertNoError(client.createOutgoingWebhook(webhook)).readEntity();
+
+		ApiResponse<OutgoingWebhookList> response = assertNoError(client.getOutgoingWebhooksForTeam(teamId));
+		List<OutgoingWebhook> webhooks = response.readEntity();
+
+		assertThat(webhooks.stream().map(OutgoingWebhook::getId).collect(Collectors.toSet()),
+				containsInAnyOrder(webhook.getId()));
+	}
+
+	@Test
+	public void testWebhooks_ListOutgoingWebhooksForChannel() {
+		String teamId = th.basicTeam().getId();
+		String channelId = th.basicChannel().getId();
+		String displayName = th.newRandomString(32);
+		List<String> callbackUrls = Arrays.asList("http://callback-url");
+		OutgoingWebhook webhook = new OutgoingWebhook();
+		webhook.setTeamId(teamId);
+		webhook.setChannelId(channelId);
+		webhook.setDisplayName(displayName);
+		webhook.setTriggerWords(Arrays.asList("trigger" + th.newRandomString(10)));
+		webhook.setCallbackUrls(callbackUrls);
+		webhook = assertNoError(client.createOutgoingWebhook(webhook)).readEntity();
+		{
+			OutgoingWebhook otherChannelHook = new OutgoingWebhook();
+			otherChannelHook.setTeamId(teamId);
+			otherChannelHook.setChannelId(th.basicChannel2().getId());
+			otherChannelHook.setDisplayName(displayName);
+			otherChannelHook.setTriggerWords(Arrays.asList("trigger" + th.newRandomString(10)));
+			otherChannelHook.setCallbackUrls(callbackUrls);
+			otherChannelHook = assertNoError(client.createOutgoingWebhook(otherChannelHook)).readEntity();
+
+			OutgoingWebhook noChannelHook = new OutgoingWebhook();
+			noChannelHook.setTeamId(teamId);
+			noChannelHook.setDisplayName(displayName);
+			noChannelHook.setTriggerWords(Arrays.asList("trigger" + th.newRandomString(10)));
+			noChannelHook.setCallbackUrls(callbackUrls);
+			noChannelHook = assertNoError(client.createOutgoingWebhook(noChannelHook)).readEntity();
+		}
+
+		ApiResponse<OutgoingWebhookList> response = assertNoError(client.getOutgoingWebhooksForChannel(channelId));
+		List<OutgoingWebhook> webhooks = response.readEntity();
+
+		assertThat(webhooks.stream().map(OutgoingWebhook::getId).collect(Collectors.toSet()),
+				containsInAnyOrder(webhook.getId()));
+	}
+
+	@Test
+	public void testWebhooks_GetOutgoingWebhook() {
+		OutgoingWebhook webhook = new OutgoingWebhook();
+		webhook.setTeamId(th.basicTeam().getId());
+		webhook.setDisplayName(th.newRandomString(32));
+		webhook.setTriggerWords(Arrays.asList("trigger"));
+		webhook.setCallbackUrls(Arrays.asList("http://callback-url"));
+		webhook = assertNoError(client.createOutgoingWebhook(webhook)).readEntity();
+
+		String webhookId = webhook.getId();
+		ApiResponse<OutgoingWebhook> response = assertNoError(client.getOutgoingWebhook(webhookId));
+		OutgoingWebhook responseWebhook = response.readEntity();
+
+		assertThat(responseWebhook.getId(), is(webhookId));
+	}
+
+	@Test
+	public void testWebhooks_DeleteOutgoingWebhook() {
+		OutgoingWebhook webhook = new OutgoingWebhook();
+		webhook.setTeamId(th.basicTeam().getId());
+		webhook.setDisplayName(th.newRandomString(32));
+		webhook.setTriggerWords(Arrays.asList("trigger"));
+		webhook.setCallbackUrls(Arrays.asList("http://callback-url"));
+		webhook = assertNoError(client.createOutgoingWebhook(webhook)).readEntity();
+
+		String webhookId = webhook.getId();
+		ApiResponse<Boolean> response = assertNoError(client.deleteOutgoingWebhook(webhookId));
+		boolean result = response.readEntity();
+
+		assertThat(result, is(true));
+		assertThat(client.getOutgoingWebhooksForTeam(th.basicTeam().getId()).readEntity().stream()
+				.map(OutgoingWebhook::getId).collect(Collectors.toSet()), not(hasItem(webhookId)));
+	}
+
+	@Test
+	public void testWebhooks_UpdateOutgoingWebhook() {
+		OutgoingWebhook webhook = new OutgoingWebhook();
+		webhook.setTeamId(th.basicTeam().getId());
+		webhook.setDisplayName(th.newRandomString(32));
+		webhook.setTriggerWords(Arrays.asList("trigger"));
+		webhook.setCallbackUrls(Arrays.asList("http://callback-url"));
+		webhook = assertNoError(client.createOutgoingWebhook(webhook)).readEntity();
+
+		webhook.setChannelId(th.basicChannel().getId());
+		webhook.setDisplayName("update" + webhook.getDisplayName());
+		webhook.setDescription("update");
+		ApiResponse<OutgoingWebhook> response = assertNoError(client.updateOutgoingWebhook(webhook));
+		OutgoingWebhook updated = response.readEntity();
+
+		assertThat(updated.getId(), is(webhook.getId()));
+		assertThat(updated.getChannelId(), is(webhook.getChannelId()));
+		assertThat(updated.getDisplayName(), is(webhook.getDisplayName()));
+		assertThat(updated.getDescription(), is(webhook.getDescription()));
+	}
+
+	@Test
+	public void testWebhooks_RgenerateOutgoingWebhookToken() {
+		OutgoingWebhook webhook = new OutgoingWebhook();
+		webhook.setTeamId(th.basicTeam().getId());
+		webhook.setDisplayName(th.newRandomString(32));
+		webhook.setTriggerWords(Arrays.asList("trigger"));
+		webhook.setCallbackUrls(Arrays.asList("http://callback-url"));
+		webhook = assertNoError(client.createOutgoingWebhook(webhook)).readEntity();
+
+		String currentToken = webhook.getToken();
+		ApiResponse<OutgoingWebhook> response = assertNoError(client.regenOutgoingHookToken(webhook.getId()));
+		OutgoingWebhook updated = response.readEntity();
+		String newToken = updated.getToken();
+
+		assertThat(newToken, is(not(currentToken)));
+	}
 }

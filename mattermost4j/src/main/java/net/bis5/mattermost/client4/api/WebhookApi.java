@@ -16,13 +16,12 @@
  */
 package net.bis5.mattermost.client4.api;
 
-import java.util.List;
-
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.Pager;
 import net.bis5.mattermost.model.IncomingWebhook;
 import net.bis5.mattermost.model.IncomingWebhookList;
 import net.bis5.mattermost.model.OutgoingWebhook;
+import net.bis5.mattermost.model.OutgoingWebhookList;
 
 /**
  * TODO 型の説明
@@ -67,37 +66,37 @@ public interface WebhookApi {
 
 	ApiResponse<OutgoingWebhook> updateOutgoingWebhook(OutgoingWebhook hook);
 
-	default ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooks() {
+	default ApiResponse<OutgoingWebhookList> getOutgoingWebhooks() {
 		return getOutgoingWebhooks(Pager.defaultPager());
 	}
 
-	default ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooks(Pager pager) {
+	default ApiResponse<OutgoingWebhookList> getOutgoingWebhooks(Pager pager) {
 		return getOutgoingWebhooks(pager, null);
 	}
 
-	ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooks(Pager pager, String etag);
+	ApiResponse<OutgoingWebhookList> getOutgoingWebhooks(Pager pager, String etag);
 
 	ApiResponse<OutgoingWebhook> getOutgoingWebhook(String hookId);
 
-	default ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForChannel(String channelId) {
+	default ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForChannel(String channelId) {
 		return getOutgoingWebhooksForChannel(channelId, Pager.defaultPager());
 	}
 
-	default ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForChannel(String channelId, Pager pager) {
+	default ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForChannel(String channelId, Pager pager) {
 		return getOutgoingWebhooksForChannel(channelId, pager, null);
 	}
 
-	ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForChannel(String channelId, Pager pager, String etag);
+	ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForChannel(String channelId, Pager pager, String etag);
 
-	default ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForTeam(String teamId) {
+	default ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForTeam(String teamId) {
 		return getOutgoingWebhooksForTeam(teamId, Pager.defaultPager());
 	}
 
-	default ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForTeam(String teamId, Pager pager) {
+	default ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForTeam(String teamId, Pager pager) {
 		return getOutgoingWebhooksForTeam(teamId, pager, null);
 	}
 
-	ApiResponse<List<OutgoingWebhook>> getOutgoingWebhooksForTeam(String teamId, Pager pager, String etag);
+	ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForTeam(String teamId, Pager pager, String etag);
 
 	ApiResponse<OutgoingWebhook> regenOutgoingHookToken(String hookId);
 
