@@ -45,7 +45,7 @@ public class IncomingWebhook {
 	private String teamId;
 	@JsonProperty("display_name")
 	private String displayName;
-	@JsonProperty("descriptiont")
+	@JsonProperty("description")
 	private String description;
 
 }

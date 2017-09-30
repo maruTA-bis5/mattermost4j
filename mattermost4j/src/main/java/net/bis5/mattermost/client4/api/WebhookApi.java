@@ -21,6 +21,7 @@ import java.util.List;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.Pager;
 import net.bis5.mattermost.model.IncomingWebhook;
+import net.bis5.mattermost.model.IncomingWebhookList;
 import net.bis5.mattermost.model.OutgoingWebhook;
 
 /**
@@ -34,25 +35,25 @@ public interface WebhookApi {
 
 	ApiResponse<IncomingWebhook> updateIncomingWebhook(IncomingWebhook hook);
 
-	default ApiResponse<List<IncomingWebhook>> getIncomingWebhooks() {
+	default ApiResponse<IncomingWebhookList> getIncomingWebhooks() {
 		return getIncomingWebhooks(Pager.defaultPager());
 	}
 
-	default ApiResponse<List<IncomingWebhook>> getIncomingWebhooks(Pager pager) {
+	default ApiResponse<IncomingWebhookList> getIncomingWebhooks(Pager pager) {
 		return getIncomingWebhooks(pager, null);
 	}
 
-	ApiResponse<List<IncomingWebhook>> getIncomingWebhooks(Pager pager, String etag);
+	ApiResponse<IncomingWebhookList> getIncomingWebhooks(Pager pager, String etag);
 
-	default ApiResponse<List<IncomingWebhook>> getIncomingWebhooksForTeam(String teamId) {
+	default ApiResponse<IncomingWebhookList> getIncomingWebhooksForTeam(String teamId) {
 		return getIncomingWebhooksForTeam(teamId, Pager.defaultPager());
 	}
 
-	default ApiResponse<List<IncomingWebhook>> getIncomingWebhooksForTeam(String teamId, Pager pager) {
+	default ApiResponse<IncomingWebhookList> getIncomingWebhooksForTeam(String teamId, Pager pager) {
 		return getIncomingWebhooksForTeam(teamId, pager, null);
 	}
 
-	ApiResponse<List<IncomingWebhook>> getIncomingWebhooksForTeam(String teamId, Pager pager, String etag);
+	ApiResponse<IncomingWebhookList> getIncomingWebhooksForTeam(String teamId, Pager pager, String etag);
 
 	default ApiResponse<IncomingWebhook> getIncomingWebhook(String hookId) {
 		return getIncomingWebhook(hookId, null);

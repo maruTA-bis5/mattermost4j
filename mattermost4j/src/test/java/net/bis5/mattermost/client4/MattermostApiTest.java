@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
@@ -71,6 +72,8 @@ import net.bis5.mattermost.model.ChannelUnread;
 import net.bis5.mattermost.model.ChannelView;
 import net.bis5.mattermost.model.Emoji;
 import net.bis5.mattermost.model.EmojiList;
+import net.bis5.mattermost.model.IncomingWebhook;
+import net.bis5.mattermost.model.IncomingWebhookList;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
@@ -1681,4 +1684,104 @@ public class MattermostApiTest {
 	@Ignore // TODO
 	public void testEmoji_GetCustomEmojiImage() {
 	}
+
+	// Webhooks
+
+	@Test
+	public void testWebhooks_CreateIncomingWebhook() {
+		String channelId = th.basicChannel().getId();
+		String displayName = "webhook" + th.newId();
+		String description = "description" + th.newId();
+		IncomingWebhook webhook = new IncomingWebhook();
+		webhook.setChannelId(channelId);
+		webhook.setDisplayName(displayName);
+		webhook.setDescription(description);
+
+		ApiResponse<IncomingWebhook> response = assertNoError(client.createIncomingWebhook(webhook));
+		webhook = response.readEntity();
+
+		assertThat(webhook.getId(), is(not(nullValue())));
+		assertThat(webhook.getChannelId(), is(channelId));
+		assertThat(webhook.getDisplayName(), is(displayName));
+		assertThat(webhook.getDescription(), is(description));
+	}
+
+	@Test
+	public void testWebhooks_ListIncomingWebhooks() {
+		String channelId = th.basicChannel().getId();
+		IncomingWebhook webhook1 = new IncomingWebhook();
+		webhook1.setChannelId(channelId);
+		IncomingWebhook webhook2 = new IncomingWebhook();
+		webhook2.setChannelId(channelId);
+		webhook1 = assertNoError(client.createIncomingWebhook(webhook1)).readEntity();
+		webhook2 = assertNoError(client.createIncomingWebhook(webhook2)).readEntity();
+
+		th.loginSystemAdmin(); // needs permission for get other team's webhooks
+		ApiResponse<IncomingWebhookList> response = assertNoError(client.getIncomingWebhooks());
+		List<IncomingWebhook> webhooks = response.readEntity();
+
+		assertThat(webhooks.size(), is(greaterThanOrEqualTo(2)));
+		assertThat(webhooks.stream().map(IncomingWebhook::getId).collect(Collectors.toSet()),
+				hasItems(webhook1.getId(), webhook2.getId()));
+	}
+
+	@Test
+	public void testWebhooks_ListIncomingWebhooksForTeam() {
+		String channelId = th.basicChannel().getId();
+		String teamId = th.basicTeam().getId();
+		IncomingWebhook webhook1 = new IncomingWebhook();
+		webhook1.setChannelId(channelId);
+		IncomingWebhook webhook2 = new IncomingWebhook();
+		webhook2.setChannelId(channelId);
+		webhook1 = assertNoError(client.createIncomingWebhook(webhook1)).readEntity();
+		webhook2 = assertNoError(client.createIncomingWebhook(webhook2)).readEntity();
+
+		ApiResponse<IncomingWebhookList> response = assertNoError(client.getIncomingWebhooksForTeam(teamId));
+		List<IncomingWebhook> webhooks = response.readEntity();
+
+		assertThat(webhooks.size(), is(2));
+		assertThat(webhooks.stream().map(IncomingWebhook::getId).collect(Collectors.toSet()),
+				containsInAnyOrder(webhook1.getId(), webhook2.getId()));
+	}
+
+	@Test
+	public void testWebhooks_GetIncomingWebhook() {
+		String channelId = th.basicChannel().getId();
+		IncomingWebhook webhook = new IncomingWebhook();
+		webhook.setChannelId(channelId);
+		webhook = assertNoError(client.createIncomingWebhook(webhook)).readEntity();
+		String webhookId = webhook.getId();
+
+		ApiResponse<IncomingWebhook> response = assertNoError(client.getIncomingWebhook(webhookId));
+		IncomingWebhook responseWebhook = response.readEntity();
+
+		assertThat(responseWebhook, is(not(nullValue())));
+		assertThat(responseWebhook.getId(), is(webhookId));
+	}
+
+	@Test
+	public void testWebhooks_UpdateIncomingWebhook() {
+		String channelId = th.basicChannel().getId();
+		IncomingWebhook webhook = new IncomingWebhook();
+		{
+			webhook.setChannelId(channelId);
+			webhook.setDisplayName(th.newRandomString(32));
+			webhook.setDescription(th.newRandomString(32));
+			webhook = assertNoError(client.createIncomingWebhook(webhook)).readEntity();
+		}
+
+		String newDisplayName = "new" + webhook.getDisplayName();
+		String newDescription = "new" + webhook.getDescription();
+		String newChannelId = th.basicChannel2().getId();
+		webhook.setDisplayName(newDisplayName);
+		webhook.setDescription(newDescription);
+		webhook.setChannelId(newChannelId);
+		ApiResponse<IncomingWebhook> response = assertNoError(client.updateIncomingWebhook(webhook));
+		IncomingWebhook updatedWebhook = response.readEntity();
+
+		assertThat(updatedWebhook.getDisplayName(), is(webhook.getDisplayName()));
+		assertThat(updatedWebhook.getDescription(), is(webhook.getDescription()));
+		assertThat(updatedWebhook.getChannelId(), is(webhook.getChannelId()));
+	}
+
 }
