@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import net.bis5.mattermost.model.config.AnalyticsSettings;
 import net.bis5.mattermost.model.config.AnnouncementSettings;
+import net.bis5.mattermost.model.config.ClientRequirements;
 import net.bis5.mattermost.model.config.ClusterSettings;
 import net.bis5.mattermost.model.config.ComplianceSettings;
 import net.bis5.mattermost.model.config.ElasticsearchSettings;
@@ -84,5 +85,10 @@ public class Config {
 	private JobSettings jobSettings;
 	/** @Since Mattermost Server 4.2 (Enterprise Edition) */
 	private ThemeSettings themeSettings;
+	/**
+	 * @since Mattermost Server 4.2 but experimental. see <a href=
+	 *        "https://github.com/mattermost/mattermost-server/pull/7220">https://github.com/mattermost/mattermost-server/pull/7220</a>
+	 */
+	private ClientRequirements clientRequrements;
 
 }
