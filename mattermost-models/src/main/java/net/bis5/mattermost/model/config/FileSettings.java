@@ -69,5 +69,7 @@ public class FileSettings {
 	private boolean enableMobileUpload;
 	/** @since Mattermost Server 4.1 (Enterprise Edition) */
 	private boolean enableMobileDownload;
+	/** @since Mattermost Server 4.2 */
+	private boolean amazonS3Trace;
 
 }

@@ -40,6 +40,7 @@ import net.bis5.mattermost.model.config.ServiceSettings;
 import net.bis5.mattermost.model.config.SqlSettings;
 import net.bis5.mattermost.model.config.SupportSettings;
 import net.bis5.mattermost.model.config.TeamSettings;
+import net.bis5.mattermost.model.config.ThemeSettings;
 import net.bis5.mattermost.model.config.WebrtcSettings;
 
 /**
@@ -78,5 +79,7 @@ public class Config {
 	private AnnouncementSettings announcementSettings;
 	/** @since Mattermost Server 4.1 (Enterprise Edition) */
 	private JobSettings jobSettings;
+	/** @Since Mattermost Server 4.2 (Enterprise Edition) */
+	private ThemeSettings themeSettings;
 
 }

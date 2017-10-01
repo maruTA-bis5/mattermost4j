@@ -90,5 +90,7 @@ public class ServiceSettings {
 	private boolean enableAPIv3;
 	/** @since Mattermost Server 4.1 */
 	private boolean enableUserAccessToken;
+	/** @since Mattermost Server 4.2 */
+	private String allowedUntrustedInternalConnections;
 
 }

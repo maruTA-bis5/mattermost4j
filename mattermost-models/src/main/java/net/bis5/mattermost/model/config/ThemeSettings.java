@@ -1,5 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.config.ElasticsearchSettings
+ * @(#) net.bis5.mattermost.model.config.ThemeSettings
  * Copyright (c) 2017 Maruyama Takayuki
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,28 +16,22 @@
  */
 package net.bis5.mattermost.model.config;
 
+import java.util.List;
+
 import lombok.Data;
 
 /**
  * TODO 型の説明
  * 
  * @author Maruyama Takayuki
- * @since Mattermost Server 4.1 (Enterprise Edition)
+ * @since Mattermost Server 4.2 (Enterprise Edition)
  */
 @Data
-public class ElasticsearchSettings {
+public class ThemeSettings {
 
-	private String connectionUrl;
-	private String username;
-	private String password;
-	private boolean enableIndexing;
-	private boolean enableSearching;
-	private boolean sniff;
-	private int postIndexReplicas;
-	private int postIndexShards;
-	/** @since Mattermost Server 4.2 (Enterprise Edition) */
-	private String aggregatePostsAfterDays;
-	/** @since Mattermost Server 4.2 (Enterprise Edition) */
-	private String postsAggregatorJobStartTime;
+	private boolean enableThemeSelection;
+	private String defaultTheme;
+	private boolean allowCustomThemes;
+	private List<String> allowedThemes;
 
 }
