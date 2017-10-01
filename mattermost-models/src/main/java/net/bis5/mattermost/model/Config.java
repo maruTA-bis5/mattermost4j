@@ -23,8 +23,10 @@ import net.bis5.mattermost.model.config.AnalyticsSettings;
 import net.bis5.mattermost.model.config.AnnouncementSettings;
 import net.bis5.mattermost.model.config.ClusterSettings;
 import net.bis5.mattermost.model.config.ComplianceSettings;
+import net.bis5.mattermost.model.config.ElasticsearchSettings;
 import net.bis5.mattermost.model.config.EmailSettings;
 import net.bis5.mattermost.model.config.FileSettings;
+import net.bis5.mattermost.model.config.JobSettings;
 import net.bis5.mattermost.model.config.LdapSettings;
 import net.bis5.mattermost.model.config.LocalizationSettings;
 import net.bis5.mattermost.model.config.LogSettings;
@@ -39,6 +41,7 @@ import net.bis5.mattermost.model.config.ServiceSettings;
 import net.bis5.mattermost.model.config.SqlSettings;
 import net.bis5.mattermost.model.config.SupportSettings;
 import net.bis5.mattermost.model.config.TeamSettings;
+import net.bis5.mattermost.model.config.ThemeSettings;
 import net.bis5.mattermost.model.config.WebrtcSettings;
 
 /**
@@ -75,5 +78,11 @@ public class Config {
 	private WebrtcSettings webrtcSettings;
 	/** @since Mattermost Server 3.10 (E10) */
 	private AnnouncementSettings announcementSettings;
+	/** @since Mattermost Server 4.1 (Enterprise Edition) */
+	private ElasticsearchSettings elasticsearchSettings;
+	/** @since Mattermost Server 4.1 (Enterprise Edition) */
+	private JobSettings jobSettings;
+	/** @Since Mattermost Server 4.2 (Enterprise Edition) */
+	private ThemeSettings themeSettings;
 
 }

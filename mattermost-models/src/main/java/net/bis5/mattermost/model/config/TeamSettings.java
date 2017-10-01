@@ -55,5 +55,9 @@ public class TeamSettings {
 	private long MaxNotificationsPerChannel;
 	/** @since Mattermost Server 4.0 */
 	private TeammateNameDisplay teammateNameDisplay;
+	/** @since Mattermost Server 4.2 */
+	private boolean enableXToLeaveChannelFromLHS;
+	/** @since Mattermost Server 4.2 (Enterprise Edition) */
+	private boolean ExperimentalTownSquareIsReadOnly;
 
 }

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
+import net.bis5.mattermost.model.config.consts.EmailNotificationContent;
 
 /**
  * TODO 型の説明
@@ -52,5 +53,9 @@ public class EmailSettings {
 	private int emailBatchingBufferSize;
 	private int emailBatchingInterval;
 	private boolean skipServerCertificateVerification;
+	/** @since Mattermost Server 4.1 */
+	private boolean enableSMTPAuth;
+	/** @since Mattermost Server 4.1 */
+	private EmailNotificationContent emailNotificationContentType;
 
 }
