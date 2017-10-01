@@ -25,6 +25,7 @@ import net.bis5.mattermost.model.config.ClusterSettings;
 import net.bis5.mattermost.model.config.ComplianceSettings;
 import net.bis5.mattermost.model.config.EmailSettings;
 import net.bis5.mattermost.model.config.FileSettings;
+import net.bis5.mattermost.model.config.JobSettings;
 import net.bis5.mattermost.model.config.LdapSettings;
 import net.bis5.mattermost.model.config.LocalizationSettings;
 import net.bis5.mattermost.model.config.LogSettings;
@@ -75,5 +76,7 @@ public class Config {
 	private WebrtcSettings webrtcSettings;
 	/** @since Mattermost Server 3.10 (E10) */
 	private AnnouncementSettings announcementSettings;
+	/** @since Mattermost Server 4.1 (Enterprise Edition) */
+	private JobSettings jobSettings;
 
 }

@@ -63,5 +63,11 @@ public class FileSettings {
 	private boolean amazonS3SSL;
 	/** @since Mattermost Server 3.10 */
 	private boolean amazonS3SignV2;
+	/** @since Mattermost Server 4.1 (Enterprise Edition) */
+	private boolean amazonS3SSE;
+	/** @since Mattermost Server 4.1 (Enterprise Edition) */
+	private boolean enableMobileUpload;
+	/** @since Mattermost Server 4.1 (Enterprise Edition) */
+	private boolean enableMobileDownload;
 
 }
