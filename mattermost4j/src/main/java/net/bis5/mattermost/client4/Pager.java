@@ -36,6 +36,10 @@ public class Pager {
 		return DEFAULT;
 	}
 
+	public Pager nextPage() {
+		return Pager.of(page + 1, perPage);
+	}
+
 	public String toQuery() {
 		return toQuery(true);
 	}
