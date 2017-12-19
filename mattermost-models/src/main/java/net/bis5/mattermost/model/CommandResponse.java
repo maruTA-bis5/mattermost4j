@@ -17,6 +17,7 @@
 package net.bis5.mattermost.model;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -39,6 +40,10 @@ public class CommandResponse {
 	private String username;
 	@JsonProperty("icon_url")
 	private String iconUrl;
+	@JsonProperty("type")
+	private PostType type;
+	@JsonProperty("props")
+	private Map<String, String> props;
 	@JsonProperty("goto_location")
 	private String gotoLocation;
 	@JsonProperty("attachments")

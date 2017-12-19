@@ -63,5 +63,6 @@ public class SlackAttachment {
 	private String footerIcon;
 	@JsonProperty("ts")
 	private Object timestamp; // This is either a string of an int64
-
+	@JsonProperty("actions")
+	private List<PostAction> actions;
 }
