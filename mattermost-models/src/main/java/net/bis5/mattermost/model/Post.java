@@ -66,7 +66,7 @@ public class Post {
 	@JsonProperty("type")
 	private PostType type;
 	@JsonProperty("props")
-	private Map<String, String> props;
+	private Map<String, Object> props;
 	@JsonProperty("hashtags")
 	private String hashtags;
 	@JsonProperty("filenames")
