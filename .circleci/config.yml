@@ -21,9 +21,9 @@ jobs:
     <<: *test-mattermost-base
     docker:
       - image: circleci/openjdk:8-jdk
-      - image: mattermost/mattermost-preview:4.10
+      - image: mattermost/mattermost-preview:4.10.2
   test-mattermost-5.1:
     <<: *test-mattermost-base
     docker:
       - image: circleci/openjdk:8-jdk
-      - image: mattermost/mattermost-preview:5.1
+      - image: mattermost/mattermost-preview:5.1.0
