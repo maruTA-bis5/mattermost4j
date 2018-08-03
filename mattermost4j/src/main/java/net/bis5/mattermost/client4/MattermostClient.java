@@ -94,6 +94,7 @@ import net.bis5.mattermost.model.ChannelSearch;
 import net.bis5.mattermost.model.ChannelStats;
 import net.bis5.mattermost.model.ChannelUnread;
 import net.bis5.mattermost.model.ChannelView;
+import net.bis5.mattermost.model.ChannelViewResponse;
 import net.bis5.mattermost.model.ClusterInfo;
 import net.bis5.mattermost.model.Command;
 import net.bis5.mattermost.model.CommandArgs;
@@ -1688,9 +1689,9 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	 * @return
 	 */
 	@Override
-	public ApiResponse<Boolean> viewChannel(String userId, ChannelView view) {
+	public ApiResponse<ChannelViewResponse> viewChannel(String userId, ChannelView view) {
 		String url = String.format(getChannelsRoute() + "/members/%s/view", userId);
-		return doApiPost(url, view).checkStatusOK();
+		return doApiPost(url, view, ChannelViewResponse.class);
 	}
 
 	/**

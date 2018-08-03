@@ -30,6 +30,7 @@ import net.bis5.mattermost.model.ChannelSearch;
 import net.bis5.mattermost.model.ChannelStats;
 import net.bis5.mattermost.model.ChannelUnread;
 import net.bis5.mattermost.model.ChannelView;
+import net.bis5.mattermost.model.ChannelViewResponse;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.Role;
 
@@ -139,7 +140,7 @@ public interface ChannelApi {
 
 	ApiResponse<ChannelMembers> getChannelMembersForUser(String userId, String teamId, String etag);
 
-	ApiResponse<Boolean> viewChannel(String userId, ChannelView view);
+	ApiResponse<ChannelViewResponse> viewChannel(String userId, ChannelView view);
 
 	ApiResponse<ChannelUnread> getChannelUnread(String channelId, String userId);
 

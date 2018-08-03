@@ -70,6 +70,7 @@ import net.bis5.mattermost.model.ChannelStats;
 import net.bis5.mattermost.model.ChannelType;
 import net.bis5.mattermost.model.ChannelUnread;
 import net.bis5.mattermost.model.ChannelView;
+import net.bis5.mattermost.model.ChannelViewResponse;
 import net.bis5.mattermost.model.Command;
 import net.bis5.mattermost.model.CommandList;
 import net.bis5.mattermost.model.CommandMethod;
@@ -579,8 +580,8 @@ public class MattermostApiTest {
 		Channel channel = th.basicChannel2();
 		ChannelView view = new ChannelView(channel.getId());
 
-		ApiResponse<Boolean> response = assertNoError(client.viewChannel(user.getId(), view));
-		boolean result = response.readEntity().booleanValue();
+		ApiResponse<ChannelViewResponse> response = assertNoError(client.viewChannel(user.getId(), view));
+		boolean result = response.readEntity().isOk();
 
 		assertThat(result, is(true));
 	}
