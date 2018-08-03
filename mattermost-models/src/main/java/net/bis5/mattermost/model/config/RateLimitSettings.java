@@ -36,5 +36,7 @@ public class RateLimitSettings {
 	private int memoryStoreSize;
 	private boolean varyByRemoteAddr;
 	private String varyByHeader;
+	/** @since Mattermost Server 4.7 */
+	private boolean varyByUser;
 
 }

@@ -54,4 +54,17 @@ public class SamlSettings {
 
 	private String loginButtonText;
 
+	/** @since Mattermost Server 4.4 (Enterprise Edition) */
+	private boolean enableSync;
+	/** @since Mattermost Server 4.6 (Enterprise Edition) */
+	private String loginButtonColor;
+	/** @since Mattermost Server 4.6 (Enterprise Edition) */
+	private String loginButtonBorderColor;
+	/** @since Mattermost Server 4.6 (Enterprise Edition) */
+	private String loginButtonTextColor;
+	/** @since Mattermost Server 4.9 */
+	private String scopingIDPProviderId;
+	/** @since Mattermost Server 4.9 */
+	private String scopingIDPName;
+
 }

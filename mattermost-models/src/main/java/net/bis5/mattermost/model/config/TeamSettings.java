@@ -59,5 +59,10 @@ public class TeamSettings {
 	private boolean enableXToLeaveChannelFromLHS;
 	/** @since Mattermost Server 4.2 (Enterprise Edition) */
 	private boolean ExperimentalTownSquareIsReadOnly;
-
+	/** @since Mattermost Server 4.4 */
+	private boolean enableConfirmNotificationsToChannel = true;
+	/** @since Mattermost Server 4.6 */
+	private String experimentalPrimaryTeam;
+	/** @since Mattermost Server 4.10 */
+	private boolean experimentalEnableAutomaticReplies;
 }

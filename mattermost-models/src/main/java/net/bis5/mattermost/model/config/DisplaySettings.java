@@ -1,6 +1,6 @@
 /*
- * @(#) net.bis5.mattermost.model.config.LogSettings
- * Copyright (c) 2016-present, Maruyama Takayuki
+ * @(#) net.bis5.mattermost.model.config.DisplaySettings
+ * Copyright (c) 2018 Maruyama Takayuki
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,22 +23,12 @@ import lombok.Data;
 /**
  * TODO 型の説明
  * 
- * @author takayuki
- * @since 2016/10/09
+ * @author Maruyama Takayuki
+ * @since Mattermost Server 4.9
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LogSettings {
+public class DisplaySettings {
 
-	private boolean enableConsole;
-	private String consoleLevel;
-	private boolean enableFile;
-	private String fileLevel;
-	private String fileLocation;
-	private boolean enableWebhookDebugging;
-	private boolean enableDiagnostics;
-	/** @since Mattermost Server 4.10 */
-	private boolean fileJson = true;
-	/** @since Mattermost Server 4.10 */
-	private boolean consoleJson = true;
+	private boolean experimentalTimezone;
 }

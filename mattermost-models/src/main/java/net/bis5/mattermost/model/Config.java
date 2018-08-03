@@ -24,6 +24,8 @@ import net.bis5.mattermost.model.config.AnnouncementSettings;
 import net.bis5.mattermost.model.config.ClientRequirements;
 import net.bis5.mattermost.model.config.ClusterSettings;
 import net.bis5.mattermost.model.config.ComplianceSettings;
+import net.bis5.mattermost.model.config.DataRetentionSettings;
+import net.bis5.mattermost.model.config.DisplaySettings;
 import net.bis5.mattermost.model.config.ElasticsearchSettings;
 import net.bis5.mattermost.model.config.EmailSettings;
 import net.bis5.mattermost.model.config.FileSettings;
@@ -31,9 +33,11 @@ import net.bis5.mattermost.model.config.JobSettings;
 import net.bis5.mattermost.model.config.LdapSettings;
 import net.bis5.mattermost.model.config.LocalizationSettings;
 import net.bis5.mattermost.model.config.LogSettings;
+import net.bis5.mattermost.model.config.MessageExportSettings;
 import net.bis5.mattermost.model.config.MetricsSettings;
 import net.bis5.mattermost.model.config.NativeAppSettings;
 import net.bis5.mattermost.model.config.PasswordSettings;
+import net.bis5.mattermost.model.config.PluginSettings;
 import net.bis5.mattermost.model.config.PrivacySettings;
 import net.bis5.mattermost.model.config.RateLimitSettings;
 import net.bis5.mattermost.model.config.SSOSettings;
@@ -90,5 +94,12 @@ public class Config {
 	 *        "https://github.com/mattermost/mattermost-server/pull/7220">https://github.com/mattermost/mattermost-server/pull/7220</a>
 	 */
 	private ClientRequirements clientRequrements;
-
+	/** @since Mattermost Server 4.3 (Enterprise Edition) */
+	private DataRetentionSettings dataRetentionSettings;
+	/** @since Mattermost Server 4.4 */
+	private PluginSettings pluginSettings;
+	/** @since Mattermost Server 4.5 (Enterprise Edition) */
+	private MessageExportSettings messageExportSettings;
+	/** @since Mattermost Server 4.9 */
+	private DisplaySettings displaySettings;
 }

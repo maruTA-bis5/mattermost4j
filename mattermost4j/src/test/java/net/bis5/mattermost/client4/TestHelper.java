@@ -82,7 +82,7 @@ public class TestHelper {
 		// config.getEmailSettings().setSmtpPort("9000");
 		// config.getEmailSettings().setFeedbackEmail("test@example.com");
 		config.getTeamSettings().setEnableOpenServer(true);
-		client.updateConfig(config);
+		checkNoError(client.updateConfig(config));
 		client.logout();
 		return this;
 	}

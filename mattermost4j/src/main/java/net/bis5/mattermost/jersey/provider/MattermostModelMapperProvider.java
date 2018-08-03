@@ -23,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import net.bis5.mattermost.model.serialize.MattermostPropertyNamingStrategy;
+
 /**
  * TODO 型の説明
  * 
@@ -35,8 +37,10 @@ public class MattermostModelMapperProvider implements ContextResolver<ObjectMapp
 	final ObjectMapper defaultObjectMapper = createDefaultObjectMapper();
 
 	protected ObjectMapper createDefaultObjectMapper() {
-		return new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-				.setSerializationInclusion(Include.NON_EMPTY);
+		return new ObjectMapper()
+				.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+				.setSerializationInclusion(Include.NON_EMPTY)
+				.setPropertyNamingStrategy(new MattermostPropertyNamingStrategy());
 	}
 
 	/**
