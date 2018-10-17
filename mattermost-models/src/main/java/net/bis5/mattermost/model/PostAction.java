@@ -49,6 +49,15 @@ public class PostAction {
 	public static class PostActionIntegrationRequest {
 		@JsonProperty("user_id")
 		private String userId;
+		/** @since Mattermost Server 5.3 */
+		@JsonProperty("post_id")
+		private String postId;
+		/** @since Mattermost Server 5.3 */
+		@JsonProperty("type")
+		private String type;
+		/** @since Mattermost Server 5.3 */
+		@JsonProperty("data_source")
+		private String dataSource;
 		@JsonProperty("context")
 		private Map<String, String> context;
 	}
