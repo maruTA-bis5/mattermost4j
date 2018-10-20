@@ -48,4 +48,6 @@ public class IncomingWebhook {
 	@JsonProperty("description")
 	private String description;
 
+	private String username;
+	private String iconUrl;
 }

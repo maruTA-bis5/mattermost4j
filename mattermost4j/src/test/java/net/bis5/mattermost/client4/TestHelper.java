@@ -82,7 +82,7 @@ public class TestHelper {
 		// config.getEmailSettings().setSmtpPort("9000");
 		// config.getEmailSettings().setFeedbackEmail("test@example.com");
 		config.getTeamSettings().setEnableOpenServer(true);
-		checkNoError(client.updateConfig(config));
+		config = checkNoError(client.updateConfig(config)).readEntity();
 		client.logout();
 		return this;
 	}
@@ -100,15 +100,12 @@ public class TestHelper {
 		basicUser2 = createUser();
 		linkUserToTeam(basicUser2, basicTeam);
 		// TODO app.~
-		client.addChannelMember(basicChannel.getId(), basicUser.getId());
-		client
-				.addChannelMember(basicChannel.getId(), basicUser2.getId());
-		client
-				.addChannelMember(basicChannel2.getId(), basicUser.getId());
-		client
-				.addChannelMember(basicChannel2.getId(), basicUser2.getId());
-		client.addChannelMember(basicPrivateChannel.getId(), basicUser.getId());
-		client.addChannelMember(basicPrivateChannel.getId(), basicUser2.getId());
+		checkNoError(client.addChannelMember(basicChannel.getId(), basicUser.getId()));
+		checkNoError(client.addChannelMember(basicChannel.getId(), basicUser2.getId()));
+		checkNoError(client.addChannelMember(basicChannel2.getId(), basicUser.getId()));
+		checkNoError(client.addChannelMember(basicChannel2.getId(), basicUser2.getId()));
+		checkNoError(client.addChannelMember(basicPrivateChannel.getId(), basicUser.getId()));
+		checkNoError(client.addChannelMember(basicPrivateChannel.getId(), basicUser2.getId()));
 
 		// linkUserToTeam(systemAdminUser, basicTeam);
 		loginBasic();
