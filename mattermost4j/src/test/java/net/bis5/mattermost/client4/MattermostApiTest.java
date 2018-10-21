@@ -861,7 +861,7 @@ public class MattermostApiTest {
 
 	@Test
 	public void testUsers_UpdateUserActiveStatus() {
-
+		th.logout().loginSystemAdmin();
 		ApiResponse<Boolean> response = assertNoError(client.updateUserActive(th.basicUser().getId(), false));
 		boolean result = response.readEntity();
 
@@ -1305,6 +1305,7 @@ public class MattermostApiTest {
 	}
 
 	@Test
+	@Ignore // we need setup inbucket container in .circleci/config.yml
 	public void testTeams_InviteUsersToTheTeamByEmail() {
 
 		ApiResponse<Boolean> response = assertNoError(
