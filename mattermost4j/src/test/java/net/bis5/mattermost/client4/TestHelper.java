@@ -76,6 +76,7 @@ public class TestHelper {
 		config.getServiceSettings().setEnableIncomingWebhooks(true);
 		config.getServiceSettings().setEnableOutgoingWebhooks(true);
 		config.getServiceSettings().setEnableCommands(true);
+		config.getServiceSettings().setEnableEmailInvitations(true);
 		// TODO un-comment these lines when Dockerfile setup.
 		// config.getEmailSettings().setSendEmailNotifications(true);
 		// config.getEmailSettings().setSmtpServer("localhost");

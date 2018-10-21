@@ -118,4 +118,6 @@ public class ServiceSettings {
 	private boolean allowCookiesForSubdomains;
 	/** @since Mattermost 4.8 */
 	private String websocketURL;
+	/** @since Mattermost Server XXX what ver? */
+	private boolean enableEmailInvitations;
 }
