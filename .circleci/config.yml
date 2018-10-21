@@ -2,8 +2,8 @@ workflows:
   version: 2
   test-supported-versions:
     jobs:
-      - test-mattermost-4.10
-      - test-mattermost-5.1
+      - test-mattermost-esr
+      - test-mattermost-latest
  
 version: 2
 jobs:
@@ -36,11 +36,11 @@ jobs:
       - checkout
       - run: for i in 1 2 3 4 5 6 7 8 9 10; do curl -I "${MATTERMOST_URL:-http://localhost:8065}" || sleep 10 && continue; break; done
       - run: mvn integration-test --show-version
-  test-mattermost-4.10:
+  test-mattermost-esr:
     <<: *test-mattermost-base
     environment:
       MATTERMOST_VERSION: 4.10.4
-  test-mattermost-5.1:
+  test-mattermost-latest:
     <<: *test-mattermost-base
     environment:
       MATTERMOST_VERSION: 5.4.0
