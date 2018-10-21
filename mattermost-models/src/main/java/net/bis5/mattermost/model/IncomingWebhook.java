@@ -50,4 +50,6 @@ public class IncomingWebhook {
 
 	private String username;
 	private String iconUrl;
+	/** @since Mattermost Server XXX what ver? */
+	private boolean channelLocked;
 }
