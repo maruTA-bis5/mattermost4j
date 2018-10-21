@@ -1305,7 +1305,6 @@ public class MattermostApiTest {
 	}
 
 	@Test
-	@Ignore // we need setup inbucket container in .circleci/config.yml
 	public void testTeams_InviteUsersToTheTeamByEmail() {
 
 		ApiResponse<Boolean> response = assertNoError(
