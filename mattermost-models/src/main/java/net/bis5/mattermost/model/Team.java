@@ -58,5 +58,5 @@ public class Team {
 	/** @since Mattermost Server 4.9 */
 	private long lastTeamIconUpdate;
 	/** @since Mattermost Server XXX what ver? */
-	private long schemeId;
+	private String schemeId;
 }
