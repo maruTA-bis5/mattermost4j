@@ -62,4 +62,12 @@ public class LdapSettings {
 	// Customization
 	private String loginFieldName;
 
+	/** @since Mattermost Server 4.4 (Enterprise Edition) */
+	private boolean enableSyncWithLdap;
+	/** @since Mattermost Server 4.6 (Enterprise Edition) */
+	private String loginButtonColor;
+	/** @since Mattermost Server 4.6 (Enterprise Edition) */
+	private String loginButtonBorderColor;
+	/** @since Mattermost Server 4.6 (Enterprise Edition) */
+	private String loginButtonTextColor;
 }

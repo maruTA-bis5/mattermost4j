@@ -2,10 +2,8 @@ workflows:
   version: 2
   test-supported-versions:
     jobs:
-      - test-mattermost-3.9
-      - test-mattermost-3.10
-      - test-mattermost-4.0
-      - test-mattermost-4.1
+      - test-mattermost-esr
+      - test-mattermost-latest
  
 version: 2
 jobs:
@@ -13,29 +11,37 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: circleci/openjdk:8-jdk
+      - image: mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: mostest
+          MYSQL_USER: mmuser
+          MYSQL_PASSWORD: mostest
+          MYSQL_DATABASE: mattermost_test
+      - image: jhillyerd/inbucket:release-2.0.0
     environment:
       MAVEN_OPTS: -Xmx3200m
     steps:
+      - run:
+          name: setup-mattermost-server
+          command: |
+              mkdir ~/work
+              wget https://releases.mattermost.com/${MATTERMOST_VERSION}/mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz -O ~/work/mattermost.tar.gz
+              tar -C ~ -xvf ~/work/mattermost.tar.gz
+              cat ~/mattermost/config/default.json | sed 's/dockerhost/localhost/' | tee ~/mattermost/config/config.json
+      - run: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
+      - run:
+          name: mattermost
+          command: cd ~/mattermost && ~/mattermost/bin/platform
+          background: true
       - checkout
       - run: for i in 1 2 3 4 5 6 7 8 9 10; do curl -I "${MATTERMOST_URL:-http://localhost:8065}" || sleep 10 && continue; break; done
-      - run: mvn integration-test
-  test-mattermost-3.9:
+      - run: mvn integration-test --show-version
+  test-mattermost-esr:
     <<: *test-mattermost-base
-    docker:
-      - image: circleci/openjdk:8-jdk
-      - image: mattermost/mattermost-preview:3.9
-  test-mattermost-3.10:
+    environment:
+      MATTERMOST_VERSION: 4.10.4
+  test-mattermost-latest:
     <<: *test-mattermost-base
-    docker:
-      - image: circleci/openjdk:8-jdk
-      - image: mattermost/mattermost-preview:3.10
-  test-mattermost-4.0:
-    <<: *test-mattermost-base
-    docker:
-      - image: circleci/openjdk:8-jdk
-      - image: mattermost/mattermost-preview:4.0
-  test-mattermost-4.1:
-    <<: *test-mattermost-base
-    docker:
-      - image: circleci/openjdk:8-jdk
-      - image: mattermost/mattermost-preview:4.1
+    environment:
+      MATTERMOST_VERSION: 5.4.0
+

@@ -1,6 +1,6 @@
 /*
- * @(#) net.bis5.mattermost.model.config.RateLimitSettings
- * Copyright (c) 2016-present, Maruyama Takayuki
+ * @(#) net.bis5.mattermost.model.ChannelViewResponse
+ * Copyright (c) 2018 Maruyama Takayuki
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,26 @@
  * 	See the License for the specific language governing permissions and
  * 	limitations under the License.
  */
-package net.bis5.mattermost.model.config;
+package net.bis5.mattermost.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.Map;
 
 import lombok.Data;
 
 /**
  * TODO 型の説明
  * 
- * @author takayuki
- * @since 2016/10/09
+ * @author Maruyama Takayuki
+ * @since Mattermost Server 4.3
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class RateLimitSettings {
+public class ChannelViewResponse {
 
-	private boolean enable;
-	private int perSec;
-	private int maxBurst;
-	private int memoryStoreSize;
-	private boolean varyByRemoteAddr;
-	private String varyByHeader;
-	/** @since Mattermost Server 4.7 */
-	private boolean varyByUser;
+	private String status;
+	private Map<String, Long> lastViewedAtTimes;
+
+	public boolean isOk() {
+		return "ok".equalsIgnoreCase(status);
+	}
 
 }

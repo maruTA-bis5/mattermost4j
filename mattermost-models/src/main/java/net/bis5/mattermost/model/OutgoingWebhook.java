@@ -59,5 +59,9 @@ public class OutgoingWebhook {
 	private String description;
 	@JsonProperty("content_type")
 	private ContentType contentType;
+	/** @since Mattermost Server XXX what ver? */
+	private String username;
+	/** @since Mattermost Server XXX what ver? */
+	private String iconUrl;
 
 }

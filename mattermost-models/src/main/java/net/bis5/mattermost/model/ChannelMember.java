@@ -47,5 +47,10 @@ public class ChannelMember {
 	private Map<String, String> notifyProps;
 	@JsonProperty("last_update_at")
 	private long lastUpdateAt;
-
+	/** @since Mattermost Server XXX what ver? */
+	private boolean schemeUser;
+	/** @since Mattermost Server XXX what ver? */
+	private boolean schemeAdmin;
+	/** @since Mattermost Server XXX what ver? */
+	private String explicitRoles;
 }

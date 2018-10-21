@@ -16,6 +16,8 @@
  */
 package net.bis5.mattermost.model;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
@@ -68,5 +70,9 @@ public class Channel {
 	private long extraUpdateAt;
 	@JsonProperty("creator_id")
 	private String creatorId;
+	/** @since Mattermost Server XXX what ver? */
+	private String schemeId;
+	/** @since Mattermost Server XXX what ver? */
+	private Map<String, String> props;
 
 }

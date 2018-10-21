@@ -35,12 +35,19 @@ public class ElasticsearchSettings {
 	private String password;
 	private boolean enableIndexing;
 	private boolean enableSearching;
-	private boolean sniff;
+	private boolean sniff = true;
 	private int postIndexReplicas;
 	private int postIndexShards;
 	/** @since Mattermost Server 4.2 (Enterprise Edition) */
-	private String aggregatePostsAfterDays;
+	private int aggregatePostsAfterDays = 365;
 	/** @since Mattermost Server 4.2 (Enterprise Edition) */
-	private String postsAggregatorJobStartTime;
-
+	private String postsAggregatorJobStartTime = "03:00";
+	/** @since Mattermost Server 4.3 (Enterprise Edition) */
+	private String indexPrefix;
+	/** @since Mattermost Server 4.4 (Enterprise Edition) */
+	private int liveIndexingBatchSize = 1;
+	/** @since Mattermost Server 4.4 (Enterprise Edition) */
+	private int requestTimeoutSeconds = 30;
+	/** @since Mattermost Server 4.4 (Enterprise Edition) */
+	private int bulkIndexingTimeWindowSeconds = 3600;
 }

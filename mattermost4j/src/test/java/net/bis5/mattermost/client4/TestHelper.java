@@ -76,13 +76,14 @@ public class TestHelper {
 		config.getServiceSettings().setEnableIncomingWebhooks(true);
 		config.getServiceSettings().setEnableOutgoingWebhooks(true);
 		config.getServiceSettings().setEnableCommands(true);
+		config.getServiceSettings().setEnableEmailInvitations(true);
 		// TODO un-comment these lines when Dockerfile setup.
 		// config.getEmailSettings().setSendEmailNotifications(true);
 		// config.getEmailSettings().setSmtpServer("localhost");
 		// config.getEmailSettings().setSmtpPort("9000");
 		// config.getEmailSettings().setFeedbackEmail("test@example.com");
 		config.getTeamSettings().setEnableOpenServer(true);
-		client.updateConfig(config);
+		config = checkNoError(client.updateConfig(config)).readEntity();
 		client.logout();
 		return this;
 	}
@@ -100,15 +101,12 @@ public class TestHelper {
 		basicUser2 = createUser();
 		linkUserToTeam(basicUser2, basicTeam);
 		// TODO app.~
-		client.addChannelMember(basicChannel.getId(), basicUser.getId());
-		client
-				.addChannelMember(basicChannel.getId(), basicUser2.getId());
-		client
-				.addChannelMember(basicChannel2.getId(), basicUser.getId());
-		client
-				.addChannelMember(basicChannel2.getId(), basicUser2.getId());
-		client.addChannelMember(basicPrivateChannel.getId(), basicUser.getId());
-		client.addChannelMember(basicPrivateChannel.getId(), basicUser2.getId());
+		checkNoError(client.addChannelMember(basicChannel.getId(), basicUser.getId()));
+		checkNoError(client.addChannelMember(basicChannel.getId(), basicUser2.getId()));
+		checkNoError(client.addChannelMember(basicChannel2.getId(), basicUser.getId()));
+		checkNoError(client.addChannelMember(basicChannel2.getId(), basicUser2.getId()));
+		checkNoError(client.addChannelMember(basicPrivateChannel.getId(), basicUser.getId()));
+		checkNoError(client.addChannelMember(basicPrivateChannel.getId(), basicUser2.getId()));
 
 		// linkUserToTeam(systemAdminUser, basicTeam);
 		loginBasic();

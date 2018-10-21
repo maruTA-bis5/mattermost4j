@@ -37,6 +37,8 @@ public class TeamSettings {
 	private boolean enableTeamCreation;
 	private boolean enableUserCreation;
 	private boolean enableOpenServer;
+	/** @since Mattermost Server XXX what ver? */
+	private boolean enableUserDeactivate;
 	private String restrictCreationToDomains;
 	private boolean enableCustomBrand;
 	private String customBrandText;
@@ -59,5 +61,10 @@ public class TeamSettings {
 	private boolean enableXToLeaveChannelFromLHS;
 	/** @since Mattermost Server 4.2 (Enterprise Edition) */
 	private boolean ExperimentalTownSquareIsReadOnly;
-
+	/** @since Mattermost Server 4.4 */
+	private boolean enableConfirmNotificationsToChannel = true;
+	/** @since Mattermost Server 4.6 */
+	private String experimentalPrimaryTeam;
+	/** @since Mattermost Server 4.10 */
+	private boolean experimentalEnableAutomaticReplies;
 }

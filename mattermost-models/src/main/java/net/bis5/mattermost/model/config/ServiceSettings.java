@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.AllowEditPost;
 import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
+import net.bis5.mattermost.model.config.consts.GroupUnreadChannels;
+import net.bis5.mattermost.model.config.consts.ImageProxyType;
 import net.bis5.mattermost.model.config.consts.PermissionsDeletePost;
 import net.bis5.mattermost.model.config.consts.RestrictEmojiCreation;
 import net.bis5.mattermost.model.config.consts.WebServerMode;
@@ -86,11 +88,36 @@ public class ServiceSettings {
 	private boolean enableEmojiPicker;
 	/** @since Mattermost Server 4.0 */
 	private boolean enableChannelViewedMessages;
-	/** @since Mattermost Server 4.0 */
-	private boolean enableAPIv3;
+	/** @since Mattermost Server 4.0, change default to false in 4.8 */
+	private boolean enableAPIv3 = false;
 	/** @since Mattermost Server 4.1 */
 	private boolean enableUserAccessToken;
 	/** @since Mattermost Server 4.2 */
 	private String allowedUntrustedInternalConnections;
-
+	/** @since Mattermost Server 4.3 (Enterprise Edition) */
+	private int sessionIdleTimeoutInMinutes;
+	/** @since Mattermost Server 4.4 */
+	private boolean closeUnusedDirectMessages;
+	/** @since Mattermost Server 4.5 */
+	private boolean enablePreviewFeatures = true;
+	/** @since Mattermost Server 4.5 */
+	private boolean experimentalEnableAuthenticationTransfer = true;
+	/** @since Mattermost Server 4.6 */
+	private boolean enableTutorial = true;
+	/** @since Mattermost Server 4.7 */
+	private ImageProxyType imageProxyType;
+	/** @since Mattermost Server 4.7 */
+	private String imageProxyOptions;
+	/** @since Mattermost Server 4.7 */
+	private String imageProxyURL;
+	/** @since Mattermost Server 4.7 */
+	private GroupUnreadChannels experimentalGroupUnreadChannels = GroupUnreadChannels.DISABLED;
+	/** @since Mattermost Server 4.7 */
+	private boolean experimentalEnableDefaultChannelLeaveJoinMessages = true;
+	/** @since Mattermost 4.8 */
+	private boolean allowCookiesForSubdomains;
+	/** @since Mattermost 4.8 */
+	private String websocketURL;
+	/** @since Mattermost Server XXX what ver? */
+	private boolean enableEmailInvitations;
 }

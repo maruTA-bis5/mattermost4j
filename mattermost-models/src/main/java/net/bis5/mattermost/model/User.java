@@ -81,5 +81,7 @@ public class User {
 	private String mfaSecret;
 	@JsonProperty("last_activity_at")
 	private long lastActivityAt;
+	/** @since Mattermost Server 4.9 */
+	private Map<String, String> timezone;
 
 }

@@ -57,5 +57,12 @@ public class EmailSettings {
 	private boolean enableSMTPAuth;
 	/** @since Mattermost Server 4.1 */
 	private EmailNotificationContent emailNotificationContentType;
-
+	/** @since Mattermost Server 4.5 */
+	private boolean useChannelInEmailNotifications;
+	/** @since Mattermost Server 4.6 */
+	private String loginButtonColor;
+	/** @since Mattermost Server 4.6 */
+	private String loginButtonBorderColor;
+	/** @since Mattermost Server 4.6 */
+	private String loginButtonTextColor;
 }

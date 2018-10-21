@@ -48,4 +48,8 @@ public class IncomingWebhook {
 	@JsonProperty("description")
 	private String description;
 
+	private String username;
+	private String iconUrl;
+	/** @since Mattermost Server XXX what ver? */
+	private boolean channelLocked;
 }
