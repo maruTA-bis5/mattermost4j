@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>net.bis5.mattermost</groupId>
-	<artifactId>mattermost-parent</artifactId>
+	<groupId>net.bis5.mattermost4j</groupId>
+	<artifactId>mattermost4j-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Mattermost Parent POM</name>
+	<name>Mattermost4J Parent POM</name>
 	<modules>
 		<module>mattermost4j</module>
 		<module>mattermost-models</module>
@@ -25,7 +25,7 @@
 	<developers>
 		<developer>
 			<id>maruTA-bis5</id>
-			<name>Maruyama Takayuki</name>
+			<name>Takayuki Maruyama</name>
 			<email>bis5.wsys@gmail.com</email>
 			<url>http://entrance.bis5.net</url>
 			<timezone>+9</timezone>
