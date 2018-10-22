@@ -2,16 +2,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>net.bis5.mattermost</groupId>
-		<artifactId>mattermost-parent</artifactId>
+		<groupId>net.bis5.mattermost4j</groupId>
+		<artifactId>mattermost4j-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>mattermost4j</artifactId>
-	<name>Mattermost Client Driver for Java</name>
+	<name>Mattermost APIv4 Client for Java</name>
 
 	<dependencies>
 		<dependency>
-			<groupId>net.bis5.mattermost</groupId>
+			<groupId>net.bis5.mattermost4j</groupId>
 			<artifactId>mattermost-models</artifactId>
 			<version>${project.version}</version>
 		</dependency>
