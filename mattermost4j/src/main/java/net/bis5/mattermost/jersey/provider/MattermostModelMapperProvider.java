@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.jersey.provider.MattermostModelMapperProvider
- * Copyright (c) 2016-present, Maruyama Takayuki
+ * Copyright (c) 2016-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.bis5.mattermost.model.serialize.MattermostPropertyNamingStrategy;
 
 /**
- * TODO 型の説明
+ * Mattermost datamodel mapper
  * 
- * @author takayuki
- * @since 2016/10/23
+ * @author Takayuki Maruyama
  */
 @Provider
 public class MattermostModelMapperProvider implements ContextResolver<ObjectMapper> {

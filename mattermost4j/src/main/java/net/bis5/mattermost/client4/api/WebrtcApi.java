@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.client4.api.WebrtcApi
- * Copyright (c) 2017 Maruyama Takayuki
+ * Copyright (c) 2017 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +19,9 @@ import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.model.WebrtcInfoResponse;
 
 /**
- * TODO 型の説明
+ * WebRTC API
  * 
- * @author Maruyama Takayuki
- * @since 2017/09/09
+ * @author Takayuki Maruyama
  */
 public interface WebrtcApi {
 

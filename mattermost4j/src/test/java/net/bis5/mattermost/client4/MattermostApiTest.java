@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.client4.MattermostApiTest
- * Copyright (c) 2017-present, Maruyama Takayuki
+ * Copyright (c) 2017-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,7 +113,7 @@ import net.bis5.mattermost.model.UserSearch;
 /**
  * Mattermost API call test
  * 
- * @author Maruyama Takayuki
+ * @author Takayuki Maruyama
  */
 public class MattermostApiTest {
 
