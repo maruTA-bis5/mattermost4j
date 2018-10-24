@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.config.consts.EmailNotificationContent
- * Copyright (c) 2017 Maruyama Takayuki
+ * Copyright (c) 2017 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +32,9 @@ import net.bis5.mattermost.model.config.consts.EmailNotificationContent.EmailNot
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * TODO 型の説明
+ * The type of body contents in email notification
  * 
- * @author Maruyama Takayuki
- * @since 2017/10/01
+ * @author Takayuki Maruyama
  */
 @Getter
 @RequiredArgsConstructor

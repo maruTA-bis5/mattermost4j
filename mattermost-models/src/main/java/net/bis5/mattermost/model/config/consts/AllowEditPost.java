@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.config.consts.AllowEditPost
- * Copyright (c) 2017-present, Maruyama Takayuki
+ * Copyright (c) 2017-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,14 +31,13 @@ import net.bis5.mattermost.model.config.consts.AllowEditPost.AllowEditPostDeseri
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * TODO 型の説明
- * 
- * @author Maruyama Takayuki
- * @since 2017/06/08
+ * @author Takayuki Maruyama
+ * @deprecated Removed in Mattermost 4.9
  */
 @JsonSerialize(using = HasCodeSerializer.class)
 @JsonDeserialize(using = AllowEditPostDeserializer.class)
 @Getter
+@Deprecated
 public enum AllowEditPost implements HasCode<AllowEditPost> {
 
 	ALWAYS("always"), NEVER("never"), TIME_LIMIT("time_limit");

@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.config.consts.GroupUnreadChannels
- * Copyright (c) 2018 Maruyama Takayuki
+ * Copyright (c) 2018 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +32,9 @@ import net.bis5.mattermost.model.config.consts.GroupUnreadChannels.GroupUnreadCh
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * TODO 型の説明
+ * The type of grouping unread channels in Left-Hand-Side bar
  * 
- * @author Maruyama Takayuki
- * @since 2018/08/03
+ * @author Takayuki Maruyama
  */
 @JsonSerialize(using = HasCodeSerializer.class)
 @JsonDeserialize(using = GroupUnreadChannelsDeserializer.class)
