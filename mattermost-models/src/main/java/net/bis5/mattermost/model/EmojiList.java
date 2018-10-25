@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.EmojiList
- * Copyright (c) 2017 Maruyama Takayuki
+ * Copyright (c) 2017 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +18,9 @@ package net.bis5.mattermost.model;
 import java.util.ArrayList;
 
 /**
- * TODO 型の説明
+ * List of {@link Emoji}
  * 
- * @author Maruyama Takayuki
- * @since 2017/09/27
+ * @author Takayuki Maruyama
  */
 public class EmojiList extends ArrayList<Emoji> {
 

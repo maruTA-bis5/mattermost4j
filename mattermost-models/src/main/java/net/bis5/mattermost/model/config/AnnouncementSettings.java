@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.config.AnnouncementSettings
- * Copyright (c) 2017 Maruyama Takayuki
+ * Copyright (c) 2017 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +18,9 @@ package net.bis5.mattermost.model.config;
 import lombok.Data;
 
 /**
- * TODO 型の説明
+ * Announcement settings
  * 
- * @author Maruyama Takayuki
+ * @author Takayuki Maruyama
  * @since Mattermost Server 3.10 (E10)
  */
 @Data

@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.License
- * Copyright (c) 2016-present, Maruyama Takayuki
+ * Copyright (c) 2016-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +22,9 @@ import net.bis5.mattermost.model.license.Customer;
 import net.bis5.mattermost.model.license.Features;
 
 /**
- * TODO 型の説明
+ * The Enterprise License
  * 
- * @author takayuki
- * @since 2016/10/09
+ * @author Takayuki Maruyama
  */
 @Data
 public class License {

@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.serialize.MattermostPropertyNamingStrategy
- * Copyright (c) 2018 Maruyama Takayuki
+ * Copyright (c) 2018 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +25,9 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import net.bis5.mattermost.model.Config;
 
 /**
- * TODO 型の説明
+ * The {@link PropertyNamingStrategy} for Mattermost datamodels
  * 
- * @author Maruyama Takayuki
- * @since 2018/08/03
+ * @author Takayuki Maruyama
  */
 @SuppressWarnings("serial")
 public class MattermostPropertyNamingStrategy extends PropertyNamingStrategy {

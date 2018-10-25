@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.ChannelView
- * Copyright (c) 2017-present, Maruyama Takayuki
+ * Copyright (c) 2017-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +21,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * TODO 型の説明
+ * Viewing channel
  * 
- * @author Maruyama Takayuki
- * @since 2017/06/07
+ * @author Takayuki Maruyama
  */
 @Data
 @NoArgsConstructor

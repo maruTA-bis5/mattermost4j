@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.config.plugin.PluginState
- * Copyright (c) 2018 Maruyama Takayuki
+ * Copyright (c) 2018 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +20,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 /**
- * TODO 型の説明
+ * Plugin state
  * 
- * @author Maruyama Takayuki
- * @since 2018/08/03
+ * @author Takayuki Maruyama
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

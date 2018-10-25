@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.ChannelViewResponse
- * Copyright (c) 2018 Maruyama Takayuki
+ * Copyright (c) 2018 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +20,9 @@ import java.util.Map;
 import lombok.Data;
 
 /**
- * TODO 型の説明
+ * ChannelView API call response
  * 
- * @author Maruyama Takayuki
+ * @author Takayuki Maruyama
  * @since Mattermost Server 4.3
  */
 @Data

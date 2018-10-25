@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.ContentType
- * Copyright (c) 2017 Maruyama Takayuki
+ * Copyright (c) 2017 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +31,9 @@ import net.bis5.mattermost.model.ContentType.ContentTypeDeserializer;
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * TODO 型の説明
+ * The type of content-type
  * 
- * @author Maruyama Takayuki
- * @since 2017/09/30
+ * @author Takayuki Maruyama
  */
 @Getter
 @RequiredArgsConstructor
