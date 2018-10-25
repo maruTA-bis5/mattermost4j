@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.config.TeamSettings
- * Copyright (c) 2016-present, Maruyama Takayuki
+ * Copyright (c) 2016-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +22,9 @@ import net.bis5.mattermost.model.config.consts.Permissions;
 import net.bis5.mattermost.model.config.consts.TeammateNameDisplay;
 
 /**
- * TODO 型の説明
+ * Team settings
  * 
- * @author takayuki
- * @since 2016/10/09
+ * @author Takayuki Maruyama
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

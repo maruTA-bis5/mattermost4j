@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.PostAction
- * Copyright (c) 2017 Maruyama Takayuki
+ * Copyright (c) 2017 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +22,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * TODO 型の説明
+ * Post action
  * 
- * @author Maruyama Takayuki
- * @since 2017/12/20
+ * @author Takayuki Maruyama
  */
 @Data
 public class PostAction {

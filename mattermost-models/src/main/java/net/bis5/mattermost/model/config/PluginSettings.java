@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.config.PluginSettings
- * Copyright (c) 2018 Maruyama Takayuki
+ * Copyright (c) 2018 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +23,9 @@ import lombok.Data;
 import net.bis5.mattermost.model.config.plugin.PluginState;
 
 /**
- * TODO 型の説明
+ * Plugin settings
  * 
- * @author Maruyama Takayuki
- * @since 2018/08/03
+ * @author Takayuki Maruyama
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

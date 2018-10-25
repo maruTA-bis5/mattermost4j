@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.PushResponse
- * Copyright (c) 2017-present, Maruyama Takayuki
+ * Copyright (c) 2017-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +18,9 @@ package net.bis5.mattermost.model;
 import java.util.HashMap;
 
 /**
- * TODO 型の説明
+ * push response
  * 
- * @author Maruyama Takayuki
- * @since 2017/06/09
+ * @author Takayuki Maruyama
  */
 public class PushResponse extends HashMap<String, String> {
 	/** $Comment$ */

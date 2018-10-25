@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.WebSocketEventType
- * Copyright (c) 2016-present, Maruyama Takayuki
+ * Copyright (c) 2016-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +28,9 @@ import net.bis5.mattermost.model.WebSocketEventType.WebSocketEventTypeDeserializ
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * TODO 型の説明
+ * Type of Websocket event
  * 
- * @author takayuki
- * @since 2016/10/23
+ * @author Takayuki Maruyama
  */
 @JsonSerialize(using = HasCodeSerializer.class)
 @JsonDeserialize(using = WebSocketEventTypeDeserializer.class)

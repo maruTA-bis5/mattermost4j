@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.Config
- * Copyright (c) 2016-present, Maruyama Takayuki
+ * Copyright (c) 2016-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,10 +49,9 @@ import net.bis5.mattermost.model.config.ThemeSettings;
 import net.bis5.mattermost.model.config.WebrtcSettings;
 
 /**
- * TODO 型の説明
+ * Server Configurations
  * 
- * @author takayuki
- * @since 2016/10/09
+ * @author Takayuki Maruyama
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

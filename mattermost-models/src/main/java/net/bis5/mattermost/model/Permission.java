@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.model.Permission
- * Copyright (c) 2017-present, Maruyama Takayuki
+ * Copyright (c) 2017-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +28,9 @@ import lombok.Getter;
 import net.bis5.mattermost.model.Permission.PermissionDeserializer;
 
 /**
- * TODO 型の説明
+ * The type of permission
  * 
- * @author Maruyama Takayuki
- * @since 2017/06/07
+ * @author Takayuki Maruyama
  */
 @JsonSerialize
 @JsonDeserialize(using = PermissionDeserializer.class)

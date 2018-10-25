@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.client4.model.UpdateUserRolesRequest
- * Copyright (c) 2017-present, Maruyama Takayuki
+ * Copyright (c) 2017-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +22,10 @@ import lombok.Value;
 import net.bis5.mattermost.model.Role;
 
 /**
- * TODO 型の説明
+ * Update user roles request payload
  * 
- * @author Maruyama Takayuki
- * @since 2017/06/14
+ * @see net.bis5.mattermost.client4.api.UserApi#updateUserRoles(String, Role...)
+ * @author Takayuki Maruyama
  */
 @Value
 public class UpdateRolesRequest {

@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.client4.model.UpdateUserActiveRequest
- * Copyright (c) 2017-present, Maruyama Takayuki
+ * Copyright (c) 2017-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +19,11 @@ import lombok.Builder;
 import lombok.Value;
 
 /**
- * TODO 型の説明
+ * Update user active request payload
  * 
- * @author Maruyama Takayuki
- * @since 2017/06/14
+ * @see net.bis5.mattermost.client4.api.UserApi#updateUserActive(String,
+ *      boolean)
+ * @author Takayuki Maruyama
  */
 @Value
 @Builder

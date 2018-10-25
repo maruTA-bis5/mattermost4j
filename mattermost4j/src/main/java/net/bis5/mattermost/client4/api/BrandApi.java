@@ -1,6 +1,5 @@
 /*
- * @(#) net.bis5.mattermost.client4.api.BrandApi
- * Copyright (c) 2017 Maruyama Takayuki
+ * Copyright (c) 2017 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +20,9 @@ import java.nio.file.Path;
 import net.bis5.mattermost.client4.ApiResponse;
 
 /**
- * TODO 型の説明
+ * Branding API
  * 
- * @author Maruyama Takayuki
- * @since 2017/09/09
+ * @author Takayuki Maruyama
  */
 public interface BrandApi {
 
