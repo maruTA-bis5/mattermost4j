@@ -7,6 +7,7 @@
 	<packaging>pom</packaging>
 	<name>Mattermost4J Parent POM</name>
 	<url>https://github.com/maruTA-bis5/mattermost4j</url>
+	<description>Mattermost API client for Java</description>
 	<modules>
 		<module>mattermost4j-core</module>
 		<module>mattermost-models</module>
