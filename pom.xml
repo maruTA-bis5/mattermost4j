@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<name>Mattermost4J Parent POM</name>
 	<modules>
-		<module>mattermost4j</module>
+		<module>mattermost4j-core</module>
 		<module>mattermost-models</module>
 	</modules>
 	<licenses>
