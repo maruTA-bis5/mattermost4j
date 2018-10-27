@@ -6,6 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Mattermost4J Parent POM</name>
+	<url>https://github.com/maruTA-bis5/mattermost4j</url>
 	<modules>
 		<module>mattermost4j-core</module>
 		<module>mattermost-models</module>
