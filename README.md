@@ -1,6 +1,10 @@
 mattermost4j
 ============
 
+[![CircleCI](https://circleci.com/gh/maruTA-bis5/mattermost4j.svg?style=svg)](https://circleci.com/gh/maruTA-bis5/mattermost4j)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.bis5.mattermost4j/mattermost4j-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.bis5.mattermost4j/mattermost4j-core)
+[![Javadocs](http://javadoc.io/badge/net.bis5.mattermost4j/mattermost4j-core.svg)](http://javadoc.io/doc/net.bis5.mattermost4j/mattermost4j-core)
+
 Mattermost API v4 client for Java.
 
 ## Requirement
@@ -18,10 +22,19 @@ client.setAccessToken(token);
 ```
 
 ## Install
-- `git clone https://github.com/maruTA-bis5/mattermost4j.git`
-- `cd mattermost4j && mvn package`
-- Put `mattermost4j/target/mattermost4j.jar` and dependencies into your libraries directory 
-    - We have plan to publish Maven Central
+### Apache Maven:
+```xml
+<dependency>
+	<groupId>net.bis5.mattermost4j</groupId>
+	<artifactId>mattermost4j-core</artifactId>
+	<version>0.0.1</version>
+</dependency>
+```
+
+### Gradle:
+```
+compile 'net.bis5.mattermost4j:mattermost4j-core:0.0.1'
+```
 
 ## Contribution
 1. Fork it ( https://github.com/maruTA-bis5/mattermost4j/fork )
