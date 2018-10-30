@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Response;
@@ -133,7 +134,7 @@ public class MattermostApiTest {
 
 	@Before
 	public void setup() {
-		client = new MattermostClient(APPLICATION);
+		client = new MattermostClient(APPLICATION, Level.WARNING);
 		th.changeClient(client).initBasic();
 	}
 
