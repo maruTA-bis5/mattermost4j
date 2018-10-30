@@ -153,20 +153,21 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	private final String apiUrl;
 	private String authToken;
 	private AuthType authType;
-	private final Client httpClient = buildClient();
+	private final Level clientLogLevel;
+	private final Client httpClient;
 
 	protected Client buildClient() {
-		return ClientBuilder.newBuilder()
+		ClientBuilder builder = ClientBuilder.newBuilder()
 				.register(MattermostModelMapperProvider.class)
 				.register(JacksonFeature.class)
-				.register(
-						new LoggingFeature(Logger.getLogger(getClass().getName()), Level.SEVERE, Verbosity.PAYLOAD_ANY,
-								1000))
 				.register(MultiPartFeature.class)
 				// needs for PUT request with null entity
 				// (/commands/{command_id}/regen_token)
-				.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true)
-				.build();
+				.property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
+		if (clientLogLevel != null) {
+			builder.register(new LoggingFeature(Logger.getLogger(getClass().getName()), clientLogLevel, Verbosity.PAYLOAD_ANY, 1000));
+		}
+		return builder.build();
 	}
 
 	/**
@@ -178,8 +179,14 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 	}
 
 	public MattermostClient(String url) {
+		this(url, null);
+	}
+
+	public MattermostClient(String url, Level logLevel) {
 		this.url = url;
 		this.apiUrl = url + API_URL_SUFFIX;
+		this.clientLogLevel = logLevel;
+		this.httpClient = buildClient();
 	}
 
 	public void setOAuthToken(String token) {
