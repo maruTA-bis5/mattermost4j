@@ -19,7 +19,10 @@ import java.util.Map;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang3.StringUtils;
 
 import lombok.AllArgsConstructor;
 import net.bis5.mattermost.client4.model.ApiError;
@@ -68,9 +71,26 @@ public abstract class ApiResponse<T> {
 	 * @param apiResponse
 	 * @return
 	 */
-	protected ApiResponse<Boolean> checkStatusOK() {
+	public ApiResponse<Boolean> checkStatusOK() {
 		Response response = getRawResponse();
 		response.bufferEntity();
+		if (response.getMediaType().equals(MediaType.TEXT_PLAIN_TYPE)) {
+			return checkPlainStatusOK(response);
+		} else {
+			return checkJsonStatusOK(response);
+		}
+	}
+
+	protected ApiResponse<Boolean> checkPlainStatusOK(Response response) {
+		String status = response.readEntity(String.class);
+		if (StringUtils.equalsIgnoreCase(status, STATUS_OK)) {
+			return ApiResponse.of(response, true);
+		} else {
+			return ApiResponse.of(response, false);
+		}
+	}
+
+	protected ApiResponse<Boolean> checkJsonStatusOK(Response response) {
 		Map<String, String> m = response.readEntity(new GenericType<Map<String, String>>() {
 		});
 		if (m != null && m.getOrDefault(STATUS, "").equalsIgnoreCase(STATUS_OK)) {
