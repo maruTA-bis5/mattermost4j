@@ -26,6 +26,7 @@ import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 import java.io.FileNotFoundException;
@@ -57,6 +58,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import net.bis5.mattermost.client4.hook.IncomingWebhookClient;
 import net.bis5.mattermost.model.Audit;
 import net.bis5.mattermost.model.Audits;
 import net.bis5.mattermost.model.AuthService;
@@ -81,6 +83,7 @@ import net.bis5.mattermost.model.Emoji;
 import net.bis5.mattermost.model.EmojiList;
 import net.bis5.mattermost.model.IncomingWebhook;
 import net.bis5.mattermost.model.IncomingWebhookList;
+import net.bis5.mattermost.model.IncomingWebhookRequest;
 import net.bis5.mattermost.model.OutgoingWebhook;
 import net.bis5.mattermost.model.OutgoingWebhookList;
 import net.bis5.mattermost.model.Post;
@@ -2206,5 +2209,31 @@ public class MattermostApiTest {
 		// "/away" command should return an ephemeral message.
 		assertThat(commandResponse.getResponseType(), is(CommandResponseType.Ephemeral));
 		assertThat(commandResponse.getText(), is(not(nullValue())));
+	}
+
+	@Test
+	public void testHook_IncomingWebhook_Post() {
+		th.logout().loginTeamAdmin();
+		IncomingWebhook webhook = new IncomingWebhook();
+		{
+			String channelId = th.basicChannel().getId();
+			String displayName = "webhook" + th.newId();
+			String description = "description" + th.newId();
+			webhook.setChannelId(channelId);
+			webhook.setDisplayName(displayName);
+			webhook.setDescription(description);
+		}
+		ApiResponse<IncomingWebhook> createWebhookResponse = assertNoError(client.createIncomingWebhook(webhook));
+		webhook = createWebhookResponse.readEntity();
+		String hookUrl = getApplicationUrl() + "/hooks/" + webhook.getId();
+
+		IncomingWebhookRequest payload = new IncomingWebhookRequest();
+		payload.setText("Hello Webhook World");
+		IncomingWebhookClient webhookClient = new IncomingWebhookClient(hookUrl, Level.WARNING);
+
+		ApiResponse<Boolean> response = webhookClient.postByIncomingWebhook(payload);
+
+		assertNoError(response);
+		assertFalse(response.hasError());
 	}
 }
