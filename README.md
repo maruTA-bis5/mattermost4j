@@ -8,7 +8,10 @@ mattermost4j
 Mattermost API v4 client for Java.
 
 ## Requirement
-JDK 8 (9+ will support soon)
+- JDK 8 (9+ will support soon)
+- Mattermost Server
+    - ESR (currently 4.10)
+    - or Latest (5.4)
 
 ## Usage
 ```java
