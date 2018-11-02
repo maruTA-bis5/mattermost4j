@@ -14,6 +14,7 @@ Mattermost API v4 client for Java.
     - or Latest (5.4)
 
 ## Usage
+### Basic API Client
 ```java
 MattermostClient client = new MattermostClient("YOUR-MATTERMOST-URL");
 
@@ -21,7 +22,17 @@ MattermostClient client = new MattermostClient("YOUR-MATTERMOST-URL");
 client.login(loginId, password);
 // Login by Personal Access Token
 client.setAccessToken(token);
+```
 
+### Use Incoming Webhook
+```
+MattermostClient client = new MattermostClient("YOUR-MATTERMOST-URL")
+
+IncomingWebhookRequest payload = new IncomingWebhookRequest();
+payload.setText("Hello World!");
+payload.setUsername("Override Username");
+
+client.postByIncomingWebhook(payload);
 ```
 
 ## Install
@@ -30,13 +41,13 @@ client.setAccessToken(token);
 <dependency>
 	<groupId>net.bis5.mattermost4j</groupId>
 	<artifactId>mattermost4j-core</artifactId>
-	<version>0.0.1</version>
+	<version>0.1.0</version>
 </dependency>
 ```
 
 ### Gradle:
 ```
-compile 'net.bis5.mattermost4j:mattermost4j-core:0.0.1'
+compile 'net.bis5.mattermost4j:mattermost4j-core:0.1.0'
 ```
 
 ## Contribution
