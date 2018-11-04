@@ -44,6 +44,7 @@ import net.bis5.mattermost.model.config.SqlSettings;
 import net.bis5.mattermost.model.config.SupportSettings;
 import net.bis5.mattermost.model.config.TeamSettings;
 import net.bis5.mattermost.model.config.ThemeSettings;
+import net.bis5.mattermost.model.config.TimezoneSettings;
 import net.bis5.mattermost.model.config.WebrtcSettings;
 
 /**
@@ -97,6 +98,8 @@ public class Config {
 	private MessageExportSettings messageExportSettings;
 	/** @since Mattermost Server 4.9 */
 	private DisplaySettings displaySettings;
+	/** @since Mattermost Server 4.9 */
+	private TimezoneSettings timezoneSettings;
 
 	/** @deprecated This is typo. Please use {@link #getClientRequirements()} */
 	@Deprecated
