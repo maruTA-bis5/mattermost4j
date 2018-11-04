@@ -15,8 +15,6 @@
  */
 package net.bis5.mattermost.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 import net.bis5.mattermost.model.config.AnalyticsSettings;
 import net.bis5.mattermost.model.config.AnnouncementSettings;
@@ -54,7 +52,6 @@ import net.bis5.mattermost.model.config.WebrtcSettings;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Config {
 
 	private ServiceSettings serviceSettings;
@@ -91,7 +88,7 @@ public class Config {
 	 * @since Mattermost Server 4.2 but experimental. see <a href=
 	 *        "https://github.com/mattermost/mattermost-server/pull/7220">https://github.com/mattermost/mattermost-server/pull/7220</a>
 	 */
-	private ClientRequirements clientRequrements;
+	private ClientRequirements clientRequirements;
 	/** @since Mattermost Server 4.3 (Enterprise Edition) */
 	private DataRetentionSettings dataRetentionSettings;
 	/** @since Mattermost Server 4.4 */
@@ -100,4 +97,16 @@ public class Config {
 	private MessageExportSettings messageExportSettings;
 	/** @since Mattermost Server 4.9 */
 	private DisplaySettings displaySettings;
+
+	/** @deprecated This is typo. Please use {@link #getClientRequirements()} */
+	@Deprecated
+	public ClientRequirements getClientRequrements() {
+		return getClientRequirements();
+	}
+
+	/** @deprecated This is typo. Please use {@link #setClientRequirements()} */
+	@Deprecated
+	public void setClientRequremenets(ClientRequirements clientRequirements) {
+		setClientRequirements(clientRequirements);
+	}
 }
