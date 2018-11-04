@@ -15,9 +15,9 @@
  */
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * LDAP settings
@@ -25,7 +25,6 @@ import lombok.Data;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class LdapSettings {
 
 	// Basic
@@ -61,11 +60,15 @@ public class LdapSettings {
 	private String loginFieldName;
 
 	/** @since Mattermost Server 4.4 (Enterprise Edition) */
-	private boolean enableSyncWithLdap;
+	private boolean enableSync;
 	/** @since Mattermost Server 4.6 (Enterprise Edition) */
 	private String loginButtonColor;
 	/** @since Mattermost Server 4.6 (Enterprise Edition) */
 	private String loginButtonBorderColor;
 	/** @since Mattermost Server 4.6 (Enterprise Edition) */
 	private String loginButtonTextColor;
+
+	@Getter(onMethod = @__({ @Deprecated }))
+	@Setter(onMethod = @__({ @Deprecated }))
+	private boolean enableSyncWithLdap;
 }
