@@ -15,8 +15,6 @@
  */
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.AllowEditPost;
 import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
@@ -32,7 +30,6 @@ import net.bis5.mattermost.model.config.consts.WebServerMode;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceSettings {
 
 	private String siteUrl;
@@ -81,7 +78,7 @@ public class ServiceSettings {
 	private boolean enableUserStatuses;
 	private int clusterLogTimeoutMilliseconds;
 	/** @since Mattermost Server 3.10 */
-	private int goroutineHealthThreshould;
+	private int goroutineHealthThreshold;
 	/** @since Mattermost Server 4.0 */
 	private boolean enableEmojiPicker;
 	/** @since Mattermost Server 4.0 */
@@ -89,7 +86,7 @@ public class ServiceSettings {
 	/** @since Mattermost Server 4.0, change default to false in 4.8 */
 	private boolean enableAPIv3 = false;
 	/** @since Mattermost Server 4.1 */
-	private boolean enableUserAccessToken;
+	private boolean enableUserAccessTokens;
 	/** @since Mattermost Server 4.2 */
 	private String allowedUntrustedInternalConnections;
 	/** @since Mattermost Server 4.3 (Enterprise Edition) */
@@ -118,4 +115,39 @@ public class ServiceSettings {
 	private String websocketURL;
 	/** @since Mattermost Server XXX what ver? */
 	private boolean enableEmailInvitations;
+
+	/**
+	 * @deprecated This is typo. Please use
+	 *             {@link #getGoroutineHealthThreshold()}
+	 */
+	@Deprecated
+	public int getGoroutineHealthThreshould() {
+		return getGoroutineHealthThreshold();
+	}
+
+	/**
+	 * @deprecated This is typo. Please use
+	 *             {@link #setGoroutineHealthThreshold(int)}
+	 */
+	@Deprecated
+	public void setGoroutineHealthThreshould(int goroutineHealthThresould) {
+		setGoroutineHealthThreshold(goroutineHealthThresould);
+	}
+
+	/**
+	 * @deprecated This is typo. Please use {@link #isEnableUserAccessTokens()}
+	 */
+	@Deprecated
+	public boolean isEnableUserAccessToken() {
+		return isEnableUserAccessTokens();
+	}
+
+	/**
+	 * @deprecated This is typo. Please use
+	 *             {@link #setEnableUserAccessToken(boolean)}
+	 */
+	@Deprecated
+	public void setEnableUserAccessToken(boolean enableUserAccessToken) {
+		setEnableUserAccessTokens(enableUserAccessToken);
+	}
 }
