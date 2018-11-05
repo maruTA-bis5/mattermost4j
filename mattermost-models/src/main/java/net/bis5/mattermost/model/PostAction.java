@@ -56,6 +56,12 @@ public class PostAction {
 		/** @since Mattermost Server 5.3 */
 		@JsonProperty("data_source")
 		private String dataSource;
+		/** @since Mattermost Server 5.4 */
+		@JsonProperty("channel_id")
+		private String channelId;
+		/** @since Mattermost Server 5.4 */
+		@JsonProperty("team_id")
+		private String teamId;
 		@JsonProperty("context")
 		private Map<String, String> context;
 	}
