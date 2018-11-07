@@ -60,6 +60,8 @@ public class EmailSettings {
 	private String loginButtonBorderColor;
 	/** @since Mattermost Server 4.6 */
 	private String loginButtonTextColor;
+	/** @since Mattermost Server 5.0 */
+	private boolean enablePreviewModeBanner;
 
 	/**
 	 * deprecated This is typo. Please use

@@ -115,6 +115,10 @@ public class ServiceSettings {
 	private String websocketURL;
 	/** @since Mattermost Server XXX what ver? */
 	private boolean enableEmailInvitations;
+	/** @since Mattermost Server 5.0 */
+	private boolean enableAPITeamDeletion;
+	/** @since Mattermost Server 5.0 */
+	private boolean experimentalEnableHardenedMode;
 
 	/**
 	 * @deprecated This is typo. Please use

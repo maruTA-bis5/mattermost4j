@@ -62,6 +62,10 @@ public class TeamSettings {
 	private String experimentalPrimaryTeam;
 	/** @since Mattermost Server 4.10 */
 	private boolean experimentalEnableAutomaticReplies;
+	/** @since Mattermost Server 5.0 */
+	private boolean enableUserDeactivation;
+	/** @since Mattermost Server 5.0 */
+	private boolean experimentalHideTownSquareinLHS;
 
 	/**
 	 * @deprecated This is typo. Please use

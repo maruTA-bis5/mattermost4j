@@ -67,6 +67,8 @@ public class LdapSettings {
 	private String loginButtonBorderColor;
 	/** @since Mattermost Server 4.6 (Enterprise Edition) */
 	private String loginButtonTextColor;
+	/** @since Mattermost Server 5.0 */
+	private String loginIdAttribute;
 
 	@Getter(onMethod = @__({ @Deprecated }))
 	@Setter(onMethod = @__({ @Deprecated }))
