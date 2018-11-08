@@ -15,6 +15,8 @@
  */
 package net.bis5.mattermost.model.config;
 
+import java.util.List;
+
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.Permissions;
 import net.bis5.mattermost.model.config.consts.TeammateNameDisplay;
@@ -66,6 +68,10 @@ public class TeamSettings {
 	private boolean enableUserDeactivation;
 	/** @since Mattermost Server 5.0 */
 	private boolean experimentalHideTownSquareinLHS;
+	/** @since Mattermost Server 5.2 */
+	private boolean experimentalViewArchivedChannels;
+	/** @since Mattermost Server 5.2 */
+	private List<String> ExperimentalDefaultChannels;
 
 	/**
 	 * @deprecated This is typo. Please use

@@ -26,6 +26,7 @@ import net.bis5.mattermost.model.config.DisplaySettings;
 import net.bis5.mattermost.model.config.ElasticsearchSettings;
 import net.bis5.mattermost.model.config.EmailSettings;
 import net.bis5.mattermost.model.config.ExperimentalSettings;
+import net.bis5.mattermost.model.config.ExtensionSettings;
 import net.bis5.mattermost.model.config.FileSettings;
 import net.bis5.mattermost.model.config.JobSettings;
 import net.bis5.mattermost.model.config.LdapSettings;
@@ -103,6 +104,8 @@ public class Config {
 	private TimezoneSettings timezoneSettings;
 	/** @since Mattermost Server 5.1 */
 	private ExperimentalSettings experimentalSettings;
+	/** @since Mattermost Server 5.2 */
+	private ExtensionSettings extensionSettings;
 
 	/** @deprecated This is typo. Please use {@link #getClientRequirements()} */
 	@Deprecated

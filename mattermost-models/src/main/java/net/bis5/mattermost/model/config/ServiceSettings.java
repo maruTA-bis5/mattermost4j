@@ -127,6 +127,14 @@ public class ServiceSettings {
 	private String gfycatApiSecret;
 	/** @since Mattermost Server 5.1 */
 	private boolean experimentalLimitClientConfig;
+	/** @since Mattermost Server 5.2 */
+	private String corsExposedHeaders;
+	/** @since Mattermost Server 5.2 */
+	private boolean corsAllowCredentials;
+	/** @since Mattermost Server 5.2 */
+	private boolean corsDebug;
+	/** @since Mattermost Server 5.2 */
+	private boolean experimentalChannelOrganization;
 
 	/**
 	 * @deprecated This is typo. Please use
