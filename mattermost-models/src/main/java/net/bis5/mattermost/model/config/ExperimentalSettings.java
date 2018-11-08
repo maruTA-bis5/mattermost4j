@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-present, Takayuki Maruyama
+ * @(#) net.bis5.mattermost.model.config.ExperimentalSettings
+ * Copyright (c) 2018 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,28 +16,18 @@
  */
 package net.bis5.mattermost.model.config;
 
-import java.util.List;
-
 import lombok.Data;
 
 /**
- * SQL settings
+ * Experimental settings
  * 
  * @author Takayuki Maruyama
+ * @since Mattermost Server 5.1
  */
 @Data
-public class SqlSettings {
+public class ExperimentalSettings {
 
-	private String driverName;
-	private String dataSource;
-	private List<String> dataSourceReplicas;
-	private List<String> dataSourceSearchReplicas;
-	private int maxIdleConns;
-	private int maxOpenConns;
-	private boolean trace;
-	private String atRestEncryptKey;
-	/** @since Mattermost Server 3.10 */
-	private int queryTimeout;
-	/** @since Mattermost Server 5.1 */
-	private int connMaxLifetimeMilliseconds;
+	private boolean clientSideCertEnable;
+	private String clientSideCertCheck;
+
 }

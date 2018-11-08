@@ -119,6 +119,14 @@ public class ServiceSettings {
 	private boolean enableAPITeamDeletion;
 	/** @since Mattermost Server 5.0 */
 	private boolean experimentalEnableHardenedMode;
+	/** @since Mattermost Server 5.1 */
+	private boolean enableGifPicker;
+	/** @since Mattermpst Server 5.1 */
+	private String gfycatApiKey;
+	/** @since Mattermost Server 5.1 */
+	private String gfycatApiSecret;
+	/** @since Mattermost Server 5.1 */
+	private boolean experimentalLimitClientConfig;
 
 	/**
 	 * @deprecated This is typo. Please use
