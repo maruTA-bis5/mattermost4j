@@ -15,8 +15,6 @@
  */
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
 import net.bis5.mattermost.model.config.consts.EmailNotificationContent;
@@ -27,7 +25,6 @@ import net.bis5.mattermost.model.config.consts.EmailNotificationContent;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class EmailSettings {
 
 	private boolean enableSignUpWithEmail;
@@ -54,7 +51,7 @@ public class EmailSettings {
 	/** @since Mattermost Server 4.1 */
 	private boolean enableSMTPAuth;
 	/** @since Mattermost Server 4.1 */
-	private EmailNotificationContent emailNotificationContentType;
+	private EmailNotificationContent emailNotificationContentsType;
 	/** @since Mattermost Server 4.5 */
 	private boolean useChannelInEmailNotifications;
 	/** @since Mattermost Server 4.6 */
@@ -63,4 +60,24 @@ public class EmailSettings {
 	private String loginButtonBorderColor;
 	/** @since Mattermost Server 4.6 */
 	private String loginButtonTextColor;
+	/** @since Mattermost Server 5.0 */
+	private boolean enablePreviewModeBanner;
+
+	/**
+	 * deprecated This is typo. Please use
+	 * {@link #getEmailNotificationContentsType()}
+	 */
+	@Deprecated
+	public EmailNotificationContent getEmailNotificationContentType() {
+		return getEmailNotificationContentsType();
+	}
+
+	/**
+	 * @deprecated This is typo. Please use
+	 *             {@link #setEmailNotificationContentsType(EmailNotificationContent)}
+	 */
+	@Deprecated
+	public void setEmailNotificationContentType(EmailNotificationContent emailNotificationContent) {
+		setEmailNotificationContentsType(emailNotificationContent);
+	}
 }

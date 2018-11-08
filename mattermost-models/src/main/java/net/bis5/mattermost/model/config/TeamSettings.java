@@ -15,7 +15,7 @@
  */
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
 
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.Permissions;
@@ -27,7 +27,6 @@ import net.bis5.mattermost.model.config.consts.TeammateNameDisplay;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class TeamSettings {
 
 	private String siteName;
@@ -56,7 +55,7 @@ public class TeamSettings {
 	/** @since Mattermost Server 4.0 */
 	private TeammateNameDisplay teammateNameDisplay;
 	/** @since Mattermost Server 4.2 */
-	private boolean enableXToLeaveChannelFromLHS;
+	private boolean enableXToLeaveChannelsFromLHS;
 	/** @since Mattermost Server 4.2 (Enterprise Edition) */
 	private boolean ExperimentalTownSquareIsReadOnly;
 	/** @since Mattermost Server 4.4 */
@@ -65,4 +64,30 @@ public class TeamSettings {
 	private String experimentalPrimaryTeam;
 	/** @since Mattermost Server 4.10 */
 	private boolean experimentalEnableAutomaticReplies;
+	/** @since Mattermost Server 5.0 */
+	private boolean enableUserDeactivation;
+	/** @since Mattermost Server 5.0 */
+	private boolean experimentalHideTownSquareinLHS;
+	/** @since Mattermost Server 5.2 */
+	private boolean experimentalViewArchivedChannels;
+	/** @since Mattermost Server 5.2 */
+	private List<String> ExperimentalDefaultChannels;
+
+	/**
+	 * @deprecated This is typo. Please use
+	 *             {@link #isEnableXToLeaveChannelsFromLHS()}
+	 */
+	@Deprecated
+	public boolean isEnableXToLeaveChannelFromLHS() {
+		return isEnableXToLeaveChannelsFromLHS();
+	}
+
+	/**
+	 * @deprecated This is typo. Please use
+	 *             {@link #setEnableXToLeaveChannelsFromLHS(boolean)}
+	 */
+	@Deprecated
+	public void setEnableXToLeaveChannelFromLHS(boolean enableXToLeaveChannelFromLHS) {
+		setEnableXToLeaveChannelsFromLHS(enableXToLeaveChannelFromLHS);
+	}
 }

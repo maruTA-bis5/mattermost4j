@@ -18,6 +18,8 @@ package net.bis5.mattermost.model.config;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * SAML settings
@@ -53,7 +55,7 @@ public class SamlSettings {
 	private String loginButtonText;
 
 	/** @since Mattermost Server 4.4 (Enterprise Edition) */
-	private boolean enableSync;
+	private boolean enableSyncWithLdap;
 	/** @since Mattermost Server 4.6 (Enterprise Edition) */
 	private String loginButtonColor;
 	/** @since Mattermost Server 4.6 (Enterprise Edition) */
@@ -65,4 +67,7 @@ public class SamlSettings {
 	/** @since Mattermost Server 4.9 */
 	private String scopingIDPName;
 
+	@Getter(onMethod = @__({ @Deprecated }))
+	@Setter(onMethod = @__({ @Deprecated }))
+	private boolean enableSync;
 }
