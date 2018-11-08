@@ -39,4 +39,6 @@ public class SqlSettings {
 	private int queryTimeout;
 	/** @since Mattermost Server 5.1 */
 	private int connMaxLifetimeMilliseconds;
+	/** @since Mattermost Server 5.4 */
+	private boolean enablePublicChannelsMaterialization;
 }
