@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016-present, Takayuki Maruyama
+ * @(#) net.bis5.mattermost.model.config.ExperimentalSettings
+ * Copyright (c) 2018 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +19,15 @@ package net.bis5.mattermost.model.config;
 import lombok.Data;
 
 /**
- * Log settings
+ * Experimental settings
  * 
  * @author Takayuki Maruyama
+ * @since Mattermost Server 5.1
  */
 @Data
-public class LogSettings {
+public class ExperimentalSettings {
 
-	private boolean enableConsole;
-	private String consoleLevel;
-	private boolean enableFile;
-	private String fileLevel;
-	private String fileLocation;
-	private boolean enableWebhookDebugging;
-	private boolean enableDiagnostics;
-	/** @since Mattermost Server 4.10 */
-	private boolean fileJson = true;
-	/** @since Mattermost Server 4.10 */
-	private boolean consoleJson = true;
+	private boolean clientSideCertEnable;
+	private String clientSideCertCheck;
+
 }

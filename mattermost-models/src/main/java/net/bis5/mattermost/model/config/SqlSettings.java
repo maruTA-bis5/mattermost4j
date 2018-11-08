@@ -17,8 +17,6 @@ package net.bis5.mattermost.model.config;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 
 /**
@@ -27,7 +25,6 @@ import lombok.Data;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class SqlSettings {
 
 	private String driverName;
@@ -40,4 +37,8 @@ public class SqlSettings {
 	private String atRestEncryptKey;
 	/** @since Mattermost Server 3.10 */
 	private int queryTimeout;
+	/** @since Mattermost Server 5.1 */
+	private int connMaxLifetimeMilliseconds;
+	/** @since Mattermost Server 5.4 */
+	private boolean enablePublicChannelsMaterialization;
 }

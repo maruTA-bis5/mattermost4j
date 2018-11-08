@@ -15,8 +15,6 @@
  */
 package net.bis5.mattermost.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 import net.bis5.mattermost.model.config.AnalyticsSettings;
 import net.bis5.mattermost.model.config.AnnouncementSettings;
@@ -27,6 +25,8 @@ import net.bis5.mattermost.model.config.DataRetentionSettings;
 import net.bis5.mattermost.model.config.DisplaySettings;
 import net.bis5.mattermost.model.config.ElasticsearchSettings;
 import net.bis5.mattermost.model.config.EmailSettings;
+import net.bis5.mattermost.model.config.ExperimentalSettings;
+import net.bis5.mattermost.model.config.ExtensionSettings;
 import net.bis5.mattermost.model.config.FileSettings;
 import net.bis5.mattermost.model.config.JobSettings;
 import net.bis5.mattermost.model.config.LdapSettings;
@@ -46,6 +46,7 @@ import net.bis5.mattermost.model.config.SqlSettings;
 import net.bis5.mattermost.model.config.SupportSettings;
 import net.bis5.mattermost.model.config.TeamSettings;
 import net.bis5.mattermost.model.config.ThemeSettings;
+import net.bis5.mattermost.model.config.TimezoneSettings;
 import net.bis5.mattermost.model.config.WebrtcSettings;
 
 /**
@@ -54,7 +55,6 @@ import net.bis5.mattermost.model.config.WebrtcSettings;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Config {
 
 	private ServiceSettings serviceSettings;
@@ -91,7 +91,7 @@ public class Config {
 	 * @since Mattermost Server 4.2 but experimental. see <a href=
 	 *        "https://github.com/mattermost/mattermost-server/pull/7220">https://github.com/mattermost/mattermost-server/pull/7220</a>
 	 */
-	private ClientRequirements clientRequrements;
+	private ClientRequirements clientRequirements;
 	/** @since Mattermost Server 4.3 (Enterprise Edition) */
 	private DataRetentionSettings dataRetentionSettings;
 	/** @since Mattermost Server 4.4 */
@@ -100,4 +100,22 @@ public class Config {
 	private MessageExportSettings messageExportSettings;
 	/** @since Mattermost Server 4.9 */
 	private DisplaySettings displaySettings;
+	/** @since Mattermost Server 4.9 */
+	private TimezoneSettings timezoneSettings;
+	/** @since Mattermost Server 5.1 */
+	private ExperimentalSettings experimentalSettings;
+	/** @since Mattermost Server 5.2 */
+	private ExtensionSettings extensionSettings;
+
+	/** @deprecated This is typo. Please use {@link #getClientRequirements()} */
+	@Deprecated
+	public ClientRequirements getClientRequrements() {
+		return getClientRequirements();
+	}
+
+	/** @deprecated This is typo. Please use {@link #setClientRequirements()} */
+	@Deprecated
+	public void setClientRequremenets(ClientRequirements clientRequirements) {
+		setClientRequirements(clientRequirements);
+	}
 }

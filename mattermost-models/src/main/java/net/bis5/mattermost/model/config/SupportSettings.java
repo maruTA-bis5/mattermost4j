@@ -15,8 +15,6 @@
  */
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import lombok.Data;
 
 /**
@@ -25,7 +23,6 @@ import lombok.Data;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class SupportSettings {
 
 	private String termsOfServiceLink;
@@ -34,5 +31,7 @@ public class SupportSettings {
 	private String helpLink;
 	private String reportAProblemLink;
 	private String supportEmail;
+	/** @since Mattermost Server 5.4 */
+	private boolean customTermsOfServiceEnabled;
 
 }
