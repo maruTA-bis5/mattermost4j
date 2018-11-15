@@ -4,6 +4,8 @@ workflows:
     jobs:
       - test-mattermost-esr
       - test-mattermost-latest
+      - test-mattermost-previous
+      - test-mattermost-previous2
  
 version: 2
 jobs:
@@ -43,5 +45,12 @@ jobs:
   test-mattermost-latest:
     <<: *test-mattermost-base
     environment:
+      MATTERMOST_VERSION: 5.5.0
+  test-mattermost-previous:
+    <<: *test-mattermost-base
+    environment:
       MATTERMOST_VERSION: 5.4.0
-
+  test-mattermost-previous2:
+    <<: *test-mattermost-base
+    environment:
+      MATTERMOST_VERSION: 5.3.1
