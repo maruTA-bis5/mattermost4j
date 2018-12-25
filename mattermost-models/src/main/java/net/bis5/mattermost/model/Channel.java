@@ -71,6 +71,6 @@ public class Channel {
 	/** @since Mattermost Server XXX what ver? */
 	private String schemeId;
 	/** @since Mattermost Server XXX what ver? */
-	private Map<String, String> props;
+	private Map<String, Object> props;
 
 }
