@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -57,6 +58,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.vdurmont.semver4j.Semver;
 
 import net.bis5.mattermost.client4.hook.IncomingWebhookClient;
 import net.bis5.mattermost.model.Audit;
@@ -632,6 +635,55 @@ public class MattermostApiTest {
 		ChannelUnread unread = response.readEntity();
 
 		assertThat(unread.getChannelId(), is(channel.getId()));
+	}
+
+	/**
+	 * Test case for issue#99
+	 */
+	@Test
+	public void testChannels_GetChannelHasChannelMentionsProp() {
+		Channel channelPublic1 = new Channel("Public 1", "public1", ChannelType.Open, th.basicTeam().getId());
+		ApiResponse<Channel> createChannelResponse = client.createChannel(channelPublic1);
+		if (isNotSupportVersion("5.1.0", createChannelResponse)) {
+			// skip
+			return;
+		}
+		channelPublic1 = assertNoError(createChannelResponse).readEntity();
+
+		Channel channelPublic2 = new Channel("Public 2", "public2", ChannelType.Open, th.basicTeam().getId());
+		channelPublic2 = assertNoError(client.createChannel(channelPublic2)).readEntity();
+
+		Channel channelPrivate = new Channel("Private", "private", ChannelType.Private, th.basicTeam().getId());
+		channelPrivate = assertNoError(client.createChannel(channelPrivate)).readEntity();
+
+		Team otherTeam = th.createTeam();
+		Channel channelOtherTeam = new Channel("Other Team Channel", "other-team", ChannelType.Open, otherTeam.getId());
+		channelOtherTeam = assertNoError(client.createChannel(channelOtherTeam)).readEntity();
+
+		Channel channelNoReference = th.createPublicChannel();
+		channelNoReference.setHeader("No references");
+		channelNoReference.setPurpose("No references");
+		assertNoError(client.updateChannel(channelNoReference));
+		channelNoReference = assertNoError(client.getChannel(channelNoReference.getId())).readEntity();
+		assertThat(channelNoReference.getProps(), is(nullValue()));
+
+		Channel channelOnBasicTeam = th.createPublicChannel();
+		channelOnBasicTeam.setHeader("~public1, ~private, ~other-team");
+		channelOnBasicTeam.setPurpose("~public2, ~private, ~other-team");
+		assertNoError(client.updateChannel(channelOnBasicTeam));
+		channelOnBasicTeam = assertNoError(client.getChannel(channelOnBasicTeam.getId())).readEntity();
+		assertThat(channelOnBasicTeam.getProps().containsKey("channel_mentions"), is(true));
+		@SuppressWarnings("unchecked")
+		Map<String, Map<String, String>> channelMentions = (Map<String, Map<String, String>>) channelOnBasicTeam.getProps().get("channel_mentions");
+		assertThat(channelMentions.containsKey("public1"), is(true));
+		assertThat(channelMentions.get("public1").get("display_name"), is(channelPublic1.getDisplayName()));
+
+	}
+
+	private boolean isNotSupportVersion(String minimumRequirement, ApiResponse<?> response) {
+		Semver serverVersion = new Semver(response.getRawResponse().getHeaderString("X-Version-Id"));
+		Semver requirement = new Semver(minimumRequirement);
+		return serverVersion.compareTo(requirement) < 0;
 	}
 
 	// Users
