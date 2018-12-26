@@ -29,5 +29,7 @@ public class ExperimentalSettings {
 
 	private boolean clientSideCertEnable;
 	private String clientSideCertCheck;
+	/** @since Mattermost Server 5.6 */
+	private boolean enablePostMetadata;
 
 }

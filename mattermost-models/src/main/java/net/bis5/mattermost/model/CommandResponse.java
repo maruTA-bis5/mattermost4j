@@ -46,5 +46,9 @@ public class CommandResponse {
 	private String gotoLocation;
 	@JsonProperty("attachments")
 	private List<SlackAttachment> attachments;
+	/** @since Mattermost Server 5.6 */
+	private String triggerId;
+	/** @since Mattermost Server 5.6 */
+	private List<CommandResponse> extraResponses;
 
 }

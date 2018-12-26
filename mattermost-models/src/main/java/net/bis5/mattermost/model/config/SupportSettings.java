@@ -33,5 +33,7 @@ public class SupportSettings {
 	private String supportEmail;
 	/** @since Mattermost Server 5.4 */
 	private boolean customTermsOfServiceEnabled;
+	/** @since Mattermost Server 5.6 */
+	private int customTermsOfServiceReAcceptancePeriod;
 
 }
