@@ -45,11 +45,11 @@ jobs:
   test-mattermost-latest:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.6.0-rc1
+      MATTERMOST_VERSION: 5.6.2
   test-mattermost-previous:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.5.0
+      MATTERMOST_VERSION: 5.5.1
   test-mattermost-previous2:
     <<: *test-mattermost-base
     environment:
