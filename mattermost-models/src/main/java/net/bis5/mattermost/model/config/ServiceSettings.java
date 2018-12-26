@@ -15,6 +15,8 @@
  */
 package net.bis5.mattermost.model.config;
 
+import java.util.List;
+
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.AllowEditPost;
 import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
@@ -135,6 +137,14 @@ public class ServiceSettings {
 	private boolean corsDebug;
 	/** @since Mattermost Server 5.2 */
 	private boolean experimentalChannelOrganization;
+	/** @since Mattermost Server 5.6 */
+	private String tlsMinVer;
+	/** @since Mattermost Server 5.6 */
+	private boolean tlsStrictTransport;
+	/** @since Mattermost Server 5.6 */
+	private long tlsStrictTransportMaxAge;
+	/** @since Mattermost Server 5.6 */
+	private List<String> tlsOverwriteCiphers;
 
 	/**
 	 * @deprecated This is typo. Please use
