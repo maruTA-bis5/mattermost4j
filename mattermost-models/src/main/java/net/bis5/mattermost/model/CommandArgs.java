@@ -39,5 +39,7 @@ public class CommandArgs {
 	private String parentId;
 	@JsonProperty("command")
 	private String command;
+	/** @since Mattermost Server 5.6 */
+	private String commandArgs;
 
 }
