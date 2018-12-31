@@ -20,7 +20,7 @@ jobs:
       MAVEN_OPTS: -Xmx3200m
     steps:
       - checkout
-      - run: mvn verify -DignoreTests=true --show-version -Dsurefire.useSystemClassLoader=false
+      - run: mvn verify -DskipTests=true --show-version -Dsurefire.useSystemClassLoader=false
   test-mattermost-base: &test-mattermost-base
     working_directory: ~/repo
     docker:
