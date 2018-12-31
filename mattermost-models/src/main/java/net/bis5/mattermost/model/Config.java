@@ -1,17 +1,15 @@
 /*
  * Copyright (c) 2016-present, Takayuki Maruyama
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  * 
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package net.bis5.mattermost.model;
 
@@ -57,65 +55,65 @@ import net.bis5.mattermost.model.config.WebrtcSettings;
 @Data
 public class Config {
 
-	private ServiceSettings serviceSettings;
-	private TeamSettings teamSettings;
-	private SqlSettings sqlSettings;
-	private LogSettings logSettings;
-	private PasswordSettings passwordSettings;
-	private FileSettings fileSettings;
-	private EmailSettings emailSettings;
-	private RateLimitSettings rateLimitSettings;
-	private PrivacySettings privacySettings;
-	private SupportSettings supportSettings;
-	private SSOSettings gitLabSettings;
-	private SSOSettings googleSettings;
-	private SSOSettings office365Settings;
-	private LdapSettings ldapSettings;
-	private ComplianceSettings complianceSettings;
-	private LocalizationSettings localizationSettings;
-	private SamlSettings samlSettings;
-	private NativeAppSettings nativeAppSettings;
-	private ClusterSettings clusterSettings;
-	private MetricsSettings metricsSettings;
-	private AnalyticsSettings analyticsSettings;
-	private WebrtcSettings webrtcSettings;
-	/** @since Mattermost Server 3.10 (E10) */
-	private AnnouncementSettings announcementSettings;
-	/** @since Mattermost Server 4.1 (Enterprise Edition) */
-	private ElasticsearchSettings elasticsearchSettings;
-	/** @since Mattermost Server 4.1 (Enterprise Edition) */
-	private JobSettings jobSettings;
-	/** @Since Mattermost Server 4.2 (Enterprise Edition) */
-	private ThemeSettings themeSettings;
-	/**
-	 * @since Mattermost Server 4.2 but experimental. see <a href=
-	 *        "https://github.com/mattermost/mattermost-server/pull/7220">https://github.com/mattermost/mattermost-server/pull/7220</a>
-	 */
-	private ClientRequirements clientRequirements;
-	/** @since Mattermost Server 4.3 (Enterprise Edition) */
-	private DataRetentionSettings dataRetentionSettings;
-	/** @since Mattermost Server 4.4 */
-	private PluginSettings pluginSettings;
-	/** @since Mattermost Server 4.5 (Enterprise Edition) */
-	private MessageExportSettings messageExportSettings;
-	/** @since Mattermost Server 4.9 */
-	private DisplaySettings displaySettings;
-	/** @since Mattermost Server 4.9 */
-	private TimezoneSettings timezoneSettings;
-	/** @since Mattermost Server 5.1 */
-	private ExperimentalSettings experimentalSettings;
-	/** @since Mattermost Server 5.2 */
-	private ExtensionSettings extensionSettings;
+  private ServiceSettings serviceSettings;
+  private TeamSettings teamSettings;
+  private SqlSettings sqlSettings;
+  private LogSettings logSettings;
+  private PasswordSettings passwordSettings;
+  private FileSettings fileSettings;
+  private EmailSettings emailSettings;
+  private RateLimitSettings rateLimitSettings;
+  private PrivacySettings privacySettings;
+  private SupportSettings supportSettings;
+  private SSOSettings gitLabSettings;
+  private SSOSettings googleSettings;
+  private SSOSettings office365Settings;
+  private LdapSettings ldapSettings;
+  private ComplianceSettings complianceSettings;
+  private LocalizationSettings localizationSettings;
+  private SamlSettings samlSettings;
+  private NativeAppSettings nativeAppSettings;
+  private ClusterSettings clusterSettings;
+  private MetricsSettings metricsSettings;
+  private AnalyticsSettings analyticsSettings;
+  private WebrtcSettings webrtcSettings;
+  /** @since Mattermost Server 3.10 (E10) */
+  private AnnouncementSettings announcementSettings;
+  /** @since Mattermost Server 4.1 (Enterprise Edition) */
+  private ElasticsearchSettings elasticsearchSettings;
+  /** @since Mattermost Server 4.1 (Enterprise Edition) */
+  private JobSettings jobSettings;
+  /** @Since Mattermost Server 4.2 (Enterprise Edition) */
+  private ThemeSettings themeSettings;
+  /**
+   * @since Mattermost Server 4.2 but experimental. see <a href=
+   *        "https://github.com/mattermost/mattermost-server/pull/7220">https://github.com/mattermost/mattermost-server/pull/7220</a>
+   */
+  private ClientRequirements clientRequirements;
+  /** @since Mattermost Server 4.3 (Enterprise Edition) */
+  private DataRetentionSettings dataRetentionSettings;
+  /** @since Mattermost Server 4.4 */
+  private PluginSettings pluginSettings;
+  /** @since Mattermost Server 4.5 (Enterprise Edition) */
+  private MessageExportSettings messageExportSettings;
+  /** @since Mattermost Server 4.9 */
+  private DisplaySettings displaySettings;
+  /** @since Mattermost Server 4.9 */
+  private TimezoneSettings timezoneSettings;
+  /** @since Mattermost Server 5.1 */
+  private ExperimentalSettings experimentalSettings;
+  /** @since Mattermost Server 5.2 */
+  private ExtensionSettings extensionSettings;
 
-	/** @deprecated This is typo. Please use {@link #getClientRequirements()} */
-	@Deprecated
-	public ClientRequirements getClientRequrements() {
-		return getClientRequirements();
-	}
+  /** @deprecated This is typo. Please use {@link #getClientRequirements()} */
+  @Deprecated
+  public ClientRequirements getClientRequrements() {
+    return getClientRequirements();
+  }
 
-	/** @deprecated This is typo. Please use {@link #setClientRequirements()} */
-	@Deprecated
-	public void setClientRequremenets(ClientRequirements clientRequirements) {
-		setClientRequirements(clientRequirements);
-	}
+  /** @deprecated This is typo. Please use {@link #setClientRequirements()} */
+  @Deprecated
+  public void setClientRequremenets(ClientRequirements clientRequirements) {
+    setClientRequirements(clientRequirements);
+  }
 }
