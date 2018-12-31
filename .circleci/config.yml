@@ -1,5 +1,8 @@
 workflows:
   version: 2
+  lint:
+    jobs:
+      - lint
   test-supported-versions:
     jobs:
       - test-mattermost-esr
@@ -9,6 +12,15 @@ workflows:
  
 version: 2
 jobs:
+  lint:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - run: mvn verify --DignoreTests=true --show-version -Dsurefire.useSystemClassLoader=false
   test-mattermost-base: &test-mattermost-base
     working_directory: ~/repo
     docker:
