@@ -57,6 +57,12 @@ compile 'net.bis5.mattermost4j:mattermost4j-core:0.3.0'
 4. Push to the branch (git push origin my-new-feature)
 5. Create new Pull Request
 
+### Code Formatter
+use https://github.com/google/styleguide/{intellij,eclipse}-java-google-style.xml .
+
+### CheckStyle
+Currently, use CheckStyle's built-in `google_checks.xml`.
+
 ## License
 [Apache Software License, Version 2.0](LICENSE.txt)
 
