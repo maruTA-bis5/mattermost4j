@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4;
 
 import java.io.UnsupportedEncodingException;
@@ -135,6 +136,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 /**
+ * Mattermost API Version4 Client default implementation.
  * 
  * @author Maruyama Takayuki
  * @since 2017/06/10
@@ -165,9 +167,6 @@ public class MattermostClient
     return builder.build();
   }
 
-  /**
-   * @see java.lang.AutoCloseable#close()
-   */
   @Override
   public void close() throws Exception {
     httpClient.close();
@@ -177,6 +176,9 @@ public class MattermostClient
     this(url, null);
   }
 
+  /**
+   * Create new MattermosClient instance.
+   */
   public MattermostClient(String url, Level logLevel) {
     this.url = url;
     this.apiUrl = url + API_URL_SUFFIX;
@@ -195,7 +197,8 @@ public class MattermostClient
   }
 
   /**
-   * @param token Personal Access Token to access Mattermost API
+   * Set Personal Access Token that use to access Mattermost API to this client.
+   * 
    * @since Mattermost Server 4.1
    */
   public void setAccessToken(String token) {
@@ -487,58 +490,10 @@ public class MattermostClient
 
   /**
    * authenticates a user by user id and password.
-   * 
-   * @param id
-   * @param password
-   * @return
    */
   @Override
   public User loginById(String id, String password) {
     return login(LoginRequest.builder().id(id).password(password).build());
-  }
-
-  /**
-   * authenticates a user by login id, which can be username, email, or some sort of SSO identifier
-   * based on server configuration, and a password.
-   * 
-   * @param loginId
-   * @param password
-   * @return
-   */
-  @Override
-  public User login(String loginId, String password) {
-    return login(LoginRequest.builder().loginId(loginId).password(password).build());
-  }
-
-  /**
-   * authenticates a user by LDAP id and password.
-   * 
-   * @param loginId
-   * @param password
-   * @return
-   */
-  @Override
-  public User loginByLdap(String loginId, String password) {
-    return login(LoginRequest.builder().loginId(loginId).password(password).ldapOnly(true).build());
-  }
-
-  /**
-   * authenticates a user by login id (username, email or some sort of SSO identifier based on
-   * configuration), password and attaches a device id to the session.
-   * 
-   * @param loginId
-   * @param password
-   * @param deviceId
-   * @return
-   */
-  @Override
-  public User loginWithDevice(String loginId, String password, String deviceId) {
-    return login(
-        LoginRequest.builder().loginId(loginId).password(password).deviceId(deviceId).build());
-  }
-
-  protected User login(LoginRequest param) {
-    return onLogin(doApiPost("/users/login", param)).readEntity();
   }
 
   protected ApiResponse<User> onLogin(ApiResponse<Void> loginResponse) {
@@ -548,6 +503,40 @@ public class MattermostClient
   }
 
   private static final String HEADER_TOKEN = "token";
+
+  protected User login(LoginRequest param) {
+    return onLogin(doApiPost("/users/login", param)).readEntity();
+  }
+
+
+  /**
+   * authenticates a user by login id, which can be username, email, or some sort of SSO identifier
+   * based on server configuration, and a password.
+   */
+  @Override
+  public User login(String loginId, String password) {
+    return login(LoginRequest.builder().loginId(loginId).password(password).build());
+  }
+
+
+  /**
+   * authenticates a user by LDAP id and password.
+   */
+  @Override
+  public User loginByLdap(String loginId, String password) {
+    return login(LoginRequest.builder().loginId(loginId).password(password).ldapOnly(true).build());
+  }
+
+  /**
+   * authenticates a user by login id (username, email or some sort of SSO identifier based on
+   * configuration), password and attaches a device id to the session.
+   */
+  @Override
+  public User loginWithDevice(String loginId, String password, String deviceId) {
+    return login(
+        LoginRequest.builder().loginId(loginId).password(password).deviceId(deviceId).build());
+  }
+
 
   /**
    * terminates the current user's session.
@@ -563,7 +552,7 @@ public class MattermostClient
     authToken = null;
     authType = AuthType.BEARER;
 
-    return logoutResponse.checkStatusOK();
+    return logoutResponse.checkStatusOk();
   }
 
   /**
@@ -581,9 +570,6 @@ public class MattermostClient
 
   /**
    * creates a user in the system based on the provided user object.
-   * 
-   * @param user
-   * @return
    */
   @Override
   public ApiResponse<User> createUser(User user) {
@@ -592,9 +578,6 @@ public class MattermostClient
 
   /**
    * returns the logged in user.
-   * 
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<User> getMe(String etag) {
@@ -605,10 +588,6 @@ public class MattermostClient
 
   /**
    * returns a user based on the provided user id string.
-   * 
-   * @param userId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<User> getUser(String userId, String etag) {
@@ -617,10 +596,6 @@ public class MattermostClient
 
   /**
    * returns a user based pn the provided user name string.
-   * 
-   * @param userName
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<User> getUserByUsername(String userName, String etag) {
@@ -629,10 +604,6 @@ public class MattermostClient
 
   /**
    * returns a user based on the provided user email string.
-   * 
-   * @param email
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<User> getUserByEmail(String email, String etag) {
@@ -641,11 +612,6 @@ public class MattermostClient
 
   /**
    * returns the users on a team based on search term.
-   * 
-   * @param teamId
-   * @param username
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<UserAutocomplete> autocompleteUsersInTeam(String teamId, String username,
@@ -656,12 +622,6 @@ public class MattermostClient
 
   /**
    * returns the users in a channel based on search term.
-   * 
-   * @param teamId
-   * @param channelId
-   * @param username
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<UserAutocomplete> autocompleteUsersInChannel(String teamId, String channelId,
@@ -673,10 +633,6 @@ public class MattermostClient
 
   /**
    * returns the users in the system based on search term.
-   * 
-   * @param username
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<UserAutocomplete> autocompleteUsers(String username, String etag) {
@@ -686,10 +642,6 @@ public class MattermostClient
 
   /**
    * gets user's profile image. Must be logged in or be a system administrator.
-   * 
-   * @param userId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<byte[]> getProfileImage(String userId, String etag) {
@@ -707,10 +659,6 @@ public class MattermostClient
 
   /**
    * returns a page of users on the system. Page counting starts at 0.
-   * 
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<UserList> getUsers(Pager pager, String etag) {
@@ -719,11 +667,6 @@ public class MattermostClient
 
   /**
    * returns a page of users on a team. Page counting starts at 0.
-   * 
-   * @param teamId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<UserList> getUsersInTeam(String teamId, Pager pager, String etag) {
@@ -733,11 +676,6 @@ public class MattermostClient
 
   /**
    * returns a page of users who are not in a team. Page counting starts at 0.
-   * 
-   * @param teamId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<UserList> getUsersNotInTeam(String teamId, Pager pager, String etag) {
@@ -747,11 +685,6 @@ public class MattermostClient
 
   /**
    * returns a page of users on a team. Page counting starts at 0.
-   * 
-   * @param channelId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<UserList> getUsersInChannel(String channelId, Pager pager, String etag) {
@@ -761,12 +694,6 @@ public class MattermostClient
 
   /**
    * returns a page of users on a team. Page counting starts at 0.
-   * 
-   * @param teamId
-   * @param channelId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<UserList> getUsersNotInChannel(String teamId, String channelId, Pager pager,
@@ -778,10 +705,6 @@ public class MattermostClient
 
   /**
    * returns a page of users on the system that aren't on any teams. Page counting starts at 0.
-   * 
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<UserList> getUsersWithoutTeam(Pager pager, String etag) {
@@ -791,9 +714,6 @@ public class MattermostClient
 
   /**
    * returns a list of users based on the provided user ids.
-   * 
-   * @param userIds
-   * @return
    */
   @Override
   public ApiResponse<UserList> getUsersByIds(String... userIds) {
@@ -802,9 +722,6 @@ public class MattermostClient
 
   /**
    * returns a list of users based on the provided usernames.
-   * 
-   * @param usernames
-   * @return
    */
   @Override
   public ApiResponse<UserList> getUsersByUsernames(String... usernames) {
@@ -813,9 +730,6 @@ public class MattermostClient
 
   /**
    * returns a list of users based on some search criteria.
-   * 
-   * @param search
-   * @return
    */
   @Override
   public ApiResponse<UserList> searchUsers(UserSearch search) {
@@ -824,9 +738,6 @@ public class MattermostClient
 
   /**
    * updates a user in the system based on the provided user object.
-   * 
-   * @param user
-   * @return
    */
   @Override
   public ApiResponse<User> updateUser(User user) {
@@ -835,10 +746,6 @@ public class MattermostClient
 
   /**
    * partially updates a user in the system. Any missing fields are not updated.
-   * 
-   * @param userId
-   * @param patch
-   * @return
    */
   @Override
   public ApiResponse<User> patchUser(String userId, UserPatch patch) {
@@ -849,24 +756,16 @@ public class MattermostClient
    * activates multi-factor authentication for a user if activate is true and a valid code is
    * provided. If activate is false, then code is not required and multi-factor authentication is
    * disabled for the user.
-   * 
-   * @param userId
-   * @param code
-   * @param activate
-   * @return
    */
   @Override
   public ApiResponse<Boolean> updateUserMfa(String userId, String code, boolean activate) {
     UpdateUserMfaRequest request =
         UpdateUserMfaRequest.builder().activate(activate).code(code).build();
-    return doApiPut(getUserRoute(userId) + "/mfa", request).checkStatusOK();
+    return doApiPut(getUserRoute(userId) + "/mfa", request).checkStatusOk();
   }
 
   /**
    * checks whether a user has MFA active on their account or not based on the provided login id.
-   * 
-   * @param loginId
-   * @return
    */
   @Override
   public boolean checkUserMfa(String loginId) {
@@ -878,9 +777,6 @@ public class MattermostClient
   /**
    * will generate a new MFA secret for a user and return it as a string and as a base64 encoded
    * image QR code.
-   * 
-   * @param userId
-   * @return
    */
   @Override
   public ApiResponse<MfaSecret> generateMfaSecret(String userId) {
@@ -889,90 +785,63 @@ public class MattermostClient
 
   /**
    * updates a user's password. Must be logged in as the user or be a system administrator.
-   * 
-   * @param userId
-   * @param currentPassword
-   * @param newPassword
-   * @return
    */
   @Override
   public ApiResponse<Boolean> updateUserPassword(String userId, String currentPassword,
       String newPassword) {
     UpdateUserPasswordRequest request = UpdateUserPasswordRequest.builder()
         .currentPassword(currentPassword).newPassword(newPassword).build();
-    return doApiPut(getUserRoute(userId) + "/password", request).checkStatusOK();
+    return doApiPut(getUserRoute(userId) + "/password", request).checkStatusOk();
   }
 
   /**
    * updates a user's roles in the system. A user can have "system_user" and "system_admin" roles.
-   * 
-   * @param userId
-   * @param role
-   * @return
    */
   @Override
   public ApiResponse<Boolean> updateUserRoles(String userId, Role... roles) {
     UpdateRolesRequest request = new UpdateRolesRequest(roles);
-    return doApiPut(getUserRoute(userId) + "/roles", request).checkStatusOK();
+    return doApiPut(getUserRoute(userId) + "/roles", request).checkStatusOk();
   }
 
   /**
    * updates status of a user whether active or not.
-   * 
-   * @param userId
-   * @param active
-   * @return
    */
   @Override
   public ApiResponse<Boolean> updateUserActive(String userId, boolean active) {
     UpdateUserActiveRequest request = UpdateUserActiveRequest.builder().active(active).build();
-    return doApiPut(getUserRoute(userId) + "/active", request).checkStatusOK();
+    return doApiPut(getUserRoute(userId) + "/active", request).checkStatusOk();
   }
 
   /**
    * deactivates a user in the system based on the provided user id string.
-   * 
-   * @param userId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteUser(String userId) {
-    return doApiDelete(getUserRoute(userId)).checkStatusOK();
+    return doApiDelete(getUserRoute(userId)).checkStatusOk();
   }
 
   /**
    * will send a link for password resetting to a user with the provided email.
-   * 
-   * @param email
-   * @return
    */
   @Override
   public ApiResponse<Boolean> sendPasswordResetEmail(String email) {
     SendPasswordResetEmailRequest request =
         SendPasswordResetEmailRequest.builder().email(email).build();
-    return doApiPost(getUsersRoute() + "/password/reset/send", request).checkStatusOK();
+    return doApiPost(getUsersRoute() + "/password/reset/send", request).checkStatusOk();
   }
 
   /**
    * uses a recovery code to update reset a user's password.
-   * 
-   * @param token
-   * @param newPassword
-   * @return
    */
   @Override
   public ApiResponse<Boolean> resetPassword(String token, String newPassword) {
     ResetPasswordRequest request =
         ResetPasswordRequest.builder().token(token).newPassword(newPassword).build();
-    return doApiPost(getUsersRoute() + "/password/reset", request).checkStatusOK();
+    return doApiPost(getUsersRoute() + "/password/reset", request).checkStatusOk();
   }
 
   /**
    * returns a list of sessions based on the provided user id string.
-   * 
-   * @param userId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<SessionList> getSessions(String userId, String etag) {
@@ -981,37 +850,26 @@ public class MattermostClient
 
   /**
    * revokes a user session based on the provided user id and session id strings.
-   * 
-   * @param userId
-   * @param sessionId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> revokeSession(String userId, String sessionId) {
     RevokeSessionRequest request = RevokeSessionRequest.builder().sessionId(sessionId).build();
-    return doApiPost(getUserRoute(userId) + "/sessions/revoke", request).checkStatusOK();
+    return doApiPost(getUserRoute(userId) + "/sessions/revoke", request).checkStatusOk();
   }
 
   /**
-   * attaches a mobile device ID to the current session/
-   * 
-   * @param deviceId
-   * @return
+   * attaches a mobile device ID to the current session.
    */
   @Override
   public ApiResponse<Boolean> attachDeviceId(String deviceId) {
     AttachDeviceIdRequest request = AttachDeviceIdRequest.builder().deviceId(deviceId).build();
-    return doApiPut(getUsersRoute() + "/sessions/device", request).checkStatusOK();
+    return doApiPut(getUsersRoute() + "/sessions/device", request).checkStatusOk();
   }
 
   /**
    * will return a list with TeamUnread objects that contain the amount of unread messages and
    * mentions the current user has for the teams it belongs to. An optional team ID can be set to
    * exclude that team from the results. Must be authenticated.
-   * 
-   * @param userId
-   * @param teamIdToExclude
-   * @return
    */
   @Override
   public ApiResponse<TeamUnreadList> getTeamUnreadForUser(String userId, String teamIdToExclude) {
@@ -1029,11 +887,6 @@ public class MattermostClient
 
   /**
    * returns a list of audit based on the provided user id string.
-   * 
-   * @param userId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<Audits> getUserAudits(String userId, Pager pager, String etag) {
@@ -1042,36 +895,26 @@ public class MattermostClient
 
   /**
    * will verify a user's email using the supplied token.
-   * 
-   * @param token
-   * @return
    */
   @Override
   public ApiResponse<Boolean> verifyUserEmail(String token) {
     VerifyUserEmailRequest request = VerifyUserEmailRequest.builder().token(token).build();
-    return doApiPost(getUsersRoute() + "/email/verify", request).checkStatusOK();
+    return doApiPost(getUsersRoute() + "/email/verify", request).checkStatusOk();
   }
 
   /**
    * will send an email to the user with the provided email addresses, if that user exists. The
    * email will contain a link that can be used to verify the user's email address.
-   * 
-   * @param email
-   * @return
    */
   @Override
   public ApiResponse<Boolean> sendVerificationEmail(String email) {
     SendVerificationEmailRequest request =
         SendVerificationEmailRequest.builder().email(email).build();
-    return doApiPost(getUsersRoute() + "/email/verify/send", request).checkStatusOK();
+    return doApiPost(getUsersRoute() + "/email/verify/send", request).checkStatusOk();
   }
 
   /**
    * sets profile image of the user.
-   * 
-   * @param userId
-   * @param imageFilePath
-   * @return
    */
   @Override
   public ApiResponse<Boolean> setProfileImage(String userId, Path imageFilePath) {
@@ -1081,16 +924,13 @@ public class MattermostClient
     FileDataBodyPart body = new FileDataBodyPart("image", imageFilePath.toFile());
     multiPart.bodyPart(body);
 
-    return doApiPostMultiPart(getUserRoute(userId) + "/image", multiPart).checkStatusOK();
+    return doApiPostMultiPart(getUserRoute(userId) + "/image", multiPart).checkStatusOk();
   }
 
   // Team Section
 
   /**
    * creates a team in the system based on the provided team object.
-   * 
-   * @param team
-   * @return
    */
   @Override
   public ApiResponse<Team> createTeam(Team team) {
@@ -1098,11 +938,7 @@ public class MattermostClient
   }
 
   /**
-   * returns a team based on the provided team is string/
-   * 
-   * @param teamId
-   * @param etag
-   * @return
+   * returns a team based on the provided team id string.
    */
   @Override
   public ApiResponse<Team> getTeam(String teamId, String etag) {
@@ -1111,10 +947,6 @@ public class MattermostClient
 
   /**
    * returns all teams based on permssions.
-   * 
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<TeamList> getAllTeams(Pager pager, String etag) {
@@ -1123,10 +955,6 @@ public class MattermostClient
 
   /**
    * returns a team based on the provided team name string.
-   * 
-   * @param name
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<Team> getTeamByName(String name, String etag) {
@@ -1135,9 +963,6 @@ public class MattermostClient
 
   /**
    * returns teams matching the provided search term.
-   * 
-   * @param search
-   * @return
    */
   @Override
   public ApiResponse<TeamList> searchTeams(TeamSearch search) {
@@ -1146,10 +971,6 @@ public class MattermostClient
 
   /**
    * returns true or false if the team exist or not.
-   * 
-   * @param name
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<TeamExists> teamExists(String name, String etag) {
@@ -1159,10 +980,6 @@ public class MattermostClient
   /**
    * returns a list of teams a user is on. Must be logged in as the user or be a system
    * administrator.
-   * 
-   * @param userId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<TeamList> getTeamsForUser(String userId, String etag) {
@@ -1171,11 +988,6 @@ public class MattermostClient
 
   /**
    * returns a team member based on the provided team and user id strings.
-   * 
-   * @param teamId
-   * @param userId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<TeamMember> getTeamMember(String teamId, String userId, String etag) {
@@ -1184,24 +996,16 @@ public class MattermostClient
 
   /**
    * will update the roles on a team for a user.
-   * 
-   * @param teamId
-   * @param userId
-   * @param newRoles
-   * @return
    */
   @Override
   public ApiResponse<Boolean> updateTeamMemberRoles(String teamId, String userId,
       Role... newRoles) {
     UpdateRolesRequest request = new UpdateRolesRequest(newRoles);
-    return doApiPut(getTeamMemberRoute(teamId, userId) + "/roles", request).checkStatusOK();
+    return doApiPut(getTeamMemberRoute(teamId, userId) + "/roles", request).checkStatusOk();
   }
 
   /**
    * will update a team.
-   * 
-   * @param team
-   * @return
    */
   @Override
   public ApiResponse<Team> updateTeam(Team team) {
@@ -1210,10 +1014,6 @@ public class MattermostClient
 
   /**
    * partially updates a team. Any missing fields are not updated.
-   * 
-   * @param teamId
-   * @param patch
-   * @return
    */
   @Override
   public ApiResponse<Team> patchTeam(String teamId, TeamPatch patch) {
@@ -1223,37 +1023,29 @@ public class MattermostClient
   /**
    * deletes the team softly (archive only, not permanent delete).
    * 
-   * @param teamId
-   * @see {@link #deleteTeam(String, boolean)}
-   * @return
+   * @see #deleteTeam(String, boolean)
    */
   @Override
   public ApiResponse<Boolean> deleteTeam(String teamId) {
-    return doApiDelete(getTeamRoute(teamId)).checkStatusOK();
+    return doApiDelete(getTeamRoute(teamId)).checkStatusOk();
   }
 
   /**
-   * deletes the team
+   * deletes the team.
    * 
-   * @param teamId
    * @param permanent {@code true}: Permanently delete the team, to be used for compliance reasons
    *        only.
-   * @see {@link #deleteTeam(String)}
+   * @see #deleteTeam(String)
    * @return
    */
   @Override
   public ApiResponse<Boolean> deleteTeam(String teamId, boolean permanent) {
     String query = new QueryBuilder().append("permanent", Boolean.toString(permanent)).toString();
-    return doApiDelete(getTeamRoute(teamId) + query).checkStatusOK();
+    return doApiDelete(getTeamRoute(teamId) + query).checkStatusOk();
   }
 
   /**
    * returns team members based on the provided team id string.
-   * 
-   * @param teamId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<TeamMemberList> getTeamMembers(String teamId, Pager pager, String etag) {
@@ -1262,10 +1054,6 @@ public class MattermostClient
 
   /**
    * returns the team member for a user.
-   * 
-   * @param userId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<TeamMemberList> getTeamMembersForUser(String userId, String etag) {
@@ -1275,10 +1063,6 @@ public class MattermostClient
   /**
    * will return an array of team members based on the team id and a list of user ids provided. Must
    * be authenticated.
-   * 
-   * @param teamId
-   * @param userIds
-   * @return
    */
   @Override
   public ApiResponse<TeamMemberList> getTeamMembersByIds(String teamId, String... userIds) {
@@ -1288,9 +1072,6 @@ public class MattermostClient
 
   /**
    * add user to a team and return a team member.
-   * 
-   * @param teamMemberToAdd
-   * @return
    */
   @Override
   public ApiResponse<TeamMember> addTeamMember(TeamMember teamMemberToAdd) {
@@ -1299,12 +1080,8 @@ public class MattermostClient
   }
 
   /**
-   * @param teamId
-   * @param userId
-   * @param hash
-   * @param dataToHash
-   * @param inviteId
-   * @return
+   * Should not use this API because server api changed.
+   * 
    * @deprecated API Change on Mattermost 4.0
    */
   @Deprecated
@@ -1326,10 +1103,6 @@ public class MattermostClient
   /**
    * adds user to a team and return a team member.
    * 
-   * @param hash
-   * @param dataToHash
-   * @param inviteId
-   * @return
    * @since Mattermost 4.0
    */
   @Override
@@ -1348,10 +1121,6 @@ public class MattermostClient
 
   /**
    * adds a number of users to a team and returns the team members.
-   * 
-   * @param teamId
-   * @param userIds
-   * @return
    */
   @Override
   public ApiResponse<TeamMemberList> addTeamMembers(String teamId, String... userIds) {
@@ -1363,22 +1132,14 @@ public class MattermostClient
 
   /**
    * will remove a user from a team.
-   * 
-   * @param teamId
-   * @param userId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> removeTeamMember(String teamId, String userId) {
-    return doApiDelete(getTeamMemberRoute(teamId, userId)).checkStatusOK();
+    return doApiDelete(getTeamMemberRoute(teamId, userId)).checkStatusOk();
   }
 
   /**
    * returns a team stats based on the team id string. Must be authenticated.
-   * 
-   * @param teamId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<TeamStats> getTeamStats(String teamId, String etag) {
@@ -1388,10 +1149,6 @@ public class MattermostClient
   /**
    * will return a TeamUnread object that contains the amount of unread messages and mentions the
    * user has for the specified team. Must be authenticated.
-   * 
-   * @param teamId
-   * @param userId
-   * @return
    */
   @Override
   public ApiResponse<TeamUnread> getTeamUnread(String teamId, String userId) {
@@ -1401,13 +1158,6 @@ public class MattermostClient
 
   /**
    * will import an exported team from other app into a existing team.
-   * 
-   * @param data
-   * @param filesize
-   * @param importFrom
-   * @param fileName
-   * @param teamId
-   * @return
    */
   @Override
   public ApiResponse<byte[]> importTeam(byte[] data, int filesize, String importFrom,
@@ -1418,23 +1168,16 @@ public class MattermostClient
 
   /**
    * invite users by email to the team.
-   * 
-   * @param teamId
-   * @param userEmails
-   * @return
    */
   @Override
   public ApiResponse<Boolean> inviteUsersToTeam(String teamId, Collection<String> userEmails) {
-    return doApiPost(getTeamRoute(teamId) + "/invite/email", userEmails).checkStatusOK();
+    return doApiPost(getTeamRoute(teamId) + "/invite/email", userEmails).checkStatusOk();
   }
 
   // Channel Section
 
   /**
    * creates a channel based on the provided channel object.
-   * 
-   * @param channel
-   * @return
    */
   @Override
   public ApiResponse<Channel> createChannel(Channel channel) {
@@ -1443,9 +1186,6 @@ public class MattermostClient
 
   /**
    * update a channel based on the provided channel object.
-   * 
-   * @param channel
-   * @return
    */
   @Override
   public ApiResponse<Channel> updateChannel(Channel channel) {
@@ -1454,10 +1194,6 @@ public class MattermostClient
 
   /**
    * partially updates a channel. Any missing fields are not updated.
-   * 
-   * @param channelId
-   * @param patch
-   * @return
    */
   @Override
   public ApiResponse<Channel> patchChannel(String channelId, ChannelPatch patch) {
@@ -1466,10 +1202,6 @@ public class MattermostClient
 
   /**
    * creates a direct message channel based on the two user ids provided.
-   * 
-   * @param userId1
-   * @param userId2
-   * @return
    */
   @Override
   public ApiResponse<Channel> createDirectChannel(String userId1, String userId2) {
@@ -1479,9 +1211,6 @@ public class MattermostClient
 
   /**
    * creates a group message channel based on userIds provided.
-   * 
-   * @param userIds
-   * @return
    */
   @Override
   public ApiResponse<Channel> createGroupChannel(String... userIds) {
@@ -1490,10 +1219,6 @@ public class MattermostClient
 
   /**
    * returns a channel based on the provided channel id string.
-   * 
-   * @param channelId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<Channel> getChannel(String channelId, String etag) {
@@ -1502,10 +1227,6 @@ public class MattermostClient
 
   /**
    * returns statistics for a channel.
-   * 
-   * @param channelId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<ChannelStats> getChannelStats(String channelId, String etag) {
@@ -1514,10 +1235,6 @@ public class MattermostClient
 
   /**
    * gets a list of pinned posts.
-   * 
-   * @param channelId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<PostList> getPinnedPosts(String channelId, String etag) {
@@ -1526,11 +1243,6 @@ public class MattermostClient
 
   /**
    * returns a list of public channels based on the provided team id string.
-   * 
-   * @param teamId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<ChannelList> getPublicChannelsForTeam(String teamId, Pager pager,
@@ -1540,10 +1252,6 @@ public class MattermostClient
 
   /**
    * returns a list of public channeld based on provided team id string.
-   * 
-   * @param teamId
-   * @param channelIds
-   * @return
    */
   @Override
   public ApiResponse<ChannelList> getPublicChannelsByIdsForTeam(String teamId,
@@ -1553,11 +1261,6 @@ public class MattermostClient
 
   /**
    * returns a list channels of on a team for user.
-   * 
-   * @param teamId
-   * @param userId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<ChannelList> getChannelsForTeamForUser(String teamId, String userId,
@@ -1568,10 +1271,6 @@ public class MattermostClient
 
   /**
    * returns the channels on a team matching the provided search term.
-   * 
-   * @param teamId
-   * @param search
-   * @return
    */
   @Override
   public ApiResponse<ChannelList> searchChannels(String teamId, ChannelSearch search) {
@@ -1580,22 +1279,14 @@ public class MattermostClient
 
   /**
    * deletes channel based on the provided channel id string.
-   * 
-   * @param channelId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteChannel(String channelId) {
-    return doApiDelete(getChannelRoute(channelId)).checkStatusOK();
+    return doApiDelete(getChannelRoute(channelId)).checkStatusOk();
   }
 
   /**
    * returns a channel based on the provided channel name and team id strings.
-   * 
-   * @param channelName
-   * @param teamId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<Channel> getChannelByName(String channelName, String teamId, String etag) {
@@ -1604,11 +1295,6 @@ public class MattermostClient
 
   /**
    * returns a channel based on the provided channel name and team name strings.
-   * 
-   * @param channelName
-   * @param teamName
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<Channel> getChannelByNameForTeamName(String channelName, String teamName,
@@ -1618,9 +1304,6 @@ public class MattermostClient
 
   /**
    * gets a page of channel members.
-   * 
-   * @param channelId
-   * @return
    */
   @Override
   public ApiResponse<ChannelMembers> getChannelMembers(String channelId, Pager pager, String etag) {
@@ -1630,10 +1313,6 @@ public class MattermostClient
 
   /**
    * gets the channel members in a channel for a list of user ids.
-   * 
-   * @param channelId
-   * @param userIds
-   * @return
    */
   @Override
   public ApiResponse<ChannelMembers> getChannelMembersByIds(String channelId, String... userIds) {
@@ -1642,11 +1321,6 @@ public class MattermostClient
 
   /**
    * gets a channel memner.
-   * 
-   * @param channelId
-   * @param userId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<ChannelMember> getChannelMember(String channelId, String userId, String etag) {
@@ -1655,11 +1329,6 @@ public class MattermostClient
 
   /**
    * gets all the channel members for a user on a team.
-   * 
-   * @param userId
-   * @param teamId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<ChannelMembers> getChannelMembersForUser(String userId, String teamId,
@@ -1671,10 +1340,6 @@ public class MattermostClient
   /**
    * performs a view action for a user. synonymous with switching channels or marking channels as
    * read by a user.
-   * 
-   * @param userId
-   * @param view
-   * @return
    */
   @Override
   public ApiResponse<ChannelViewResponse> viewChannel(String userId, ChannelView view) {
@@ -1685,10 +1350,6 @@ public class MattermostClient
   /**
    * will return a ChannelUnread object that contains the number ofo unread messages and mentions
    * for a user.
-   * 
-   * @param channelId
-   * @param userId
-   * @return
    */
   @Override
   public ApiResponse<ChannelUnread> getChannelUnread(String channelId, String userId) {
@@ -1698,39 +1359,25 @@ public class MattermostClient
 
   /**
    * will update the roles on a channel for a user.
-   * 
-   * @param channelId
-   * @param userId
-   * @param roles
-   * @return
    */
   @Override
   public ApiResponse<Boolean> updateChannelRoles(String channelId, String userId, Role... roles) {
     UpdateRolesRequest request = new UpdateRolesRequest(roles);
-    return doApiPut(getChannelMemberRoute(channelId, userId) + "/roles", request).checkStatusOK();
+    return doApiPut(getChannelMemberRoute(channelId, userId) + "/roles", request).checkStatusOk();
   }
 
   /**
    * will update the notification properties on a channel for a user.
-   * 
-   * @param channelId
-   * @param userId
-   * @param props
-   * @return
    */
   @Override
   public ApiResponse<Boolean> updateChannelNotifyProps(String channelId, String userId,
       Map<String, String> props) {
     return doApiPut(getChannelMemberRoute(channelId, userId) + "/notify_props", props)
-        .checkStatusOK();
+        .checkStatusOk();
   }
 
   /**
    * adds user to channel and return a channel memner.
-   * 
-   * @param channelId
-   * @param userId
-   * @return
    */
   @Override
   public ApiResponse<ChannelMember> addChannelMember(String channelId, String userId) {
@@ -1740,23 +1387,16 @@ public class MattermostClient
 
   /**
    * will delete the channel member object for a user, effectively removing the user from a channel.
-   * 
-   * @param channelId
-   * @param userId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> removeUserFromChannel(String channelId, String userId) {
-    return doApiDelete(getChannelMemberRoute(channelId, userId)).checkStatusOK();
+    return doApiDelete(getChannelMemberRoute(channelId, userId)).checkStatusOk();
   }
 
   // Post Section
 
   /**
    * creates a post based on the provided post object.
-   * 
-   * @param post
-   * @return
    */
   @Override
   public ApiResponse<Post> createPost(Post post) {
@@ -1765,10 +1405,6 @@ public class MattermostClient
 
   /**
    * updates a post based on the provided post object.
-   * 
-   * @param postId
-   * @param post
-   * @return
    */
   @Override
   public ApiResponse<Post> updatePost(String postId, Post post) {
@@ -1777,10 +1413,6 @@ public class MattermostClient
 
   /**
    * partially updates a post. Any missing fields are not updated.
-   * 
-   * @param postId
-   * @param patch
-   * @return
    */
   @Override
   public ApiResponse<Post> patchPost(String postId, PostPatch patch) {
@@ -1789,32 +1421,22 @@ public class MattermostClient
 
   /**
    * pin a post based on proviced post id string.
-   * 
-   * @param postId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> pinPost(String postId) {
-    return doApiPost(getPostRoute(postId) + "/pin", null).checkStatusOK();
+    return doApiPost(getPostRoute(postId) + "/pin", null).checkStatusOk();
   }
 
   /**
    * unpin a post based on provided post id string.
-   * 
-   * @param postId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> unpinPost(String postId) {
-    return doApiPost(getPostRoute(postId) + "/unpin", null).checkStatusOK();
+    return doApiPost(getPostRoute(postId) + "/unpin", null).checkStatusOk();
   }
 
   /**
    * gets a single post.
-   * 
-   * @param postId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<Post> getPost(String postId, String etag) {
@@ -1823,21 +1445,14 @@ public class MattermostClient
 
   /**
    * deletes a post from the provided post id string.
-   * 
-   * @param postId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deletePost(String postId) {
-    return doApiDelete(getPostRoute(postId)).checkStatusOK();
+    return doApiDelete(getPostRoute(postId)).checkStatusOk();
   }
 
   /**
    * gets a post with all the other posts in the same thread.
-   * 
-   * @param postId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<PostList> getPostThread(String postId, String etag) {
@@ -1846,11 +1461,6 @@ public class MattermostClient
 
   /**
    * gets a page of posts with an array for ordering for a channel.
-   * 
-   * @param channelId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<PostList> getPostsForChannel(String channelId, Pager pager, String etag) {
@@ -1859,10 +1469,6 @@ public class MattermostClient
 
   /**
    * returns flagges posts of a user based on user id string.
-   * 
-   * @param userId
-   * @param pager
-   * @return
    */
   @Override
   public ApiResponse<PostList> getFlaggedPostsForUser(String userId, Pager pager) {
@@ -1872,11 +1478,6 @@ public class MattermostClient
 
   /**
    * returns flagged posts in team of a user based on user id string.
-   * 
-   * @param userId
-   * @param teamId
-   * @param pager
-   * @return
    */
   @Override
   public ApiResponse<PostList> getFlaggedPostsForUserInTeam(String userId, String teamId,
@@ -1889,11 +1490,6 @@ public class MattermostClient
 
   /**
    * returns flagged posts in channel of a user based on user id string.
-   * 
-   * @param userId
-   * @param channelId
-   * @param pager
-   * @return
    */
   @Override
   public ApiResponse<PostList> getFlaggedPostsForUserInChannel(String userId, String channelId,
@@ -1906,10 +1502,6 @@ public class MattermostClient
 
   /**
    * gets posts created after a specified time as Unix time in milliseconds.
-   * 
-   * @param channelId
-   * @param time
-   * @return
    */
   @Override
   public ApiResponse<PostList> getPostsSince(String channelId, long time) {
@@ -1919,12 +1511,6 @@ public class MattermostClient
 
   /**
    * gets a page of posts that were posted after the post provided.
-   * 
-   * @param channelId
-   * @param postId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<PostList> getPostsAfter(String channelId, String postId, Pager pager,
@@ -1936,12 +1522,6 @@ public class MattermostClient
 
   /**
    * gets a page of posts that were posted before the post provided.
-   * 
-   * @param channelId
-   * @param postId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<PostList> getPostsBefore(String channelId, String postId, Pager pager,
@@ -1953,11 +1533,6 @@ public class MattermostClient
 
   /**
    * returns any posts with matching term string.
-   * 
-   * @param teamId
-   * @param terms
-   * @param isOrSearch
-   * @return
    */
   @Override
   public ApiResponse<PostList> searchPosts(String teamId, String terms, boolean isOrSearch) {
@@ -1977,7 +1552,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> getPing() {
-    return doApiGet(getSystemRoute() + "/ping", null).checkStatusOK();
+    return doApiGet(getSystemRoute() + "/ping", null).checkStatusOk();
   }
 
   /**
@@ -1987,7 +1562,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> testEmail() {
-    return doApiPost(getTestEmailRoute(), null).checkStatusOK();
+    return doApiPost(getTestEmailRoute(), null).checkStatusOk();
   }
 
   /**
@@ -2007,15 +1582,12 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> reloadConfig() {
-    return doApiPost(getConfigRoute() + "/reload", null).checkStatusOK();
+    return doApiPost(getConfigRoute() + "/reload", null).checkStatusOk();
   }
 
   /**
    * will retrieve the parts of the server configuration needed by the client, formatted in the old
    * format.
-   * 
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<Map<String, String>> getOldClientConfig(String etag) {
@@ -2025,9 +1597,6 @@ public class MattermostClient
   /**
    * will retrieve the parts of the server license needed by the client, formatted in the old
    * format.
-   * 
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<Map<String, String>> getOldClientLicense(String etag) {
@@ -2041,7 +1610,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> databaseRecycle() {
-    return doApiPost(getDatabaseRoute() + "/recycle", null).checkStatusOK();
+    return doApiPost(getDatabaseRoute() + "/recycle", null).checkStatusOk();
   }
 
   /**
@@ -2051,14 +1620,11 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> invalidateCaches() {
-    return doApiPost(getCacheRoute() + "/invalidate", null).checkStatusOK();
+    return doApiPost(getCacheRoute() + "/invalidate", null).checkStatusOk();
   }
 
   /**
    * will update the server configuration.
-   * 
-   * @param config
-   * @return
    */
   @Override
   public ApiResponse<Config> updateConfig(Config config) {
@@ -2069,9 +1635,6 @@ public class MattermostClient
 
   /**
    * creates an incoming webhook for a channel.
-   * 
-   * @param hook
-   * @return
    */
   @Override
   public ApiResponse<IncomingWebhook> createIncomingWebhook(IncomingWebhook hook) {
@@ -2080,9 +1643,6 @@ public class MattermostClient
 
   /**
    * updates an incoming webhook for a channel.
-   * 
-   * @param hook
-   * @return
    */
   @Override
   public ApiResponse<IncomingWebhook> updateIncomingWebhook(IncomingWebhook hook) {
@@ -2091,10 +1651,6 @@ public class MattermostClient
 
   /**
    * returns a page of incoming webhooks on the system. Page counting starts at 0.
-   * 
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<IncomingWebhookList> getIncomingWebhooks(Pager pager, String etag) {
@@ -2103,11 +1659,6 @@ public class MattermostClient
 
   /**
    * returns a page of incoming webhooks for a team. Page counting starts at 0.
-   * 
-   * @param teamId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<IncomingWebhookList> getIncomingWebhooksForTeam(String teamId, Pager pager,
@@ -2119,10 +1670,6 @@ public class MattermostClient
 
   /**
    * returns an Incoming webhook given the hook id.
-   * 
-   * @param hookId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<IncomingWebhook> getIncomingWebhook(String hookId, String etag) {
@@ -2131,20 +1678,14 @@ public class MattermostClient
 
   /**
    * deletes an Incoming Webhook given the hook id.
-   * 
-   * @param hookId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteIncomingWebhook(String hookId) {
-    return doApiDelete(getIncomingWebhookRoute(hookId)).checkStatusOK();
+    return doApiDelete(getIncomingWebhookRoute(hookId)).checkStatusOk();
   }
 
   /**
    * creates an outgoing webhook for a team or channel.
-   * 
-   * @param hook
-   * @return
    */
   @Override
   public ApiResponse<OutgoingWebhook> createOutgoingWebhook(OutgoingWebhook hook) {
@@ -2153,9 +1694,6 @@ public class MattermostClient
 
   /**
    * updates an outgoing webhook.
-   * 
-   * @param hook
-   * @return
    */
   @Override
   public ApiResponse<OutgoingWebhook> updateOutgoingWebhook(OutgoingWebhook hook) {
@@ -2164,10 +1702,6 @@ public class MattermostClient
 
   /**
    * returns a page of outgoing webhooks ont eh system. Page counting starts at 0.
-   * 
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<OutgoingWebhookList> getOutgoingWebhooks(Pager pager, String etag) {
@@ -2176,9 +1710,6 @@ public class MattermostClient
 
   /**
    * outgoing webhooks on the system requested by hook id.
-   * 
-   * @param hookId
-   * @return
    */
   @Override
   public ApiResponse<OutgoingWebhook> getOutgoingWebhook(String hookId) {
@@ -2187,11 +1718,6 @@ public class MattermostClient
 
   /**
    * returns a page of outgoing webhooks for a channel. Page counting starts at 0.
-   * 
-   * @param channelId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForChannel(String channelId,
@@ -2203,11 +1729,6 @@ public class MattermostClient
 
   /**
    * returns a page of outgoing webhooks for a team. Page counting starts at 0.
-   * 
-   * @param teamId
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForTeam(String teamId, Pager pager,
@@ -2219,9 +1740,6 @@ public class MattermostClient
 
   /**
    * regenerate the outgoing webhook token.
-   * 
-   * @param hookId
-   * @return
    */
   @Override
   public ApiResponse<OutgoingWebhook> regenOutgoingHookToken(String hookId) {
@@ -2230,22 +1748,16 @@ public class MattermostClient
 
   /**
    * delete the outgoing webhook on the system requested by hook id.
-   * 
-   * @param hookId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteOutgoingWebhook(String hookId) {
-    return doApiDelete(getOutgoingWebhookRoute(hookId)).checkStatusOK();
+    return doApiDelete(getOutgoingWebhookRoute(hookId)).checkStatusOk();
   }
 
   // Preferences Section
 
   /**
    * returns the user's preferences.
-   * 
-   * @param userId
-   * @return
    */
   @Override
   public ApiResponse<Preferences> getPreferences(String userId) {
@@ -2254,34 +1766,22 @@ public class MattermostClient
 
   /**
    * saves the user's preferences.
-   * 
-   * @param userId
-   * @param preferences
-   * @return
    */
   @Override
   public ApiResponse<Boolean> updatePreferences(String userId, Preferences preferences) {
-    return doApiPut(getPreferencesRoute(userId), preferences).checkStatusOK();
+    return doApiPut(getPreferencesRoute(userId), preferences).checkStatusOk();
   }
 
   /**
    * deletes the user's preferences.
-   * 
-   * @param userId
-   * @param preferences
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deletePreferences(String userId, Preferences preferences) {
-    return doApiPost(getPreferencesRoute(userId) + "/delete", preferences).checkStatusOK();
+    return doApiPost(getPreferencesRoute(userId) + "/delete", preferences).checkStatusOk();
   }
 
   /**
    * returns the user's preferences from the provided category string.
-   * 
-   * @param userId
-   * @param category
-   * @return
    */
   @Override
   public ApiResponse<Preferences> getPreferencesByCategory(String userId,
@@ -2292,11 +1792,6 @@ public class MattermostClient
 
   /**
    * returns the user's preferences from the provided category and preference name string.
-   * 
-   * @param userId
-   * @param category
-   * @param preferenceName
-   * @return
    */
   @Override
   public ApiResponse<Preference> getPreferenceByCategoryAndName(String userId,
@@ -2322,10 +1817,6 @@ public class MattermostClient
 
   /**
    * will upload an IDP certificate for SAML and set the config to use it.
-   * 
-   * @param dataFile
-   * @param fileName
-   * @return
    */
   @Override
   public boolean uploadSamlIdpCertificate(Path dataFile, String fileName) {
@@ -2334,10 +1825,6 @@ public class MattermostClient
 
   /**
    * will upload a public certificate for SAML and set the config to use it.
-   * 
-   * @param dataFile
-   * @param fileName
-   * @return
    */
   @Override
   public boolean uploadSamlPublicCertificate(Path dataFile, String fileName) {
@@ -2346,10 +1833,6 @@ public class MattermostClient
 
   /**
    * will upload a private key for SAML and set the config to use it.
-   * 
-   * @param dataFile
-   * @param fileName
-   * @return
    */
   @Override
   public boolean uploadSamlPrivateCertificate(Path dataFile, String fileName) {
@@ -2364,7 +1847,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> deleteSamlIdpCertificate() {
-    return doApiDelete(getSamlRoute() + "/certificate/idp").checkStatusOK();
+    return doApiDelete(getSamlRoute() + "/certificate/idp").checkStatusOk();
   }
 
   /**
@@ -2375,7 +1858,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> deleteSamlPublicCertificate() {
-    return doApiDelete(getSamlRoute() + "/certificate/public").checkStatusOK();
+    return doApiDelete(getSamlRoute() + "/certificate/public").checkStatusOk();
   }
 
   /**
@@ -2386,7 +1869,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> deleteSamlPrivateCertificate() {
-    return doApiDelete(getSamlRoute() + "/certificate/private").checkStatusOK();
+    return doApiDelete(getSamlRoute() + "/certificate/private").checkStatusOk();
   }
 
   /**
@@ -2403,9 +1886,6 @@ public class MattermostClient
 
   /**
    * creates a compliance report.
-   * 
-   * @param report
-   * @return
    */
   @Override
   public ApiResponse<Compliance> createComplianceReport(Compliance report) {
@@ -2414,9 +1894,6 @@ public class MattermostClient
 
   /**
    * returns list of compliance reports.
-   * 
-   * @param pager
-   * @return
    */
   @Override
   public ApiResponse<Compliances> getComplianceReports(Pager pager) {
@@ -2425,9 +1902,6 @@ public class MattermostClient
 
   /**
    * returns a compliance report.
-   * 
-   * @param reportId
-   * @return
    */
   @Override
   public ApiResponse<Compliance> getComplianceReport(String reportId) {
@@ -2435,10 +1909,7 @@ public class MattermostClient
   }
 
   /**
-   * returns a full compliance report as a file/
-   * 
-   * @param reportId
-   * @return
+   * returns a full compliance report as a file.
    */
   @Override
   public ApiResponse<Object> downloadComplianceReport(String reportId) {
@@ -2447,9 +1918,6 @@ public class MattermostClient
 
   // Cluster Section
 
-  /**
-   * @return
-   */
   @Override
   public ApiResponse<List<ClusterInfo>> getClusterStatus() {
     return doApiGet(getClusterRoute() + "/status", null, listType());
@@ -2464,7 +1932,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> syncLdap() {
-    return doApiPost(getLdapRoute() + "/sync", null).checkStatusOK();
+    return doApiPost(getLdapRoute() + "/sync", null).checkStatusOk();
   }
 
   /**
@@ -2474,17 +1942,13 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> testLdap() {
-    return doApiPost(getLdapRoute() + "/test", null).checkStatusOK();
+    return doApiPost(getLdapRoute() + "/test", null).checkStatusOk();
   }
 
   // Audits Section
 
   /**
    * returns a list of audits for the whole system.
-   * 
-   * @param pager
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<Audits> getAudits(Pager pager, String etag) {
@@ -2505,9 +1969,6 @@ public class MattermostClient
 
   /**
    * sets the brand image for the system.
-   * 
-   * @param dataFile
-   * @return
    */
   @Override
   public boolean uploadBrandImage(Path dataFile) {
@@ -2518,9 +1979,6 @@ public class MattermostClient
 
   /**
    * page of logs as a string list.
-   * 
-   * @param pager
-   * @return
    */
   @Override
   public ApiResponse<List<String>> getLogs(Pager pager) {
@@ -2531,9 +1989,6 @@ public class MattermostClient
    * This method is a convenience Web Service call so clients can log messages into the server-side
    * logs. For example we typically log javascript error messages into the server-side. It returns
    * the log message if the logging was successful.
-   * 
-   * @param message
-   * @return
    */
   @Override
   public ApiResponse<Map<String, String>> postLog(Map<String, String> message) {
@@ -2545,9 +2000,6 @@ public class MattermostClient
   /**
    * will register a new OAuth 2.0 client application with Mattermost acting as an OAuth 2.0 service
    * provider.
-   * 
-   * @param app
-   * @return
    */
   @Override
   public ApiResponse<OAuthApp> createOAuthApp(OAuthApp app) {
@@ -2557,9 +2009,6 @@ public class MattermostClient
   /**
    * gets a page of registered OAuth 2.0 client applications with Mattermost acting as an OAuth 2.0
    * service provider.
-   * 
-   * @param pager
-   * @return
    */
   @Override
   public ApiResponse<List<OAuthApp>> getOAuthApps(Pager pager) {
@@ -2569,9 +2018,6 @@ public class MattermostClient
   /**
    * gets a registered OAuth 2.0 client application with Mattermost acting as an OAuth 2.0 service
    * provider.
-   * 
-   * @param appId
-   * @return
    */
   @Override
   public ApiResponse<OAuthApp> getOAuthApp(String appId) {
@@ -2581,9 +2027,6 @@ public class MattermostClient
   /**
    * gets a sanitized version of a registered OAuth 2.0 client application with Mattermost acting as
    * an OAuth 2.0 service provider.
-   * 
-   * @param appId
-   * @return
    */
   @Override
   public ApiResponse<OAuthApp> getOAuthAppInfo(String appId) {
@@ -2592,20 +2035,14 @@ public class MattermostClient
 
   /**
    * deletes a registered OAuth 2.0 client application.
-   * 
-   * @param appId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteOAuthApp(String appId) {
-    return doApiDelete(getOAuthAppRoute(appId)).checkStatusOK();
+    return doApiDelete(getOAuthAppRoute(appId)).checkStatusOk();
   }
 
   /**
    * regenerates the client secret for a registered OAuth 2.0 client application.
-   * 
-   * @param appId
-   * @return
    */
   @Override
   public ApiResponse<OAuthApp> regenerateOAuthAppSecret(String appId) {
@@ -2614,10 +2051,6 @@ public class MattermostClient
 
   /**
    * gets a page of OAuth 2.0 client applications the user authorized to use access their account.
-   * 
-   * @param userId
-   * @param pager
-   * @return
    */
   @Override
   public ApiResponse<List<OAuthApp>> getAuthorizedOAuthAppsForUser(String userId, Pager pager) {
@@ -2628,9 +2061,6 @@ public class MattermostClient
   /**
    * will authorize an OAuth 2.0 client application to access a user's account and provide a
    * redirect link to follow.
-   * 
-   * @param authRequest
-   * @return
    */
   @Override
   public String authorizeOAuthApp(AuthorizeRequest authRequest) {
@@ -2640,24 +2070,18 @@ public class MattermostClient
 
   /**
    * will deauthorize an OAuth 2.0 client application from accessing a user's account.
-   * 
-   * @param appId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deauthorizeOAuthApp(String appId) {
     DeauthorizeOAuthAppRequest request =
         DeauthorizeOAuthAppRequest.builder().clientId(appId).build();
-    return doApiRequest(HttpMethod.POST, url + "/oauth/deauthorize", request, null).checkStatusOK();
+    return doApiRequest(HttpMethod.POST, url + "/oauth/deauthorize", request, null).checkStatusOk();
   }
 
   // Commands Section
 
   /**
    * will create a new command if the user have the right permissions.
-   * 
-   * @param cmd
-   * @return
    */
   @Override
   public ApiResponse<Command> createCommand(Command cmd) {
@@ -2666,9 +2090,6 @@ public class MattermostClient
 
   /**
    * updates a command based on the provided Command object.
-   * 
-   * @param cmd
-   * @return
    */
   @Override
   public ApiResponse<Command> updateCommand(Command cmd) {
@@ -2677,21 +2098,14 @@ public class MattermostClient
 
   /**
    * deletes a command based on the provided command id string.
-   * 
-   * @param commandId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteCommand(String commandId) {
-    return doApiDelete(getCommandRoute(commandId)).checkStatusOK();
+    return doApiDelete(getCommandRoute(commandId)).checkStatusOk();
   }
 
   /**
    * will retrieve a list of commands available in the team.
-   * 
-   * @param teamId
-   * @param customOnly
-   * @return
    */
   @Override
   public ApiResponse<CommandList> listCommands(String teamId, boolean customOnly) {
@@ -2702,10 +2116,6 @@ public class MattermostClient
 
   /**
    * executes a given command.
-   * 
-   * @param channelId
-   * @param command
-   * @return
    */
   @Override
   public ApiResponse<CommandResponse> executeCommand(String channelId, String command) {
@@ -2717,9 +2127,6 @@ public class MattermostClient
 
   /**
    * will retrieve a list of commands available in the team.
-   * 
-   * @param teamId
-   * @return
    */
   @Override
   public ApiResponse<CommandList> listAutocompleteCommands(String teamId) {
@@ -2728,9 +2135,6 @@ public class MattermostClient
 
   /**
    * will create a new token if the user have the right permissions.
-   * 
-   * @param commandId
-   * @return
    */
   @Override
   public ApiResponse<String> regenCommandToken(String commandId) {
@@ -2741,10 +2145,6 @@ public class MattermostClient
 
   /**
    * returns a user status based on the provided user id string.
-   * 
-   * @param userId
-   * @param etag
-   * @return
    */
   @Override
   public ApiResponse<Status> getUserStatus(String userId, String etag) {
@@ -2753,9 +2153,6 @@ public class MattermostClient
 
   /**
    * returns a list of users status based on the provided user ids.
-   * 
-   * @param userIds
-   * @return
    */
   @Override
   public ApiResponse<List<Status>> getUsersStatusesByIds(String... userIds) {
@@ -2764,10 +2161,6 @@ public class MattermostClient
 
   /**
    * sets a user's status based on the provided user id string.
-   * 
-   * @param userId
-   * @param userStatus
-   * @return
    */
   @Override
   public ApiResponse<Status> updateUserStatus(String userId, Status userStatus) {
@@ -2793,10 +2186,6 @@ public class MattermostClient
    * will save an emoji to the server if the current user has permission to do so. If successful,
    * the provided emoji will be returned with its Id field filled in. Otherwise, an error will be
    * returned.
-   * 
-   * @param emoji
-   * @param imageFile
-   * @return
    */
   @Override
   public ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile) {
@@ -2812,7 +2201,7 @@ public class MattermostClient
   }
 
   /**
-   * returns a list of custom emoji in the syste,/
+   * returns a list of custom emoji in the system.
    * 
    * @return
    */
@@ -2823,20 +2212,14 @@ public class MattermostClient
 
   /**
    * delete an custom emoji on the provided emoji id string.
-   * 
-   * @param emojiId
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteEmoji(String emojiId) {
-    return doApiDelete(getEmojiRoute(emojiId)).checkStatusOK();
+    return doApiDelete(getEmojiRoute(emojiId)).checkStatusOk();
   }
 
   /**
    * returns a custom emoji in the system on the provided emoji id string.
-   * 
-   * @param emojiId
-   * @return
    */
   @Override
   public ApiResponse<Emoji> getEmoji(String emojiId) {
@@ -2845,9 +2228,6 @@ public class MattermostClient
 
   /**
    * returns the emoji image.
-   * 
-   * @param emojiId
-   * @return
    */
   @Override
   public ApiResponse<Object> getEmojiImage(String emojiId) {
@@ -2859,9 +2239,6 @@ public class MattermostClient
   /**
    * saves an emoji reaction for a post. Returns the saved reaction if successful, otherwise an
    * error will be returned.
-   * 
-   * @param reaction
-   * @return
    */
   @Override
   public ApiResponse<Reaction> saveReaction(Reaction reaction) {
@@ -2870,9 +2247,6 @@ public class MattermostClient
 
   /**
    * returns a list of reactions to a post.
-   * 
-   * @param postId
-   * @return
    */
   @Override
   public ApiResponse<List<Reaction>> getReactions(String postId) {
@@ -2881,13 +2255,10 @@ public class MattermostClient
 
   /**
    * deletes reaction of a user in a post.
-   * 
-   * @param reaction
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteReaction(Reaction reaction) {
     return doApiDelete(getUserRoute(reaction.getUserId()) + getPostRoute(reaction.getPostId())
-        + String.format("/reactions/%s", reaction.getEmojiName())).checkStatusOK();
+        + String.format("/reactions/%s", reaction.getEmojiName())).checkStatusOk();
   }
 }

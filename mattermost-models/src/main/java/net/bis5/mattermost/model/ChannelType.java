@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -24,7 +25,7 @@ import net.bis5.mattermost.model.ChannelType.ChannelTypeDeserializer;
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of {@link Channel}
+ * The type of {@link Channel}.
  * 
  * @author Takayuki Maruyama
  */
@@ -44,6 +45,9 @@ public enum ChannelType implements HasCode<ChannelType> {
     return code;
   }
 
+  /**
+   * Get an enum constant for provided {@code code}.
+   */
   public static ChannelType of(String code) {
     for (ChannelType type : ChannelType.values()) {
       if (type.getCode().equals(code)) {
@@ -55,10 +59,6 @@ public enum ChannelType implements HasCode<ChannelType> {
 
   public static class ChannelTypeDeserializer extends JsonDeserializer<ChannelType> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public ChannelType deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

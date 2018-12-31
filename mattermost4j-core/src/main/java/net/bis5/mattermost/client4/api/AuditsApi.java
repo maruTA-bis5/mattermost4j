@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.api;
 
 import net.bis5.mattermost.client4.ApiResponse;
@@ -18,7 +19,7 @@ import net.bis5.mattermost.client4.Pager;
 import net.bis5.mattermost.model.Audits;
 
 /**
- * Audits API
+ * Audits API.
  * 
  * @author Takayuki Maruyama
  */

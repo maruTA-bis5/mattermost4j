@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -30,7 +31,7 @@ import net.bis5.mattermost.model.TriggerWhen.TriggerWhenDeserializer;
 import net.bis5.mattermost.model.TriggerWhen.TriggerWhenSerializer;
 
 /**
- * The type of trigger when
+ * The type of trigger when.
  * 
  * @author Takayuki Maruyama
  */
@@ -49,11 +50,6 @@ public enum TriggerWhen {
 
   static class TriggerWhenSerializer extends JsonSerializer<TriggerWhen> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object,
-     *      com.fasterxml.jackson.core.JsonGenerator,
-     *      com.fasterxml.jackson.databind.SerializerProvider)
-     */
     @Override
     public void serialize(TriggerWhen value, JsonGenerator gen, SerializerProvider serializers)
         throws IOException, JsonProcessingException {
@@ -65,10 +61,6 @@ public enum TriggerWhen {
 
   static class TriggerWhenDeserializer extends JsonDeserializer<TriggerWhen> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public TriggerWhen deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

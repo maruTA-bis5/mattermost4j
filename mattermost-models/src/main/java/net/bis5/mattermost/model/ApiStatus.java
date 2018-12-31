@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,7 +26,7 @@ import lombok.Data;
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * API status
+ * API status.
  * 
  * @author Takayuki Maruyama
  */
@@ -42,14 +43,14 @@ public class ApiStatus {
   public static enum Status implements HasCode<Status> {
     OK, FAIL;
 
-    /**
-     * @see net.bis5.mattermost.model.HasCode#getCode()
-     */
     @Override
     public String getCode() {
       return name();
     }
 
+    /**
+     * Get an enum constant for provided {@code code}.
+     */
     public static Status of(String code) {
       for (Status status : Status.values()) {
         if (status.name().equals(code)) {
@@ -62,10 +63,6 @@ public class ApiStatus {
 
   public static class ChannelTypeDeserializer extends JsonDeserializer<Status> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public Status deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

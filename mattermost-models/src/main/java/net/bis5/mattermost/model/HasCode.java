@@ -11,15 +11,12 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-/**
- * 
- * @author Takayuki Maruyama
- */
 public interface HasCode<T extends Enum<T>> {
 
   String getCode();

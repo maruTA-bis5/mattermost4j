@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +19,7 @@ import java.util.Map;
 import lombok.Data;
 
 /**
- * Post action
+ * Post action.
  * 
  * @author Takayuki Maruyama
  */
@@ -43,19 +44,19 @@ public class PostAction {
   public static class PostActionIntegrationRequest {
     @JsonProperty("user_id")
     private String userId;
-    /** @since Mattermost Server 5.3 */
+    /* @since Mattermost Server 5.3 */
     @JsonProperty("post_id")
     private String postId;
-    /** @since Mattermost Server 5.3 */
+    /* @since Mattermost Server 5.3 */
     @JsonProperty("type")
     private String type;
-    /** @since Mattermost Server 5.3 */
+    /* @since Mattermost Server 5.3 */
     @JsonProperty("data_source")
     private String dataSource;
-    /** @since Mattermost Server 5.4 */
+    /* @since Mattermost Server 5.4 */
     @JsonProperty("channel_id")
     private String channelId;
-    /** @since Mattermost Server 5.4 */
+    /* @since Mattermost Server 5.4 */
     @JsonProperty("team_id")
     private String teamId;
     @JsonProperty("context")

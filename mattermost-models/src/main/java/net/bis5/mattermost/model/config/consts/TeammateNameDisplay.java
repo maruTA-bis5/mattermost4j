@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config.consts;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -28,7 +29,7 @@ import net.bis5.mattermost.model.config.consts.TeammateNameDisplay.TeammateNameD
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of teammate name display
+ * The type of teammate name display.
  * 
  * @author Takayuki Maruyama
  */

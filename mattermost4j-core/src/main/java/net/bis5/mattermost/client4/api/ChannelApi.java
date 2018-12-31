@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.api;
 
 import java.util.Collection;
@@ -31,7 +32,7 @@ import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.Role;
 
 /**
- * Channel API
+ * Channel API.
  * 
  * @author Takayuki Maruyama
  */

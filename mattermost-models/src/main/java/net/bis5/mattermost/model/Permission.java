@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -24,7 +25,7 @@ import lombok.Getter;
 import net.bis5.mattermost.model.Permission.PermissionDeserializer;
 
 /**
- * The type of permission
+ * The type of permission.
  * 
  * @author Takayuki Maruyama
  */
@@ -51,17 +52,20 @@ public enum Permission {
       "authentication.permissions.assign_system_admin_role"), //
   MANAGE_ROLES("manage_roles", "authentication.permissions.manage_roles"), //
   MANAGE_TEAM_ROLES("manage_team_roles", "authentication.permissions.manage_team_roles"), //
-  MANAGE_CHANNEL_ROLES("manage_channel_roles", "authentication.permissions.manage_channel_roles"), //
+  MANAGE_CHANNEL_ROLES("manage_channel_roles", //
+      "authentication.permissions.manage_channel_roles"), //
   MANAGE_SYSTEM("manage_system", "authentication.permissions.manage_system"), //
   CREATE_DIRECT_CHANNEL("create_direct_channel",
       "authentication.permissions.create_direct_channel"), //
-  CREATE_GROUP_CHANNEL("create_group_channel", "authentication.permissions.create_group_channel"), //
+  CREATE_GROUP_CHANNEL("create_group_channel", //
+      "authentication.permissions.create_group_channel"), //
   MANAGE_PUBLIC_CHANNEL_PROPERTIES("manage__publicchannel_properties",
       "authentication.permissions.manage_public_channel_properties"), //
   MANAGE_PRIVATE_CHANNEL_PROPERTIES("manage_private_channel_properties",
       "authentication.permissions.manage_private?channel_properties"), //
   LIST_TEAM_CHANNELS("list_team_channels", "authentication.permissions.list_team_channels"), //
-  JOIN_PUBLIC_CHANNELS("join_public_channels", "authentication.permissions.join_public_channels"), //
+  JOIN_PUBLIC_CHANNELS("join_public_channels", //
+      "authentication.permissions.join_public_channels"), //
   DELETE_PUBLIC_CHANNEL("delete_public_channel",
       "authentication.permissions.delete_public_channel"), //
   DELETE_PRIVATE_CHANNEL("delete_private_channel",
@@ -104,6 +108,9 @@ public enum Permission {
     this.description = key + ".description";
   }
 
+  /**
+   * Get permission constant for provided {@code id}.
+   */
   public static Permission of(String id) {
     if (id == null) {
       return null;
@@ -118,10 +125,6 @@ public enum Permission {
 
   public static class PermissionDeserializer extends JsonDeserializer<Permission> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public Permission deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

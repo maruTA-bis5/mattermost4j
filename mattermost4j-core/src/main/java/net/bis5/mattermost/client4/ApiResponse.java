@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4;
 
 import java.util.Map;
@@ -23,7 +24,7 @@ import net.bis5.mattermost.client4.model.ApiError;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * API response
+ * API response.
  * 
  * @author Takayuki Maruyama
  */
@@ -38,6 +39,9 @@ public abstract class ApiResponse<T> {
     return response.readEntity(ApiError.class);
   }
 
+  /**
+   * If remote api returns error response, this method also return {@code false}.
+   */
   public boolean hasError() {
     response.bufferEntity();
     try {
@@ -62,20 +66,20 @@ public abstract class ApiResponse<T> {
   /**
    * a convenience function for checking the standard OK response from the web service.
    * 
-   * @param apiResponse
    * @return
    */
-  public ApiResponse<Boolean> checkStatusOK() {
+  public ApiResponse<Boolean> checkStatusOk() {
     Response response = getRawResponse();
     response.bufferEntity();
     if (response.getMediaType().equals(MediaType.TEXT_PLAIN_TYPE)) {
-      return checkPlainStatusOK(response);
+      return checkPlainStatusOk(response);
     } else {
-      return checkJsonStatusOK(response);
+      return checkJsonStatusOk(response);
     }
   }
 
-  protected ApiResponse<Boolean> checkPlainStatusOK(Response response) {
+
+  protected ApiResponse<Boolean> checkPlainStatusOk(Response response) {
     String status = response.readEntity(String.class);
     if (StringUtils.equalsIgnoreCase(status, STATUS_OK)) {
       return ApiResponse.of(response, true);
@@ -84,13 +88,15 @@ public abstract class ApiResponse<T> {
     }
   }
 
-  protected ApiResponse<Boolean> checkJsonStatusOK(Response response) {
+
+  protected ApiResponse<Boolean> checkJsonStatusOk(Response response) {
     Map<String, String> m = response.readEntity(new GenericType<Map<String, String>>() {});
     if (m != null && m.getOrDefault(STATUS, "").equalsIgnoreCase(STATUS_OK)) {
       return ApiResponse.of(response, true);
     }
     return ApiResponse.of(response, false);
   }
+
 
   public static <T> ApiResponse<T> of(Response response, Class<T> entityClass) {
     return new EntityResponse<>(response, entityClass);

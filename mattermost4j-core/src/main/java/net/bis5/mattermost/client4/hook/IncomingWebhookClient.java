@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.hook;
 
 import java.util.logging.Level;
@@ -30,7 +31,7 @@ import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
 
 /**
- * Incoming Webhook client
+ * Incoming Webhook client.
  * 
  * @author Takayuki Maruyama
  */
@@ -58,15 +59,12 @@ public class IncomingWebhookClient implements IncomingWebhook {
     return builder.build();
   }
 
-  /**
-   * @see net.bis5.mattermost.client4.api.hook.IncomingWebhook#postByIncomingWebhook(net.bis5.mattermost.model.IncomingWebhookRequest)
-   */
   @Override
   public ApiResponse<Boolean> postByIncomingWebhook(IncomingWebhookRequest payload) {
     return ApiResponse
         .of(hookTarget.request(MediaType.TEXT_PLAIN_TYPE, MediaType.APPLICATION_JSON_TYPE)
             .method(HttpMethod.POST, Entity.json(payload)), Void.class)
-        .checkStatusOK();
+        .checkStatusOk();
   }
 
 }

@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 /**
- * Data retention policy settings
+ * Data retention policy settings.
  * 
  * @author Takayuki Maruyama
  * @since Mattermost Server 4.3 (Enterprise Edition)

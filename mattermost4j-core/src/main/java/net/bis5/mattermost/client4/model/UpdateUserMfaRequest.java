@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.model;
 
 import lombok.Builder;
 import lombok.Value;
 
 /**
- * Update user MFA request payload
+ * Update user MFA request payload.
  * 
  * @see net.bis5.mattermost.client4.api.UserApi#updateUserMfa(String, String, boolean)
  * @author Takayuki Maruyama

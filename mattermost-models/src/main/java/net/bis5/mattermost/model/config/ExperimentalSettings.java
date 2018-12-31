@@ -11,12 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import lombok.Data;
 
 /**
- * Experimental settings
+ * Experimental settings.
  * 
  * @author Takayuki Maruyama
  * @since Mattermost Server 5.1
@@ -26,7 +27,7 @@ public class ExperimentalSettings {
 
   private boolean clientSideCertEnable;
   private String clientSideCertCheck;
-  /** @since Mattermost Server 5.6 */
+  /* @since Mattermost Server 5.6 */
   private boolean enablePostMetadata;
 
 }

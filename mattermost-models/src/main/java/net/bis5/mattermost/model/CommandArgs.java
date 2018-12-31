@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * Command arguments
+ * Command arguments.
  * 
  * @author Takayuki Maruyama
  */
@@ -36,7 +37,7 @@ public class CommandArgs {
   private String parentId;
   @JsonProperty("command")
   private String command;
-  /** @since Mattermost Server 5.6 */
+  /* @since Mattermost Server 5.6 */
   private String commandArgs;
 
 }

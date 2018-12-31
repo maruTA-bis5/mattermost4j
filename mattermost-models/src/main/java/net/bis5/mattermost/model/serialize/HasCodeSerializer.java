@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.serialize;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -21,17 +22,12 @@ import java.io.IOException;
 import net.bis5.mattermost.model.HasCode;
 
 /**
- * Serializer for {@link HasCode}
+ * Serializer for {@link HasCode}.
  * 
  * @author Takayuki Maruyama
  */
 public class HasCodeSerializer<T extends Enum<T> & HasCode<T>> extends JsonSerializer<T> {
 
-  /**
-   * @see com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object,
-   *      com.fasterxml.jackson.core.JsonGenerator,
-   *      com.fasterxml.jackson.databind.SerializerProvider)
-   */
   @Override
   public void serialize(T value, JsonGenerator gen, SerializerProvider serializers)
       throws IOException, JsonProcessingException {

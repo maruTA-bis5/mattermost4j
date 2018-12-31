@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * Team
+ * Team.
  * 
  * @author Takayuki Maruyama
  */
@@ -50,8 +51,8 @@ public class Team {
   private String inviteId;
   @JsonProperty("allow_open_invite")
   private boolean allowOpenInvite;
-  /** @since Mattermost Server 4.9 */
+  /* @since Mattermost Server 4.9 */
   private long lastTeamIconUpdate;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost Server XXX what ver? */
   private String schemeId;
 }

@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * SAML certificate status
+ * SAML certificate status.
  * 
  * @author Takayuki Maruyama
  */
@@ -27,7 +28,7 @@ public class SamlCertificateStatus {
   @JsonProperty("idp_certificate_file")
   private boolean idpCertificateFile;
   @JsonProperty("private_key_file")
-  private boolean privateKeyFile;;
+  private boolean privateKeyFile;
   @JsonProperty("public_certificate_file")
   private boolean publicCertificateFile;
 

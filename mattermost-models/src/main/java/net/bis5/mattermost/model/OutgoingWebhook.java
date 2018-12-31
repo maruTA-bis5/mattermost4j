@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +19,7 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * Outgoing webhook
+ * Outgoing webhook.
  * 
  * @author Takayuki Maruyama
  */
@@ -53,9 +54,9 @@ public class OutgoingWebhook {
   private String description;
   @JsonProperty("content_type")
   private ContentType contentType;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost Server XXX what ver? */
   private String username;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost Server XXX what ver? */
   private String iconUrl;
 
 }

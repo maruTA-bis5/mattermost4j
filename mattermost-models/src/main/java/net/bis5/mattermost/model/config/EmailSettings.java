@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import lombok.Data;
@@ -18,7 +19,7 @@ import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
 import net.bis5.mattermost.model.config.consts.EmailNotificationContent;
 
 /**
- * Email settings
+ * Email settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -46,23 +47,25 @@ public class EmailSettings {
   private int emailBatchingBufferSize;
   private int emailBatchingInterval;
   private boolean skipServerCertificateVerification;
-  /** @since Mattermost Server 4.1 */
-  private boolean enableSMTPAuth;
-  /** @since Mattermost Server 4.1 */
+  /* @since Mattermost Server 4.1 */
+  private boolean enableSmtpAuth;
+  /* @since Mattermost Server 4.1 */
   private EmailNotificationContent emailNotificationContentsType;
-  /** @since Mattermost Server 4.5 */
+  /* @since Mattermost Server 4.5 */
   private boolean useChannelInEmailNotifications;
-  /** @since Mattermost Server 4.6 */
+  /* @since Mattermost Server 4.6 */
   private String loginButtonColor;
-  /** @since Mattermost Server 4.6 */
+  /* @since Mattermost Server 4.6 */
   private String loginButtonBorderColor;
-  /** @since Mattermost Server 4.6 */
+  /* @since Mattermost Server 4.6 */
   private String loginButtonTextColor;
-  /** @since Mattermost Server 5.0 */
+  /* @since Mattermost Server 5.0 */
   private boolean enablePreviewModeBanner;
 
   /**
-   * deprecated This is typo. Please use {@link #getEmailNotificationContentsType()}
+   * Should not use this.
+   * 
+   * @deprecated This is typo. Please use {@link #getEmailNotificationContentsType()}
    */
   @Deprecated
   public EmailNotificationContent getEmailNotificationContentType() {
@@ -70,6 +73,8 @@ public class EmailSettings {
   }
 
   /**
+   * Should not use this.
+   * 
    * @deprecated This is typo. Please use
    *             {@link #setEmailNotificationContentsType(EmailNotificationContent)}
    */

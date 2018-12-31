@@ -11,18 +11,18 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import java.util.ArrayList;
 
 /**
- * List of {@link User}
+ * List of {@link User}.
  * 
  * @author Takayuki Maruyama
  */
 public class UserList extends ArrayList<User> {
 
-  /** $Comment$ */
   private static final long serialVersionUID = 1L;
 
 }

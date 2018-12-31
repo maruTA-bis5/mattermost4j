@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,7 +20,7 @@ import net.bis5.mattermost.model.license.Customer;
 import net.bis5.mattermost.model.license.Features;
 
 /**
- * The Enterprise License
+ * The Enterprise License.
  * 
  * @author Takayuki Maruyama
  */
@@ -29,9 +30,9 @@ public class License {
   @JsonProperty("id")
   private String id;
   @JsonProperty("issued_at")
-  private long issued_at;
+  private long issuedAt;
   @JsonProperty("starts_at")
-  private long starts_at;
+  private long startsAt;
   @JsonProperty("expires_at")
   private long expiresAt;
   @JsonProperty("customer")

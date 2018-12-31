@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import java.util.List;
 import lombok.Data;
 
 /**
- * SQL settings
+ * SQL settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -32,10 +33,10 @@ public class SqlSettings {
   private int maxOpenConns;
   private boolean trace;
   private String atRestEncryptKey;
-  /** @since Mattermost Server 3.10 */
+  /* @since Mattermost Server 3.10 */
   private int queryTimeout;
-  /** @since Mattermost Server 5.1 */
+  /* @since Mattermost Server 5.1 */
   private int connMaxLifetimeMilliseconds;
-  /** @since Mattermost Server 5.4 */
+  /* @since Mattermost Server 5.4 */
   private boolean enablePublicChannelsMaterialization;
 }

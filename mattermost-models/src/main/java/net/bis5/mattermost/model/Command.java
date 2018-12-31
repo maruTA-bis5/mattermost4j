@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +19,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Command
+ * Command.
  * 
  * @author Takayuki Maruyama
  */
@@ -26,6 +27,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Command {
 
+  /**
+   * The convenience constructor for create new slash command.
+   */
   public Command(String creatorId, String teamId, String url, CommandMethod method,
       String trigger) {
     this.creatorId = creatorId;

@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.serialize;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -22,7 +23,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import net.bis5.mattermost.model.Config;
 
 /**
- * The {@link PropertyNamingStrategy} for Mattermost datamodels
+ * The {@link PropertyNamingStrategy} for Mattermost datamodels.
  * 
  * @author Takayuki Maruyama
  */

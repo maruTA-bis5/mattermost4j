@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import java.util.Iterator;
@@ -18,7 +19,7 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * List of {@link SecurityBulletin}
+ * List of {@link SecurityBulletin}.
  * 
  * @author Takayuki Maruyama
  */
@@ -26,9 +27,6 @@ import lombok.Data;
 public class SecurityBulletins implements Iterable<SecurityBulletin> {
   private List<SecurityBulletin> securityBulletins;
 
-  /**
-   * @see java.lang.Iterable#iterator()
-   */
   @Override
   public Iterator<SecurityBulletin> iterator() {
     return securityBulletins.iterator();

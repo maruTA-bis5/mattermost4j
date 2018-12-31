@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,7 +20,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Channel
+ * Channel.
  * 
  * @author Takayuki Maruyama
  */
@@ -29,6 +30,9 @@ public class Channel {
 
   public static final String DEFAULT_CHANNEL_NAME = "town-square";
 
+  /**
+   * The convenience constructor to create new channel.
+   */
   public Channel(String displayName, String name, ChannelType type, String teamId) {
     this.displayName = displayName;
     this.name = name;
@@ -64,9 +68,9 @@ public class Channel {
   private long extraUpdateAt;
   @JsonProperty("creator_id")
   private String creatorId;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost Server XXX what ver? */
   private String schemeId;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost Server XXX what ver? */
   private Map<String, Object> props;
 
 }

@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.api;
 
 import java.nio.file.Path;
@@ -30,7 +31,7 @@ import net.bis5.mattermost.model.UserSearch;
 import net.bis5.mattermost.model.license.MfaSecret;
 
 /**
- * User API
+ * User API.
  * 
  * @author Takayuki Maruyama
  */

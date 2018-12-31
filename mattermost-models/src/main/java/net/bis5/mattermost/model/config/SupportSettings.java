@@ -11,12 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import lombok.Data;
 
 /**
- * Support settings
+ * Support settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -29,9 +30,9 @@ public class SupportSettings {
   private String helpLink;
   private String reportAProblemLink;
   private String supportEmail;
-  /** @since Mattermost Server 5.4 */
+  /* @since Mattermost Server 5.4 */
   private boolean customTermsOfServiceEnabled;
-  /** @since Mattermost Server 5.6 */
+  /* @since Mattermost Server 5.6 */
   private int customTermsOfServiceReAcceptancePeriod;
 
 }

@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +19,7 @@ import java.util.Map;
 import lombok.Data;
 
 /**
- * Channel member
+ * Channel member.
  * 
  * @author Takayuki Maruyama
  */
@@ -41,10 +42,10 @@ public class ChannelMember {
   private Map<String, String> notifyProps;
   @JsonProperty("last_update_at")
   private long lastUpdateAt;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost Server XXX what ver? */
   private boolean schemeUser;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost Server XXX what ver? */
   private boolean schemeAdmin;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost Server XXX what ver? */
   private String explicitRoles;
 }

@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -24,7 +25,7 @@ import net.bis5.mattermost.model.CommandResponseType.CommandResponseTypeDeserial
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of {@link CommandResponse}
+ * The type of {@link CommandResponse}.
  * 
  * @author Takayuki Maruyama
  */
@@ -43,6 +44,9 @@ public enum CommandResponseType implements HasCode<CommandResponseType> {
     return code;
   }
 
+  /**
+   * Get an enum constant for {@code code}.
+   */
   public static CommandResponseType of(String code) {
     for (CommandResponseType type : CommandResponseType.values()) {
       if (type.getCode().equals(code)) {
@@ -55,10 +59,6 @@ public enum CommandResponseType implements HasCode<CommandResponseType> {
   public static class CommandResponseTypeDeserializer
       extends JsonDeserializer<CommandResponseType> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public CommandResponseType deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.license;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * Features
+ * Features.
  * 
  * @author Takayuki Maruyama
  */
@@ -51,6 +52,6 @@ public class Features {
   // after we enabled more features for webrtc we'll need to control them with
   // this
   @JsonProperty("future_features")
-  private boolean future_features;
+  private boolean futureFeatures;
 
 }

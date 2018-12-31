@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,7 +20,7 @@ import java.util.Map;
 import lombok.Data;
 
 /**
- * Command execution response
+ * Command execution response.
  * 
  * @author Takayuki Maruyama
  */
@@ -42,9 +43,9 @@ public class CommandResponse {
   private String gotoLocation;
   @JsonProperty("attachments")
   private List<SlackAttachment> attachments;
-  /** @since Mattermost Server 5.6 */
+  /* @since Mattermost Server 5.6 */
   private String triggerId;
-  /** @since Mattermost Server 5.6 */
+  /* @since Mattermost Server 5.6 */
   private List<CommandResponse> extraResponses;
 
 }

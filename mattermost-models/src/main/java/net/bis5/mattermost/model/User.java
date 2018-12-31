@@ -11,15 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 import lombok.Data;
 
-/**
- * @author Takayuki Maruyama
- */
 @Data
 public class User {
 
@@ -73,7 +71,7 @@ public class User {
   private String mfaSecret;
   @JsonProperty("last_activity_at")
   private long lastActivityAt;
-  /** @since Mattermost Server 4.9 */
+  /* @since Mattermost Server 4.9 */
   private Map<String, String> timezone;
 
 }

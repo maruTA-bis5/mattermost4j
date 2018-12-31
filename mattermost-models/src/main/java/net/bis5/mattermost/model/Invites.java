@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,7 +21,7 @@ import java.util.Map;
 import lombok.Data;
 
 /**
- * Invite infos
+ * Invite infos.
  * 
  * @author Takayuki Maruyama
  */
@@ -30,9 +31,6 @@ public class Invites implements Iterable<Map<String, String>> {
   @JsonProperty("invites")
   private List<Map<String, String>> invites;
 
-  /**
-   * @see java.lang.Iterable#iterator()
-   */
   @Override
   public Iterator<Map<String, String>> iterator() {
     return invites.iterator();

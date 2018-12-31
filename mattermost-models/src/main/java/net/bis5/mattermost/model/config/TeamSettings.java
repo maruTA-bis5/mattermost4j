@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import net.bis5.mattermost.model.config.consts.Permissions;
 import net.bis5.mattermost.model.config.consts.TeammateNameDisplay;
 
 /**
- * Team settings
+ * Team settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -31,7 +32,7 @@ public class TeamSettings {
   private boolean enableTeamCreation;
   private boolean enableUserCreation;
   private boolean enableOpenServer;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost Server XXX what ver? */
   private boolean enableUserDeactivate;
   private String restrictCreationToDomains;
   private boolean enableCustomBrand;
@@ -48,41 +49,26 @@ public class TeamSettings {
   private Permissions restrictPrivateChannelManageMembers;
   private long userStatusAwayTimeout;
   private long maxChannelsPerTeam;
-  private long MaxNotificationsPerChannel;
-  /** @since Mattermost Server 4.0 */
+  private long maxNotificationsPerChannel;
+  /* @since Mattermost Server 4.0 */
   private TeammateNameDisplay teammateNameDisplay;
-  /** @since Mattermost Server 4.2 */
-  private boolean enableXToLeaveChannelsFromLHS;
-  /** @since Mattermost Server 4.2 (Enterprise Edition) */
-  private boolean ExperimentalTownSquareIsReadOnly;
-  /** @since Mattermost Server 4.4 */
+  /* @since Mattermost Server 4.2 */
+  private boolean enableXtoLeaveChannelsFromLhs;
+  /* @since Mattermost Server 4.2 (Enterprise Edition) */
+  private boolean experimentalTownSquareIsReadOnly;
+  /* @since Mattermost Server 4.4 */
   private boolean enableConfirmNotificationsToChannel = true;
-  /** @since Mattermost Server 4.6 */
+  /* @since Mattermost Server 4.6 */
   private String experimentalPrimaryTeam;
-  /** @since Mattermost Server 4.10 */
+  /* @since Mattermost Server 4.10 */
   private boolean experimentalEnableAutomaticReplies;
-  /** @since Mattermost Server 5.0 */
+  /* @since Mattermost Server 5.0 */
   private boolean enableUserDeactivation;
-  /** @since Mattermost Server 5.0 */
-  private boolean experimentalHideTownSquareinLHS;
-  /** @since Mattermost Server 5.2 */
+  /* @since Mattermost Server 5.0 */
+  private boolean experimentalHideTownSquareinLhs;
+  /* @since Mattermost Server 5.2 */
   private boolean experimentalViewArchivedChannels;
-  /** @since Mattermost Server 5.2 */
-  private List<String> ExperimentalDefaultChannels;
+  /* @since Mattermost Server 5.2 */
+  private List<String> experimentalDefaultChannels;
 
-  /**
-   * @deprecated This is typo. Please use {@link #isEnableXToLeaveChannelsFromLHS()}
-   */
-  @Deprecated
-  public boolean isEnableXToLeaveChannelFromLHS() {
-    return isEnableXToLeaveChannelsFromLHS();
-  }
-
-  /**
-   * @deprecated This is typo. Please use {@link #setEnableXToLeaveChannelsFromLHS(boolean)}
-   */
-  @Deprecated
-  public void setEnableXToLeaveChannelFromLHS(boolean enableXToLeaveChannelFromLHS) {
-    setEnableXToLeaveChannelsFromLHS(enableXToLeaveChannelFromLHS);
-  }
 }

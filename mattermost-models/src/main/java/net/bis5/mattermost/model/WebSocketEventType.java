@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -24,7 +25,7 @@ import net.bis5.mattermost.model.WebSocketEventType.WebSocketEventTypeDeserializ
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * Type of Websocket event
+ * Type of Websocket event.
  * 
  * @author Takayuki Maruyama
  */
@@ -64,14 +65,14 @@ public enum WebSocketEventType implements HasCode<WebSocketEventType> {
     this.code = code;
   }
 
-  /**
-   * @see net.bis5.mattermost.model.HasCode#getCode()
-   */
   @Override
   public String getCode() {
     return code;
   }
 
+  /**
+   * Get a WebSocketEventType constant for provided {@code code}.
+   */
   public static WebSocketEventType of(String code) {
     for (WebSocketEventType type : WebSocketEventType.values()) {
       if (type.getCode().equals(code)) {
@@ -83,10 +84,6 @@ public enum WebSocketEventType implements HasCode<WebSocketEventType> {
 
   public static class WebSocketEventTypeDeserializer extends JsonDeserializer<WebSocketEventType> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public WebSocketEventType deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

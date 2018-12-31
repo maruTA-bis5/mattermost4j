@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.model;
 
 import java.util.Arrays;
@@ -19,7 +20,7 @@ import lombok.Value;
 import net.bis5.mattermost.model.Role;
 
 /**
- * Update user roles request payload
+ * Update user roles request payload.
  * 
  * @see net.bis5.mattermost.client4.api.UserApi#updateUserRoles(String, Role...)
  * @author Takayuki Maruyama

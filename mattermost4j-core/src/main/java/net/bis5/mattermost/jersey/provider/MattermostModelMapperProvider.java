@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.jersey.provider;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -21,7 +22,7 @@ import javax.ws.rs.ext.Provider;
 import net.bis5.mattermost.model.serialize.MattermostPropertyNamingStrategy;
 
 /**
- * Mattermost datamodel mapper
+ * Mattermost datamodel mapper.
  * 
  * @author Takayuki Maruyama
  */
@@ -36,9 +37,6 @@ public class MattermostModelMapperProvider implements ContextResolver<ObjectMapp
         .setPropertyNamingStrategy(new MattermostPropertyNamingStrategy());
   }
 
-  /**
-   * @see javax.ws.rs.ext.ContextResolver#getContext(java.lang.Class)
-   */
   @Override
   public ObjectMapper getContext(Class<?> type) {
     return defaultObjectMapper;

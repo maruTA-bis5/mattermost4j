@@ -11,18 +11,18 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import java.util.ArrayList;
 
 /**
- * List of {@link OutgoingWebhook}
+ * List of {@link OutgoingWebhook}.
  * 
  * @author Takayuki Maruyama
  */
 public class OutgoingWebhookList extends ArrayList<OutgoingWebhook> {
 
-  /** $Comment$ */
   private static final long serialVersionUID = 1L;
 
 }

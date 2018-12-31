@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +19,7 @@ import lombok.Builder;
 import lombok.Value;
 
 /**
- * Attach device id request payload
+ * Attach device id request payload.
  * 
  * @see net.bis5.mattermost.client4.api.UserApi#attachDeviceId(String)
  * @author Takayuki Maruyama

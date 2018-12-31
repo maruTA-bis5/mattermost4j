@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -19,7 +20,7 @@ import lombok.Data;
 import net.bis5.mattermost.model.config.plugin.PluginState;
 
 /**
- * Plugin settings
+ * Plugin settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -31,6 +32,6 @@ public class PluginSettings {
   private boolean enableUploads;
   private Map<String, Map<String, String>> plugins;
   private Map<String, PluginState> pluginStates;
-  /** @since Mattermost Server 4.5 */
+  /* @since Mattermost Server 4.5 */
   private String clientDirectory;
 }

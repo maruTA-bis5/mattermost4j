@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -25,7 +26,7 @@ import net.bis5.mattermost.model.ComplianceType.ComplianceTypeDeserializer;
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of compliance report
+ * The type of compliance report.
  * 
  * @author Takayuki Maruyama
  */
@@ -52,10 +53,6 @@ public enum ComplianceType implements HasCode<ComplianceType> {
 
   public static class ComplianceTypeDeserializer extends JsonDeserializer<ComplianceType> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public ComplianceType deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

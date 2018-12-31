@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import lombok.Data;
@@ -18,7 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * LDAP settings
+ * LDAP settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -30,7 +31,7 @@ public class LdapSettings {
   private String ldapServer;
   private int ldapPort;
   private String connectionSecurity; // XXX ConnectionSecurity?
-  private String baseDN;
+  private String baseDn;
   private String bindUsername;
   private String bindPassword;
 
@@ -57,15 +58,15 @@ public class LdapSettings {
   // Customization
   private String loginFieldName;
 
-  /** @since Mattermost Server 4.4 (Enterprise Edition) */
+  /* @since Mattermost Server 4.4 (Enterprise Edition) */
   private boolean enableSync;
-  /** @since Mattermost Server 4.6 (Enterprise Edition) */
+  /* @since Mattermost Server 4.6 (Enterprise Edition) */
   private String loginButtonColor;
-  /** @since Mattermost Server 4.6 (Enterprise Edition) */
+  /* @since Mattermost Server 4.6 (Enterprise Edition) */
   private String loginButtonBorderColor;
-  /** @since Mattermost Server 4.6 (Enterprise Edition) */
+  /* @since Mattermost Server 4.6 (Enterprise Edition) */
   private String loginButtonTextColor;
-  /** @since Mattermost Server 5.0 */
+  /* @since Mattermost Server 5.0 */
   private String loginIdAttribute;
 
   @Getter(onMethod = @__({@Deprecated}))

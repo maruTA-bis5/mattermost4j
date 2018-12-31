@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * Incoming webhook
+ * Incoming webhook.
  * 
  * @author Takayuki Maruyama
  */
@@ -45,6 +46,6 @@ public class IncomingWebhook {
 
   private String username;
   private String iconUrl;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost Server XXX what ver? */
   private boolean channelLocked;
 }

@@ -11,12 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import lombok.Data;
 
 /**
- * Log settings
+ * Log settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -30,8 +31,8 @@ public class LogSettings {
   private String fileLocation;
   private boolean enableWebhookDebugging;
   private boolean enableDiagnostics;
-  /** @since Mattermost Server 4.10 */
+  /* @since Mattermost Server 4.10 */
   private boolean fileJson = true;
-  /** @since Mattermost Server 4.10 */
+  /* @since Mattermost Server 4.10 */
   private boolean consoleJson = true;
 }

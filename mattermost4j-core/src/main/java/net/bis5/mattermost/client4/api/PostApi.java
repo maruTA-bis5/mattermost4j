@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.api;
 
 import java.sql.Date;
@@ -22,7 +23,7 @@ import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
 
 /**
- * Post API
+ * Post API.
  * 
  * @author Takayuki Maruyama
  */

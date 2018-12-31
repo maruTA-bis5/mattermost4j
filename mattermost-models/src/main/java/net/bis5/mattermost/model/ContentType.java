@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -27,7 +28,7 @@ import net.bis5.mattermost.model.ContentType.ContentTypeDeserializer;
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of content-type
+ * The type of content-type.
  * 
  * @author Takayuki Maruyama
  */
@@ -46,10 +47,6 @@ public enum ContentType implements HasCode<ContentType> {
 
   static class ContentTypeDeserializer extends JsonDeserializer<ContentType> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public ContentType deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

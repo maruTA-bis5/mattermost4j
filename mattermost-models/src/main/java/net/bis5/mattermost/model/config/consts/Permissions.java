@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config.consts;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -27,7 +28,7 @@ import net.bis5.mattermost.model.config.consts.Permissions.PermissionsDeserializ
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of permissions
+ * The type of permissions.
  * 
  * @author Takayuki Maruyama
  */
@@ -50,10 +51,6 @@ public enum Permissions implements HasCode<Permissions> {
 
   public static class PermissionsDeserializer extends JsonDeserializer<Permissions> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public Permissions deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

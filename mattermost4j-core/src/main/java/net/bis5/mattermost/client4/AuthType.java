@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4;
 
 import lombok.Getter;
 import net.bis5.mattermost.model.HasCode;
 
 /**
- * API Authentication type
+ * API Authentication type.
  * 
  * @author Takayuki Maruyama
  */

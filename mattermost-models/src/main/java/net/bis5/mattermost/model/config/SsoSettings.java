@@ -11,17 +11,18 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import lombok.Data;
 
 /**
- * SSO settings
+ * SSO settings.
  * 
  * @author Takayuki Maruyama
  */
 @Data
-public class SSOSettings {
+public class SsoSettings {
 
   private boolean enable;
   private String secret;

@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 /**
- * Message export settings
+ * Message export settings.
  * 
  * @author Takayuki Maruyama
  * @since Mattermost Server 4.5 (Enterprise Edition)
@@ -31,8 +32,8 @@ public class MessageExportSettings {
   private int exportFromTimestamp;
   private String fileLocation = "export";
   private int batchSize = 10000;
-  /** @since Mattermost Server 4.9 */
+  /* @since Mattermost Server 4.9 */
   private String customerType;
-  /** @since Mattermost Server 4.9 */
+  /* @since Mattermost Server 4.9 */
   private String emailAddress;
 }

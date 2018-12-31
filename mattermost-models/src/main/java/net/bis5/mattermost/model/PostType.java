@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -26,7 +27,7 @@ import net.bis5.mattermost.model.PostType.PostTypeDeserializer;
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of {@link Post}
+ * The type of {@link Post}.
  * 
  * @author Takayuki Maruyama
  */
@@ -39,6 +40,8 @@ public enum PostType implements HasCode<PostType> {
   SLACK_ATTACHMENT("slack_attachment"), //
   SYSTEM_GENERIC("system_generic"), //
   /**
+   * This post type is not used currently.
+   * 
    * @deprecated use {@link POST_JOIN_CHANNEL} or {@link POST_LEAVE_CHANNEL} instead.
    */
   @Deprecated
@@ -46,6 +49,8 @@ public enum PostType implements HasCode<PostType> {
   JOIN_CHANNEL("system_join_channel"), //
   LEAVE_CHANNEL("system_leave_channel"), //
   /**
+   * This post type is not used currently.
+   * 
    * @deprecated use {@link POST_ADD_TO_CHANNEL} or {@link POST_REMOVE_FROM_CHANNEL} instead.
    */
   @Deprecated
@@ -70,10 +75,6 @@ public enum PostType implements HasCode<PostType> {
 
   static class PostTypeDeserializer extends JsonDeserializer<PostType> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public PostType deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.api;
 
 import net.bis5.mattermost.client4.ApiResponse;
@@ -21,7 +22,7 @@ import net.bis5.mattermost.model.OutgoingWebhook;
 import net.bis5.mattermost.model.OutgoingWebhookList;
 
 /**
- * Webhook API
+ * Webhook API.
  * 
  * @author Takayuki Maruyama
  */

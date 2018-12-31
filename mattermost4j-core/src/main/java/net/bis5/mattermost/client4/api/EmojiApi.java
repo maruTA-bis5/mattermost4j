@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.api;
 
 import java.nio.file.Path;
@@ -20,7 +21,7 @@ import net.bis5.mattermost.model.Emoji;
 import net.bis5.mattermost.model.EmojiList;
 
 /**
- * Emoji API
+ * Emoji API.
  * 
  * @author Takayuki Maruyama
  */
@@ -33,8 +34,9 @@ public interface EmojiApi {
   }
 
   /**
+   * Get custom emoji list.
+   * 
    * @param pager add in Mattermost Server 4.1, in older version, ignore.
-   * @return
    */
   ApiResponse<EmojiList> getEmojiList(Pager pager);
 

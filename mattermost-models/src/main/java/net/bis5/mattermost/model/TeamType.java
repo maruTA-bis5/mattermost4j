@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -25,7 +26,7 @@ import net.bis5.mattermost.model.TeamType.TeamTypeDeserializer;
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of team
+ * The type of team.
  * 
  * @author Takayuki Maruyama
  */
@@ -43,10 +44,6 @@ public enum TeamType implements HasCode<TeamType> {
 
   static class TeamTypeDeserializer extends JsonDeserializer<TeamType> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public TeamType deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

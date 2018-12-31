@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import java.util.Arrays;
@@ -19,7 +20,7 @@ import java.util.List;
 import lombok.Getter;
 
 /**
- * The type of roles
+ * The type of roles.
  * 
  * @author Takayuki Maruyama
  */
@@ -60,6 +61,9 @@ public enum Role {
     this.permissions = permissions;
   }
 
+  /**
+   * Get a role constant for provided {@code roles}.
+   */
   public boolean is(String roles) {
     if (roles == null) {
       return false;

@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config.consts;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -27,7 +28,7 @@ import net.bis5.mattermost.model.config.consts.RestrictEmojiCreation.RestrictEmo
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of permission for create emojis
+ * The type of permission for create emojis.
  * 
  * @author Takayuki Maruyama
  */
@@ -51,10 +52,6 @@ public enum RestrictEmojiCreation implements HasCode<RestrictEmojiCreation> {
   public static class RestrictEmojiCreationDeserializer
       extends JsonDeserializer<RestrictEmojiCreation> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public RestrictEmojiCreation deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

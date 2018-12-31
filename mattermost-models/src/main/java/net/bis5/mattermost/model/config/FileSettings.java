@@ -11,12 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import lombok.Data;
 
 /**
- * File settings
+ * File settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -29,22 +30,22 @@ public class FileSettings {
   private String directory;
   private boolean enablePublicLink;
   private String publicLinkSalt;
-  /** @deprecated removed in Mattermost Server 4.0 */
+  /* @deprecated removed in Mattermost Server 4.0 */
   @Deprecated
   private int thumbnailWidth;
-  /** @deprecated removed in Mattermost Server 4.0 */
+  /* @deprecated removed in Mattermost Server 4.0 */
   @Deprecated
   private int thumbnailHeight;
-  /** @deprecated removed in Mattermost Server 4.0 */
+  /* @deprecated removed in Mattermost Server 4.0 */
   @Deprecated
   private int previewWidth;
-  /** @deprecated removed in Mattermost Server 4.0 */
+  /* @deprecated removed in Mattermost Server 4.0 */
   @Deprecated
   private int previewHeight;
-  /** @deprecated removed in Mattermost Server 4.0 */
+  /* @deprecated removed in Mattermost Server 4.0 */
   @Deprecated
   private int profileWidth;
-  /** @deprecated removed in Mattermost Server 4.0 */
+  /* @deprecated removed in Mattermost Server 4.0 */
   @Deprecated
   private int profileHeight;
   private String initialFont;
@@ -53,16 +54,16 @@ public class FileSettings {
   private String amazonS3Bucket;
   private String amazonS3Region;
   private String amazonS3Endpoint;
-  private boolean amazonS3SSL;
-  /** @since Mattermost Server 3.10 */
+  private boolean amazonS3Ssl;
+  /* @since Mattermost Server 3.10 */
   private boolean amazonS3SignV2;
-  /** @since Mattermost Server 4.1 (Enterprise Edition) */
-  private boolean amazonS3SSE;
-  /** @since Mattermost Server 4.1 (Enterprise Edition) */
+  /* @since Mattermost Server 4.1 (Enterprise Edition) */
+  private boolean amazonS3Sse;
+  /* @since Mattermost Server 4.1 (Enterprise Edition) */
   private boolean enableMobileUpload;
-  /** @since Mattermost Server 4.1 (Enterprise Edition) */
+  /* @since Mattermost Server 4.1 (Enterprise Edition) */
   private boolean enableMobileDownload;
-  /** @since Mattermost Server 4.2 */
+  /* @since Mattermost Server 4.2 */
   private boolean amazonS3Trace;
 
 }

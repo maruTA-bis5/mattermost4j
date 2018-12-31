@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,7 +20,7 @@ import java.util.Map;
 import lombok.Data;
 
 /**
- * Session
+ * Session.
  * 
  * @author Takayuki Maruyama
  */
@@ -33,7 +34,7 @@ public class Session {
   @JsonProperty("create_at")
   private long createAt;
   @JsonProperty("expires_at")
-  private long expires_at;
+  private long expiresAt;
   @JsonProperty("last_activity_at")
   private long lastActivityAt;
   @JsonProperty("user_id")

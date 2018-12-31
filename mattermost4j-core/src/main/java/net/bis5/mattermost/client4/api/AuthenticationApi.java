@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.api;
 
 import net.bis5.mattermost.client4.ApiResponse;
@@ -19,7 +20,7 @@ import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.User;
 
 /**
- * Authentication API
+ * Authentication API.
  * 
  * @author Takayuki Maruyama
  */

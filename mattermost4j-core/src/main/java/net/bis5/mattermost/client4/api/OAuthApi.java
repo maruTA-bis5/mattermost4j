@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.api;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import net.bis5.mattermost.model.AuthorizeRequest;
 import net.bis5.mattermost.model.OAuthApp;
 
 /**
- * OAuth API
+ * OAuth API.
  * 
  * @author Takayuki Maruyama
  */

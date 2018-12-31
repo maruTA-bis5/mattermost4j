@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import java.util.List;
@@ -24,7 +25,7 @@ import net.bis5.mattermost.model.config.consts.RestrictEmojiCreation;
 import net.bis5.mattermost.model.config.consts.WebServerMode;
 
 /**
- * Service settings
+ * Service settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -61,7 +62,7 @@ public class ServiceSettings {
   private String allowCorsFrom;
   private int sessionLengthWebInDays;
   private int sessionLengthMobileInDays;
-  private int sessionLengthSSOInDays;
+  private int sessionLengthSsoInDays;
   private int sessionCacheInMinutes;
   private int websocketSecurePort;
   private int websocketPort;
@@ -76,74 +77,76 @@ public class ServiceSettings {
   private boolean enableUserTypingMessages;
   private boolean enableUserStatuses;
   private int clusterLogTimeoutMilliseconds;
-  /** @since Mattermost Server 3.10 */
+  /* @since Mattermost Server 3.10 */
   private int goroutineHealthThreshold;
-  /** @since Mattermost Server 4.0 */
+  /* @since Mattermost Server 4.0 */
   private boolean enableEmojiPicker;
-  /** @since Mattermost Server 4.0 */
+  /* @since Mattermost Server 4.0 */
   private boolean enableChannelViewedMessages;
-  /** @since Mattermost Server 4.0, change default to false in 4.8 */
-  private boolean enableAPIv3 = false;
-  /** @since Mattermost Server 4.1 */
+  /* @since Mattermost Server 4.0, change default to false in 4.8 */
+  private boolean enableApiv3 = false;
+  /* @since Mattermost Server 4.1 */
   private boolean enableUserAccessTokens;
-  /** @since Mattermost Server 4.2 */
+  /* @since Mattermost Server 4.2 */
   private String allowedUntrustedInternalConnections;
-  /** @since Mattermost Server 4.3 (Enterprise Edition) */
+  /* @since Mattermost Server 4.3 (Enterprise Edition) */
   private int sessionIdleTimeoutInMinutes;
-  /** @since Mattermost Server 4.4 */
+  /* @since Mattermost Server 4.4 */
   private boolean closeUnusedDirectMessages;
-  /** @since Mattermost Server 4.5 */
+  /* @since Mattermost Server 4.5 */
   private boolean enablePreviewFeatures = true;
-  /** @since Mattermost Server 4.5 */
+  /* @since Mattermost Server 4.5 */
   private boolean experimentalEnableAuthenticationTransfer = true;
-  /** @since Mattermost Server 4.6 */
+  /* @since Mattermost Server 4.6 */
   private boolean enableTutorial = true;
-  /** @since Mattermost Server 4.7 */
+  /* @since Mattermost Server 4.7 */
   private ImageProxyType imageProxyType;
-  /** @since Mattermost Server 4.7 */
+  /* @since Mattermost Server 4.7 */
   private String imageProxyOptions;
-  /** @since Mattermost Server 4.7 */
-  private String imageProxyURL;
-  /** @since Mattermost Server 4.7 */
+  /* @since Mattermost Server 4.7 */
+  private String imageProxyUrl;
+  /* @since Mattermost Server 4.7 */
   private GroupUnreadChannels experimentalGroupUnreadChannels = GroupUnreadChannels.DISABLED;
-  /** @since Mattermost Server 4.7 */
+  /* @since Mattermost Server 4.7 */
   private boolean experimentalEnableDefaultChannelLeaveJoinMessages = true;
-  /** @since Mattermost 4.8 */
+  /* @since Mattermost 4.8 */
   private boolean allowCookiesForSubdomains;
-  /** @since Mattermost 4.8 */
-  private String websocketURL;
-  /** @since Mattermost Server XXX what ver? */
+  /* @since Mattermost 4.8 */
+  private String websocketUrl;
+  /* @since Mattermost Server XXX what ver? */
   private boolean enableEmailInvitations;
-  /** @since Mattermost Server 5.0 */
-  private boolean enableAPITeamDeletion;
-  /** @since Mattermost Server 5.0 */
+  /* @since Mattermost Server 5.0 */
+  private boolean enableApiTeamDeletion;
+  /* @since Mattermost Server 5.0 */
   private boolean experimentalEnableHardenedMode;
-  /** @since Mattermost Server 5.1 */
+  /* @since Mattermost Server 5.1 */
   private boolean enableGifPicker;
-  /** @since Mattermpst Server 5.1 */
+  /* @since Mattermpst Server 5.1 */
   private String gfycatApiKey;
-  /** @since Mattermost Server 5.1 */
+  /* @since Mattermost Server 5.1 */
   private String gfycatApiSecret;
-  /** @since Mattermost Server 5.1 */
+  /* @since Mattermost Server 5.1 */
   private boolean experimentalLimitClientConfig;
-  /** @since Mattermost Server 5.2 */
+  /* @since Mattermost Server 5.2 */
   private String corsExposedHeaders;
-  /** @since Mattermost Server 5.2 */
+  /* @since Mattermost Server 5.2 */
   private boolean corsAllowCredentials;
-  /** @since Mattermost Server 5.2 */
+  /* @since Mattermost Server 5.2 */
   private boolean corsDebug;
-  /** @since Mattermost Server 5.2 */
+  /* @since Mattermost Server 5.2 */
   private boolean experimentalChannelOrganization;
-  /** @since Mattermost Server 5.6 */
+  /* @since Mattermost Server 5.6 */
   private String tlsMinVer;
-  /** @since Mattermost Server 5.6 */
+  /* @since Mattermost Server 5.6 */
   private boolean tlsStrictTransport;
-  /** @since Mattermost Server 5.6 */
+  /* @since Mattermost Server 5.6 */
   private long tlsStrictTransportMaxAge;
-  /** @since Mattermost Server 5.6 */
+  /* @since Mattermost Server 5.6 */
   private List<String> tlsOverwriteCiphers;
 
   /**
+   * This method should not use.
+   * 
    * @deprecated This is typo. Please use {@link #getGoroutineHealthThreshold()}
    */
   @Deprecated
@@ -152,6 +155,8 @@ public class ServiceSettings {
   }
 
   /**
+   * This method should not use.
+   * 
    * @deprecated This is typo. Please use {@link #setGoroutineHealthThreshold(int)}
    */
   @Deprecated
@@ -160,6 +165,8 @@ public class ServiceSettings {
   }
 
   /**
+   * This method should not use.
+   * 
    * @deprecated This is typo. Please use {@link #isEnableUserAccessTokens()}
    */
   @Deprecated
@@ -168,6 +175,8 @@ public class ServiceSettings {
   }
 
   /**
+   * This method should not use.
+   * 
    * @deprecated This is typo. Please use {@link #setEnableUserAccessToken(boolean)}
    */
   @Deprecated

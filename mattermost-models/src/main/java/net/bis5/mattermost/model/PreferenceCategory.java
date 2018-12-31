@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -26,7 +27,7 @@ import net.bis5.mattermost.model.PreferenceCategory.PreferenceCategoryDeserializ
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of preference category
+ * The type of preference category.
  * 
  * @author Takayuki Maruyama
  */
@@ -51,10 +52,6 @@ public enum PreferenceCategory implements HasCode<PreferenceCategory> {
 
   static class PreferenceCategoryDeserializer extends JsonDeserializer<PreferenceCategory> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public PreferenceCategory deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

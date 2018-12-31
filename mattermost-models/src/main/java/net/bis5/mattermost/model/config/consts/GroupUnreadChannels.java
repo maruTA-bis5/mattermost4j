@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config.consts;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -28,7 +29,7 @@ import net.bis5.mattermost.model.config.consts.GroupUnreadChannels.GroupUnreadCh
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of grouping unread channels in Left-Hand-Side bar
+ * The type of grouping unread channels in Left-Hand-Side bar.
  * 
  * @author Takayuki Maruyama
  */
@@ -48,10 +49,6 @@ public enum GroupUnreadChannels implements HasCode<GroupUnreadChannels> {
   public static class GroupUnreadChannelsDeserializer
       extends JsonDeserializer<GroupUnreadChannels> {
 
-    /**
-     * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser,
-     *      com.fasterxml.jackson.databind.DeserializationContext)
-     */
     @Override
     public GroupUnreadChannels deserialize(JsonParser p, DeserializationContext ctxt)
         throws IOException, JsonProcessingException {

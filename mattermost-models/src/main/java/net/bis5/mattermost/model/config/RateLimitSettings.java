@@ -11,12 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import lombok.Data;
 
 /**
- * Rate limit settings
+ * Rate limit settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -29,7 +30,7 @@ public class RateLimitSettings {
   private int memoryStoreSize;
   private boolean varyByRemoteAddr;
   private String varyByHeader;
-  /** @since Mattermost Server 4.7 */
+  /* @since Mattermost Server 4.7 */
   private boolean varyByUser;
 
 }

@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import java.util.Iterator;
@@ -18,7 +19,7 @@ import java.util.List;
 import lombok.Data;
 
 /**
- * List of {@link Compliance}
+ * List of {@link Compliance}.
  * 
  * @author Takayuki Maruyama
  */
@@ -27,9 +28,6 @@ public class Compliances implements Iterable<Compliance> {
 
   private List<Compliance> compliances;
 
-  /**
-   * @see java.lang.Iterable#iterator()
-   */
   @Override
   public Iterator<Compliance> iterator() {
     return compliances.iterator();

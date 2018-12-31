@@ -11,15 +11,15 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * Switch account type request payload
+ * Switch account type request payload.
  * 
- * @see net.bis5.mattermost.client4.api.AuthenticationApi#switchAccountType(net.bis5.mattermost.model.SwitchRequest)
  * @author Takayuki Maruyama
  */
 @Data

@@ -11,12 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import lombok.Data;
 
 /**
- * Timezone settings
+ * Timezone settings.
  * 
  * @author Takayuki Maruyama
  * @since Mattermost Server 4.9

@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import java.util.List;
 import lombok.Data;
 
 /**
- * Search parameters
+ * Search parameters.
  * 
  * @author Takayuki Maruyama
  */

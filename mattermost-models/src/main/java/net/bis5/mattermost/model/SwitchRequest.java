@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * Switch {@link AuthService} request payload
+ * Switch {@link AuthService} request payload.
  * 
  * @author Takayuki Maruyama
  */
@@ -30,7 +31,7 @@ public class SwitchRequest {
   private AuthService newService;
   @JsonProperty("email")
   private String email;
-  /** @deprecated Mattermost 4.0 or lator: use {@link #password} instead. */
+  /* @deprecated Mattermost 4.0 or lator: use {@link #password} instead. */
   @JsonProperty("current_password")
   private String currentPassword;
   @JsonProperty("password")

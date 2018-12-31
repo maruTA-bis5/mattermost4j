@@ -11,13 +11,14 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.client4.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 /**
- * Search posts request payload
+ * Search posts request payload.
  * 
  * @see net.bis5.mattermost.client4.api.PostApi#searchPosts(String, String, boolean)
  * @author Takayuki Maruyama

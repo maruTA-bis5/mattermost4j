@@ -11,6 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -19,7 +20,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * SAML settings
+ * SAML settings.
  * 
  * @author Takayuki Maruyama
  */
@@ -51,18 +52,18 @@ public class SamlSettings {
 
   private String loginButtonText;
 
-  /** @since Mattermost Server 4.4 (Enterprise Edition) */
+  /* @since Mattermost Server 4.4 (Enterprise Edition) */
   private boolean enableSyncWithLdap;
-  /** @since Mattermost Server 4.6 (Enterprise Edition) */
+  /* @since Mattermost Server 4.6 (Enterprise Edition) */
   private String loginButtonColor;
-  /** @since Mattermost Server 4.6 (Enterprise Edition) */
+  /* @since Mattermost Server 4.6 (Enterprise Edition) */
   private String loginButtonBorderColor;
-  /** @since Mattermost Server 4.6 (Enterprise Edition) */
+  /* @since Mattermost Server 4.6 (Enterprise Edition) */
   private String loginButtonTextColor;
-  /** @since Mattermost Server 4.9 */
-  private String scopingIDPProviderId;
-  /** @since Mattermost Server 4.9 */
-  private String scopingIDPName;
+  /* @since Mattermost Server 4.9 */
+  private String scopingIdpProviderId;
+  /* @since Mattermost Server 4.9 */
+  private String scopingIdpName;
 
   @Getter(onMethod = @__({@Deprecated}))
   @Setter(onMethod = @__({@Deprecated}))
