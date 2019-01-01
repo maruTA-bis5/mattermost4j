@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-present, Takayuki Maruyama
+ * Copyright (c) 2016-present, Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -12,28 +12,24 @@
  * the License.
  */
 
-package net.bis5.mattermost.model;
+package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Map;
 import lombok.Data;
 
 /**
- * Channel unread counts.
+ * SSO settings.
  * 
  * @author Takayuki Maruyama
  */
 @Data
-public class ChannelUnread {
+public class SsoSettings {
 
-  @JsonProperty("team_id")
-  private String teamId;
-  @JsonProperty("channel_id")
-  private String channelId;
-  @JsonProperty("msg_count")
-  private long msgCount;
-  @JsonProperty("mention_count")
-  private long mentionCount;
-  private Map<String, String> notifyProps;
+  private boolean enable;
+  private String secret;
+  private String id;
+  private String scope;
+  private String authEndpoint;
+  private String tokenEndpoint;
+  private String userApiEndpoint;
 
 }

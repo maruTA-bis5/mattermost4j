@@ -1,37 +1,36 @@
 /*
  * Copyright (c) 2016-present, Takayuki Maruyama
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *  
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  * 
- * 	Unless required by applicable law or agreed to in writing, software
- * 	distributed under the License is distributed on an "AS IS" BASIS,
- * 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * 	See the License for the specific language governing permissions and
- * 	limitations under the License.
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
+
 package net.bis5.mattermost.model.config;
 
 import lombok.Data;
 
 /**
- * Rate limit settings
+ * Rate limit settings.
  * 
  * @author Takayuki Maruyama
  */
 @Data
 public class RateLimitSettings {
 
-	private boolean enable;
-	private int perSec;
-	private int maxBurst;
-	private int memoryStoreSize;
-	private boolean varyByRemoteAddr;
-	private String varyByHeader;
-	/** @since Mattermost Server 4.7 */
-	private boolean varyByUser;
+  private boolean enable;
+  private int perSec;
+  private int maxBurst;
+  private int memoryStoreSize;
+  private boolean varyByRemoteAddr;
+  private String varyByHeader;
+  /* @since Mattermost Server 4.7 */
+  private boolean varyByUser;
 
 }
