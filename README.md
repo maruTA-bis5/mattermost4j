@@ -58,7 +58,7 @@ compile 'net.bis5.mattermost4j:mattermost4j-core:0.3.0'
 5. Create new Pull Request
 
 ### Code Formatter
-use https://github.com/google/styleguide/{intellij,eclipse}-java-google-style.xml .
+use https://github.com/google/styleguide/ {intellij,eclipse}-java-google-style.xml .
 
 ### CheckStyle
 Currently, use CheckStyle's built-in `google_checks.xml`.
