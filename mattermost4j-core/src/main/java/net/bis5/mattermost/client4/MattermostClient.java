@@ -616,7 +616,7 @@ public class MattermostClient
   @Override
   public ApiResponse<UserAutocomplete> autocompleteUsersInTeam(String teamId, String username,
       String etag) {
-    String query = new QueryBuilder().append("in_team", teamId).append("name", username).toString();
+    String query = new QueryBuilder().set("in_team", teamId).set("name", username).toString();
     return doApiGet(getUsersRoute() + "/autocomplete" + query, etag, UserAutocomplete.class);
   }
 
@@ -626,8 +626,8 @@ public class MattermostClient
   @Override
   public ApiResponse<UserAutocomplete> autocompleteUsersInChannel(String teamId, String channelId,
       String username, String etag) {
-    String query = new QueryBuilder().append("in_team", teamId).append("in_channel", channelId)
-        .append("name", username).toString();
+    String query = new QueryBuilder().set("in_team", teamId).set("in_channel", channelId)
+        .set("name", username).toString();
     return doApiGet(getUsersRoute() + "/autocomplete" + query, etag, UserAutocomplete.class);
   }
 
@@ -636,7 +636,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<UserAutocomplete> autocompleteUsers(String username, String etag) {
-    String query = new QueryBuilder().append("name", username).toString();
+    String query = new QueryBuilder().set("name", username).toString();
     return doApiGet(getUsersRoute() + "/autocomplete" + query, etag, UserAutocomplete.class);
   }
 
@@ -670,7 +670,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<UserList> getUsersInTeam(String teamId, Pager pager, String etag) {
-    String query = new QueryBuilder().append("in_team", teamId).toString();
+    String query = new QueryBuilder().set("in_team", teamId).toString();
     return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
   }
 
@@ -679,7 +679,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<UserList> getUsersNotInTeam(String teamId, Pager pager, String etag) {
-    String query = new QueryBuilder().append("not_in_team", teamId).toString();
+    String query = new QueryBuilder().set("not_in_team", teamId).toString();
     return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
   }
 
@@ -688,7 +688,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<UserList> getUsersInChannel(String channelId, Pager pager, String etag) {
-    String query = new QueryBuilder().append("in_channel", channelId).toString();
+    String query = new QueryBuilder().set("in_channel", channelId).toString();
     return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
   }
 
@@ -699,7 +699,7 @@ public class MattermostClient
   public ApiResponse<UserList> getUsersNotInChannel(String teamId, String channelId, Pager pager,
       String etag) {
     String query =
-        new QueryBuilder().append("in_team", teamId).append("not_in_channel", channelId).toString();
+        new QueryBuilder().set("in_team", teamId).set("not_in_channel", channelId).toString();
     return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
   }
 
@@ -708,7 +708,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<UserList> getUsersWithoutTeam(Pager pager, String etag) {
-    String query = new QueryBuilder().append("without_team", 1).toString();
+    String query = new QueryBuilder().set("without_team", 1).toString();
     return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
   }
 
@@ -1040,7 +1040,7 @@ public class MattermostClient
    */
   @Override
   public ApiResponse<Boolean> deleteTeam(String teamId, boolean permanent) {
-    String query = new QueryBuilder().append("permanent", Boolean.toString(permanent)).toString();
+    String query = new QueryBuilder().set("permanent", Boolean.toString(permanent)).toString();
     return doApiDelete(getTeamRoute(teamId) + query).checkStatusOk();
   }
 
@@ -1090,10 +1090,10 @@ public class MattermostClient
       String dataToHash, String inviteId) {
     QueryBuilder query = new QueryBuilder();
     if (StringUtils.isNotEmpty(inviteId)) {
-      query.append("invite_id", inviteId);
+      query.set("invite_id", inviteId);
     }
     if (StringUtils.isNotEmpty(hash) && StringUtils.isNotEmpty(dataToHash)) {
-      query.append("hash", hash).append("data", dataToHash);
+      query.set("hash", hash).set("data", dataToHash);
     }
     TeamMember teamMember = new TeamMember(teamId, userId);
 
@@ -1109,10 +1109,10 @@ public class MattermostClient
   public ApiResponse<TeamMember> addTeamMember(String hash, String dataToHash, String inviteId) {
     QueryBuilder query = new QueryBuilder();
     if (StringUtils.isNotEmpty(inviteId)) {
-      query.append("invite_id", inviteId);
+      query.set("invite_id", inviteId);
     }
     if (StringUtils.isNotEmpty(hash) && StringUtils.isNotEmpty(dataToHash)) {
-      query.append("hash", hash).append("data", dataToHash);
+      query.set("hash", hash).set("data", dataToHash);
     }
 
     return doApiPost(getTeamsRoute() + "/members/invite" + query.toString(), null,
@@ -1495,7 +1495,7 @@ public class MattermostClient
   public ApiResponse<PostList> getFlaggedPostsForUserInChannel(String userId, String channelId,
       Pager pager) {
     // TODO channelId length validation
-    String query = new QueryBuilder().append("in_channel", channelId).toString();
+    String query = new QueryBuilder().set("in_channel", channelId).toString();
     return doApiGet(getUserRoute(userId) + "/posts/flagged" + query + pager.toQuery(false), null,
         PostList.class);
   }
@@ -1515,7 +1515,7 @@ public class MattermostClient
   @Override
   public ApiResponse<PostList> getPostsAfter(String channelId, String postId, Pager pager,
       String etag) {
-    String query = new QueryBuilder().append("after", postId).toString();
+    String query = new QueryBuilder().set("after", postId).toString();
     return doApiGet(getChannelRoute(channelId) + "/posts" + query + pager.toQuery(false), etag,
         PostList.class);
   }
@@ -1526,7 +1526,7 @@ public class MattermostClient
   @Override
   public ApiResponse<PostList> getPostsBefore(String channelId, String postId, Pager pager,
       String etag) {
-    String query = new QueryBuilder().append("before", postId).toString();
+    String query = new QueryBuilder().set("before", postId).toString();
     return doApiGet(getChannelRoute(channelId) + "/posts" + query + pager.toQuery(false), etag,
         PostList.class);
   }
@@ -1663,7 +1663,7 @@ public class MattermostClient
   @Override
   public ApiResponse<IncomingWebhookList> getIncomingWebhooksForTeam(String teamId, Pager pager,
       String etag) {
-    String query = new QueryBuilder().append("team_id", teamId).toString();
+    String query = new QueryBuilder().set("team_id", teamId).toString();
     return doApiGet(getIncomingWebhooksRoute() + query + pager.toQuery(false), etag,
         IncomingWebhookList.class);
   }
@@ -1722,7 +1722,7 @@ public class MattermostClient
   @Override
   public ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForChannel(String channelId,
       Pager pager, String etag) {
-    String query = new QueryBuilder().append("channel_id", channelId).toString();
+    String query = new QueryBuilder().set("channel_id", channelId).toString();
     return doApiGet(getOutgoingWebhooksRoute() + query + pager.toQuery(false), etag,
         OutgoingWebhookList.class);
   }
@@ -1733,7 +1733,7 @@ public class MattermostClient
   @Override
   public ApiResponse<OutgoingWebhookList> getOutgoingWebhooksForTeam(String teamId, Pager pager,
       String etag) {
-    String query = new QueryBuilder().append("team_id", teamId).toString();
+    String query = new QueryBuilder().set("team_id", teamId).toString();
     return doApiGet(getOutgoingWebhooksRoute() + query + pager.toQuery(false), etag,
         OutgoingWebhookList.class);
   }
@@ -2110,7 +2110,7 @@ public class MattermostClient
   @Override
   public ApiResponse<CommandList> listCommands(String teamId, boolean customOnly) {
     String query =
-        new QueryBuilder().append("team_id", teamId).append("custom_only", customOnly).toString();
+        new QueryBuilder().set("team_id", teamId).set("custom_only", customOnly).toString();
     return doApiGet(getCommandsRoute() + query, null, CommandList.class);
   }
 
