@@ -323,7 +323,7 @@ public class MattermostClient
   }
 
   public String getCacheRoute() {
-    return "/cache";
+    return "/caches";
   }
 
   public String getClusterRoute() {
