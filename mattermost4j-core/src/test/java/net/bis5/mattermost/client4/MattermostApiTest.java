@@ -418,6 +418,13 @@ public class MattermostApiTest {
     Channel restoredChannel = restoreResult.readEntity();
     assertEquals(restoredChannel.getId(), channel.getId());
 
+    // in prior of Mattermost 5.5, archive/unarchive operations did not flush server-side cache.
+    {
+      th.logout().loginSystemAdmin();
+      assertNoError(client.invalidateCaches());
+      th.logout().loginTeamAdmin();
+    }
+
     restoredChannel = client.getChannel(channel.getId()).readEntity();
     assertThat(restoredChannel.getDeleteAt(), is(0l));
   }
