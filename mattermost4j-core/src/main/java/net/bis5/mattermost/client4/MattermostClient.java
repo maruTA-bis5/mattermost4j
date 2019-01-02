@@ -1398,6 +1398,12 @@ public class MattermostClient
     return doApiPost(getChannelRoute(channelId) + "/restore", null, Channel.class);
   }
 
+  @Override
+  public ApiResponse<ChannelList> getDeletedChannels(String teamId, Pager pager) {
+    return doApiGet(getChannelsForTeamRoute(teamId) + "/deleted" + pager.toQuery(), null,
+        ChannelList.class);
+  }
+
   // Post Section
 
   /**
