@@ -157,4 +157,6 @@ public interface ChannelApi {
 
   ApiResponse<Boolean> removeUserFromChannel(String channelId, String userId);
 
+  ApiResponse<Channel> restoreChannel(String channelId);
+
 }
