@@ -24,8 +24,10 @@ import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import com.vdurmont.semver4j.Semver;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -406,9 +408,18 @@ public class MattermostApiTest {
   }
 
   @Test
-  @Ignore
   public void testChannels_RestoreChannel() {
-    // TODO since 3.10
+    Channel channel = th.createPublicChannel();
+    ApiResponse<Boolean> deleteResult = assertNoError(client.deleteChannel(channel.getId()));
+    assertTrue(deleteResult.readEntity());
+
+    th.logout().loginTeamAdmin();
+    ApiResponse<Channel> restoreResult = assertNoError(client.restoreChannel(channel.getId()));
+    Channel restoredChannel = restoreResult.readEntity();
+    assertEquals(restoredChannel.getId(), channel.getId());
+
+    restoredChannel = client.getChannel(channel.getId()).readEntity();
+    assertThat(restoredChannel.getDeleteAt(), is(0l));
   }
 
   @Test

@@ -1393,6 +1393,11 @@ public class MattermostClient
     return doApiDelete(getChannelMemberRoute(channelId, userId)).checkStatusOk();
   }
 
+  @Override
+  public ApiResponse<Channel> restoreChannel(String channelId) {
+    return doApiPost(getChannelRoute(channelId) + "/restore", null, Channel.class);
+  }
+
   // Post Section
 
   /**
