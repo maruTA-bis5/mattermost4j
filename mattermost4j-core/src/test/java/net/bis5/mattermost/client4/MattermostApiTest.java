@@ -103,6 +103,7 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -1799,8 +1800,23 @@ public class MattermostApiTest {
   }
 
   @Test
-  @Ignore // TODO
-  public void testEmoji_GetCustomEmojiImage() {}
+  public void testEmoji_GetCustomEmojiImage() throws URISyntaxException, IOException {
+    Path originalImage = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+    Emoji emoji = new Emoji();
+    emoji.setName("custom" + th.newId());
+    emoji.setCreatorId(th.basicUser().getId());
+    emoji = client.createEmoji(emoji, originalImage).readEntity();
+    String emojiId = emoji.getId();
+
+    ApiResponse<Path> emojiImage = assertNoError(client.getEmojiImage(emojiId));
+    Path downloadedFile = emojiImage.readEntity();
+
+    // file contents equals?
+    String originalHash = DigestUtils.sha1Hex(Files.readAllBytes(originalImage));
+    String downloadedHash = DigestUtils.sha1Hex(Files.readAllBytes(downloadedFile));
+
+    assertEquals(originalHash, downloadedHash);
+  }
 
   // Webhooks
 

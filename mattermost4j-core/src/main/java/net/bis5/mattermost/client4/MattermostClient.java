@@ -14,10 +14,14 @@
 
 package net.bis5.mattermost.client4;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +35,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import net.bis5.mattermost.client4.api.AuditsApi;
 import net.bis5.mattermost.client4.api.AuthenticationApi;
 import net.bis5.mattermost.client4.api.BrandApi;
@@ -2235,9 +2240,36 @@ public class MattermostClient
    * returns the emoji image.
    */
   @Override
-  public ApiResponse<Object> getEmojiImage(String emojiId) {
-    throw new UnsupportedOperationException("not impl");
+  public ApiResponse<Path> getEmojiImage(String emojiId) throws IOException {
+    ApiResponse<InputStream> emojiResponse =
+        doApiGet(getEmojiRoute(emojiId) + "/image", null, InputStream.class);
+    if (emojiResponse.hasError()) {
+      ApiResponse<Path> errorResponse = ApiResponse.of(emojiResponse.getRawResponse(), Path.class);
+      return errorResponse;
+    }
+
+    String suffix = detectImageSuffix(emojiResponse.getRawResponse());
+    Path imageFile = Files.createTempFile(null, suffix);
+    Files.copy(emojiResponse.readEntity(), imageFile, StandardCopyOption.REPLACE_EXISTING);
+    ApiResponse<Path> response = ApiResponse.of(emojiResponse.getRawResponse(), imageFile);
+    return response;
   }
+
+  private String detectImageSuffix(Response response) {
+    MediaType mediaType = response.getMediaType();
+    if (mediaType.isCompatible(MediaType.valueOf("image/png"))) {
+      return ".png";
+    } else if (mediaType.isCompatible(MediaType.valueOf("image/jpeg"))) {
+      return ".jpg";
+    } else if (mediaType.isCompatible(MediaType.valueOf("image/gif"))) {
+      return ".gif";
+    } else if (mediaType.isCompatible(MediaType.valueOf("image/bmp"))) {
+      return ".bmp";
+    } else {
+      throw new IllegalArgumentException("Unsupported Content-Type: " + mediaType.toString());
+    }
+  }
+
 
   // Reaction Section
 

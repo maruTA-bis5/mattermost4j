@@ -14,6 +14,7 @@
 
 package net.bis5.mattermost.client4.api;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.Pager;
@@ -44,5 +45,5 @@ public interface EmojiApi {
 
   ApiResponse<Emoji> getEmoji(String emojiId);
 
-  ApiResponse<Object> getEmojiImage(String emojiId);
+  ApiResponse<Path> getEmojiImage(String emojiId) throws IOException;
 }
