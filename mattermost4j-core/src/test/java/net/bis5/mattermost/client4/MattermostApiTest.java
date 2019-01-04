@@ -1805,7 +1805,12 @@ public class MattermostApiTest {
     Emoji emoji = new Emoji();
     emoji.setName("custom" + th.newId());
     emoji.setCreatorId(th.basicUser().getId());
-    emoji = client.createEmoji(emoji, originalImage).readEntity();
+    ApiResponse<Emoji> response = client.createEmoji(emoji, originalImage);
+    if (isNotSupportVersion("5.4.0", response)) {
+      // CreateEmoji call fail between 4.8 and 5.3
+      return;
+    }
+    emoji = assertNoError(response).readEntity();
     String emojiId = emoji.getId();
 
     ApiResponse<Path> emojiImage = assertNoError(client.getEmojiImage(emojiId));
