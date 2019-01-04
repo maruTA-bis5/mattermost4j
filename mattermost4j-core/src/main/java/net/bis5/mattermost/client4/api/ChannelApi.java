@@ -159,4 +159,10 @@ public interface ChannelApi {
 
   ApiResponse<Channel> restoreChannel(String channelId);
 
+  default ApiResponse<ChannelList> getDeletedChannels(String teamId) {
+    return getDeletedChannels(teamId, Pager.defaultPager());
+  }
+
+  ApiResponse<ChannelList> getDeletedChannels(String teamId, Pager pager);
+
 }

@@ -712,6 +712,21 @@ public class MattermostApiTest {
     return serverVersion.compareTo(requirement) < 0;
   }
 
+  @Test
+  public void testChannels_GetDeletedChannels() {
+    Channel deleted1 = th.createPublicChannel();
+    Channel deleted2 = th.createPublicChannel();
+    client.deleteChannel(deleted1.getId());
+    client.deleteChannel(deleted2.getId());
+
+    th.logout().loginTeamAdmin();
+    ChannelList channels =
+        assertNoError(client.getDeletedChannels(th.basicTeam().getId())).readEntity();
+    Set<String> channelIds = channels.stream().map(Channel::getId).collect(Collectors.toSet());
+
+    assertThat(channelIds, containsInAnyOrder(deleted1.getId(), deleted2.getId()));
+  }
+
   // Users
 
   @Test
