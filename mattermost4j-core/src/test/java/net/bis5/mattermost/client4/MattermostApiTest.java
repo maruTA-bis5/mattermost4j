@@ -1521,8 +1521,34 @@ public class MattermostApiTest {
   }
 
   @Test
-  @Ignore // TODO
-  public void testPosts_GetFlaggedPosts() {}
+  public void testPosts_GetFlaggedPosts() {
+    Post post = th.basicPost();
+
+    // XXX "Flag post" operation need make more simple?
+    Preferences prefs = new Preferences();
+    Preference flag = new Preference();
+    flag.setUserid(th.basicUser().getId());
+    flag.setCategory(PreferenceCategory.FLAGGED_POST);
+    flag.setName(post.getId());
+    flag.setValue(Boolean.toString(true));
+    prefs.add(flag);
+    assertNoError(client.updatePreferences(th.basicUser().getId(), prefs));
+
+    PostList flaggedPosts =
+        assertNoError(client.getFlaggedPostsForUser(th.basicUser().getId())).readEntity();
+    assertThat(flaggedPosts.getOrder().contains(post.getId()), is(true));
+
+    flaggedPosts = assertNoError(
+        client.getFlaggedPostsForUserInChannel(th.basicUser().getId(), post.getChannelId()))
+            .readEntity();
+    assertThat(flaggedPosts.getOrder().contains(post.getId()), is(true));
+
+    flaggedPosts = assertNoError(
+        client.getFlaggedPostsForUserInTeam(th.basicUser().getId(), th.basicTeam().getId()))
+            .readEntity();
+    assertThat(flaggedPosts.getOrder().contains(post.getId()), is(true));
+  }
+
 
   @Test
   @Ignore // TODO

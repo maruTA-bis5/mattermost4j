@@ -1499,8 +1499,8 @@ public class MattermostClient
   public ApiResponse<PostList> getFlaggedPostsForUserInTeam(String userId, String teamId,
       Pager pager) {
     // TODO teamId length validation
-
-    return doApiGet(getUserRoute(userId) + "/posts/flagged" + pager.toQuery(), null,
+    String query = new QueryBuilder().set("in_team", teamId).toString();
+    return doApiGet(getUserRoute(userId) + "/posts/flagged" + query + pager.toQuery(false), null,
         PostList.class);
   }
 
