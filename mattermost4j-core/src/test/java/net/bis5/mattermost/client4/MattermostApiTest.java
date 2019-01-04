@@ -103,6 +103,7 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -1740,7 +1741,6 @@ public class MattermostApiTest {
   // Emoji
 
   @Test
-  @Ignore // emoji upload fail from MM 4.8
   public void testEmoji_CreateCustomEmoji() throws URISyntaxException {
     Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
     Emoji emoji = new Emoji();
@@ -1748,21 +1748,29 @@ public class MattermostApiTest {
     emoji.setName(emojiName);
     emoji.setCreatorId(th.basicUser().getId());
 
-    ApiResponse<Emoji> response = assertNoError(client.createEmoji(emoji, image));
-    Emoji createdEmoji = response.readEntity();
+    ApiResponse<Emoji> response = client.createEmoji(emoji, image);
+    if (isNotSupportVersion("5.4.0", response)) {
+      // CreateEmoji call fail between 4.8 and 5.3
+      return;
+    }
+    Emoji createdEmoji = assertNoError(response).readEntity();
 
     assertThat(createdEmoji.getName(), is(emojiName));
     assertThat(createdEmoji.getId(), is(not(nullValue())));
   }
 
   @Test
-  @Ignore // emoji upload fail from MM 4.8
   public void testEmoji_GetCustomEmojiList() throws URISyntaxException {
     Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
     Emoji emoji1 = new Emoji();
     emoji1.setName("custom" + th.newId());
     emoji1.setCreatorId(th.basicUser().getId());
-    emoji1 = client.createEmoji(emoji1, image).readEntity();
+    ApiResponse<Emoji> resp1 = client.createEmoji(emoji1, image);
+    if (isNotSupportVersion("5.4.0", resp1)) {
+      // CreateEmoji call fail between 4.8 and 5.3
+      return;
+    }
+    emoji1 = assertNoError(resp1).readEntity();
     Emoji emoji2 = new Emoji();
     emoji2.setName("custom" + th.newId());
     emoji2.setCreatorId(th.basicUser().getId());
@@ -1776,13 +1784,17 @@ public class MattermostApiTest {
   }
 
   @Test
-  @Ignore // emoji upload fail from MM 4.8
   public void testEmoji_GetCustomEmoji() throws URISyntaxException {
     Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
     Emoji emoji = new Emoji();
     emoji.setName("custom" + th.newId());
     emoji.setCreatorId(th.basicUser().getId());
-    emoji = client.createEmoji(emoji, image).readEntity();
+    ApiResponse<Emoji> resp1 = client.createEmoji(emoji, image);
+    if (isNotSupportVersion("5.4.0", resp1)) {
+      // CreateEmoji call fail between 4.8 and 5.3
+      return;
+    }
+    emoji = assertNoError(resp1).readEntity();
     String emojiId = emoji.getId();
 
     ApiResponse<Emoji> response = assertNoError(client.getEmoji(emojiId));
@@ -1792,13 +1804,17 @@ public class MattermostApiTest {
   }
 
   @Test
-  @Ignore // emoji upload fail from MM 4.8
   public void testEmoji_DeleteCustomEmoji() throws URISyntaxException {
     Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
     Emoji emoji = new Emoji();
     emoji.setName("custom" + th.newId());
     emoji.setCreatorId(th.basicUser().getId());
-    emoji = assertNoError(client.createEmoji(emoji, image)).readEntity();
+    ApiResponse<Emoji> resp1 = client.createEmoji(emoji, image);
+    if (isNotSupportVersion("5.4.0", resp1)) {
+      // CreateEmoji call fail between 4.8 and 5.3
+      return;
+    }
+    emoji = assertNoError(resp1).readEntity();
     String emojiId = emoji.getId();
 
     ApiResponse<Boolean> response = assertNoError(client.deleteEmoji(emojiId));
@@ -1814,8 +1830,28 @@ public class MattermostApiTest {
   }
 
   @Test
-  @Ignore // TODO
-  public void testEmoji_GetCustomEmojiImage() {}
+  public void testEmoji_GetCustomEmojiImage() throws URISyntaxException, IOException {
+    Path originalImage = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+    Emoji emoji = new Emoji();
+    emoji.setName("custom" + th.newId());
+    emoji.setCreatorId(th.basicUser().getId());
+    ApiResponse<Emoji> response = client.createEmoji(emoji, originalImage);
+    if (isNotSupportVersion("5.4.0", response)) {
+      // CreateEmoji call fail between 4.8 and 5.3
+      return;
+    }
+    emoji = assertNoError(response).readEntity();
+    String emojiId = emoji.getId();
+
+    ApiResponse<Path> emojiImage = assertNoError(client.getEmojiImage(emojiId));
+    Path downloadedFile = emojiImage.readEntity();
+
+    // file contents equals?
+    String originalHash = DigestUtils.sha1Hex(Files.readAllBytes(originalImage));
+    String downloadedHash = DigestUtils.sha1Hex(Files.readAllBytes(downloadedFile));
+
+    assertEquals(originalHash, downloadedHash);
+  }
 
   // Webhooks
 
