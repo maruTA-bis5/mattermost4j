@@ -16,6 +16,8 @@ package net.bis5.mattermost.client4.api;
 
 import java.util.Map;
 import net.bis5.mattermost.client4.ApiResponse;
+import net.bis5.mattermost.client4.model.AnalyticsCategory;
+import net.bis5.mattermost.model.AnalyticsRows;
 import net.bis5.mattermost.model.Config;
 
 /**
@@ -50,4 +52,19 @@ public interface GeneralApi {
   ApiResponse<Boolean> invalidateCaches();
 
   ApiResponse<Config> updateConfig(Config config);
+
+  default ApiResponse<AnalyticsRows> getAnalytics() {
+    return getAnalytics(AnalyticsCategory.STANDARD);
+  }
+
+  default ApiResponse<AnalyticsRows> getAnalytics(AnalyticsCategory category) {
+    return getAnalytics(category, null);
+  }
+
+  default ApiResponse<AnalyticsRows> getAnalytics(String teamId) {
+    return getAnalytics(AnalyticsCategory.STANDARD, teamId);
+  }
+
+  ApiResponse<AnalyticsRows> getAnalytics(AnalyticsCategory category, String teamId);
+
 }
