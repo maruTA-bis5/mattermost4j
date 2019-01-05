@@ -1670,6 +1670,11 @@ public class MattermostClient
     return doApiPostMultiPart("/license", multiPart).checkStatusOk();
   }
 
+  @Override
+  public ApiResponse<Boolean> removeLicense() {
+    return doApiDelete("/license").checkStatusOk();
+  }
+
   // Webhooks Section
 
   /**

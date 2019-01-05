@@ -70,4 +70,6 @@ public interface GeneralApi {
 
   ApiResponse<Boolean> uploadLicenseFile(Path licenseFile);
 
+  ApiResponse<Boolean> removeLicense();
+
 }

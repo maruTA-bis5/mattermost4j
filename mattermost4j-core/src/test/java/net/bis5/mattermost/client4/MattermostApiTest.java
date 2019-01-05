@@ -2487,4 +2487,13 @@ public class MattermostApiTest {
     assertStatus(client.uploadLicenseFile(licenseFile), Status.BAD_REQUEST);
   }
 
+  @Test
+  public void testSystem_RemoveLicense() {
+    th.logout().loginBasic();
+    assertStatus(client.removeLicense(), Status.FORBIDDEN);
+
+    th.logout().loginSystemAdmin();
+    assertNoError(client.removeLicense());
+  }
+
 }
