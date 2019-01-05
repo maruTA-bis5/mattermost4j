@@ -49,6 +49,9 @@ import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import net.bis5.mattermost.client4.hook.IncomingWebhookClient;
+import net.bis5.mattermost.client4.model.AnalyticsCategory;
+import net.bis5.mattermost.model.AnalyticsRow;
+import net.bis5.mattermost.model.AnalyticsRows;
 import net.bis5.mattermost.model.Audit;
 import net.bis5.mattermost.model.Audits;
 import net.bis5.mattermost.model.AuthService;
@@ -2421,4 +2424,55 @@ public class MattermostApiTest {
     assertNoError(response);
     assertFalse(response.hasError());
   }
+
+  // System
+
+  @Test
+  public void testSystem_GetAnalytics() {
+    th.logout().loginSystemAdmin();
+    AnalyticsRows analyticsRows = assertNoError(client.getAnalytics()).readEntity();
+
+    assertFalse(analyticsRows.isEmpty());
+    assertThat(analyticsRows.get(0).getValue(), is(not(nullValue())));
+  }
+
+  @Test
+  public void testSystem_GetAnalyticsSpecifiedCategory() {
+    th.logout().loginSystemAdmin();
+    AnalyticsRows analyticsRows =
+        assertNoError(client.getAnalytics(AnalyticsCategory.EXTRA_COUNTS)).readEntity();
+
+    assertFalse(analyticsRows.isEmpty());
+    Set<String> rowNames = analyticsRows.stream() //
+        .map(AnalyticsRow::getName) //
+        .map(String::toLowerCase) //
+        .collect(Collectors.toSet());
+    assertTrue(rowNames.contains("session_count"));
+    assertFalse(rowNames.contains("user_counts_with_posts_day"));
+  }
+
+  @Test
+  public void testSystem_GetAnalyticsSpecifiedTeam() {
+    th.logout().loginSystemAdmin();
+    Team basicTeam = th.basicTeam();
+    AnalyticsRows analyticsRows =
+        assertNoError(client.getAnalytics(basicTeam.getId())).readEntity();
+
+    assertFalse(analyticsRows.isEmpty());
+    AnalyticsRow userCountRow = analyticsRows.stream() //
+        .filter(r -> r.getName().equals("unique_user_count")) //
+        .findAny().get();
+    // BasicTeam has 3 users. see TestHelper
+    assertThat(userCountRow.getValue().intValue(), is(3));
+
+    // AdditionalTeam has 1 user (team creator).
+    Team additionalTeam = th.createTeam();
+    analyticsRows = assertNoError(client.getAnalytics(additionalTeam.getId())).readEntity();
+
+    userCountRow = analyticsRows.stream() //
+        .filter(r -> r.getName().equals("unique_user_count")) //
+        .findAny().get();
+    assertThat(userCountRow.getValue().intValue(), is(1));
+  }
+
 }

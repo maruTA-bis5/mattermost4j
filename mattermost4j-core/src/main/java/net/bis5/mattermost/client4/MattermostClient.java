@@ -58,6 +58,7 @@ import net.bis5.mattermost.client4.api.UserApi;
 import net.bis5.mattermost.client4.api.WebhookApi;
 import net.bis5.mattermost.client4.api.WebrtcApi;
 import net.bis5.mattermost.client4.model.AddChannelMemberRequest;
+import net.bis5.mattermost.client4.model.AnalyticsCategory;
 import net.bis5.mattermost.client4.model.AttachDeviceIdRequest;
 import net.bis5.mattermost.client4.model.CheckUserMfaRequest;
 import net.bis5.mattermost.client4.model.DeauthorizeOAuthAppRequest;
@@ -74,6 +75,7 @@ import net.bis5.mattermost.client4.model.UpdateUserMfaRequest;
 import net.bis5.mattermost.client4.model.UpdateUserPasswordRequest;
 import net.bis5.mattermost.client4.model.VerifyUserEmailRequest;
 import net.bis5.mattermost.jersey.provider.MattermostModelMapperProvider;
+import net.bis5.mattermost.model.AnalyticsRows;
 import net.bis5.mattermost.model.Audits;
 import net.bis5.mattermost.model.AuthorizeRequest;
 import net.bis5.mattermost.model.Channel;
@@ -1645,6 +1647,16 @@ public class MattermostClient
   @Override
   public ApiResponse<Config> updateConfig(Config config) {
     return doApiPut(getConfigRoute(), config, Config.class);
+  }
+
+  @Override
+  public ApiResponse<AnalyticsRows> getAnalytics(AnalyticsCategory category, String teamId) {
+    QueryBuilder queryBuilder = new QueryBuilder();
+    queryBuilder.set("name", category.getCode());
+    if (StringUtils.isNotEmpty(teamId)) {
+      queryBuilder.set("team_id", teamId);
+    }
+    return doApiGet("/analytics/old" + queryBuilder.toString(), null, AnalyticsRows.class);
   }
 
   // Webhooks Section
