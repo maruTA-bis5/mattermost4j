@@ -1659,6 +1659,17 @@ public class MattermostClient
     return doApiGet("/analytics/old" + queryBuilder.toString(), null, AnalyticsRows.class);
   }
 
+  @Override
+  public ApiResponse<Boolean> uploadLicenseFile(Path licenseFile) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("license", licenseFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart("/license", multiPart).checkStatusOk();
+  }
+
   // Webhooks Section
 
   /**

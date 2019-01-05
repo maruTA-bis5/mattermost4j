@@ -2475,4 +2475,16 @@ public class MattermostApiTest {
     assertThat(userCountRow.getValue().intValue(), is(1));
   }
 
+  @Test
+  public void testSystem_UploadLicenseFile() throws IOException {
+    Path licenseFile = Files.createTempFile(null, null); // invalid contents
+    licenseFile.toFile().deleteOnExit();
+
+    th.logout().loginBasic();
+    assertStatus(client.uploadLicenseFile(licenseFile), Status.FORBIDDEN);
+
+    th.logout().loginSystemAdmin();
+    assertStatus(client.uploadLicenseFile(licenseFile), Status.BAD_REQUEST);
+  }
+
 }

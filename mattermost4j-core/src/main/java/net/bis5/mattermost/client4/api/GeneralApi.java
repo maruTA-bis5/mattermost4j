@@ -14,6 +14,7 @@
 
 package net.bis5.mattermost.client4.api;
 
+import java.nio.file.Path;
 import java.util.Map;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.model.AnalyticsCategory;
@@ -66,5 +67,7 @@ public interface GeneralApi {
   }
 
   ApiResponse<AnalyticsRows> getAnalytics(AnalyticsCategory category, String teamId);
+
+  ApiResponse<Boolean> uploadLicenseFile(Path licenseFile);
 
 }
