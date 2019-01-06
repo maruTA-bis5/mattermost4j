@@ -58,6 +58,7 @@ import net.bis5.mattermost.client4.api.UserApi;
 import net.bis5.mattermost.client4.api.WebhookApi;
 import net.bis5.mattermost.client4.api.WebrtcApi;
 import net.bis5.mattermost.client4.model.AddChannelMemberRequest;
+import net.bis5.mattermost.client4.model.AnalyticsCategory;
 import net.bis5.mattermost.client4.model.AttachDeviceIdRequest;
 import net.bis5.mattermost.client4.model.CheckUserMfaRequest;
 import net.bis5.mattermost.client4.model.DeauthorizeOAuthAppRequest;
@@ -74,6 +75,7 @@ import net.bis5.mattermost.client4.model.UpdateUserMfaRequest;
 import net.bis5.mattermost.client4.model.UpdateUserPasswordRequest;
 import net.bis5.mattermost.client4.model.VerifyUserEmailRequest;
 import net.bis5.mattermost.jersey.provider.MattermostModelMapperProvider;
+import net.bis5.mattermost.model.AnalyticsRows;
 import net.bis5.mattermost.model.Audits;
 import net.bis5.mattermost.model.AuthorizeRequest;
 import net.bis5.mattermost.model.Channel;
@@ -1499,8 +1501,8 @@ public class MattermostClient
   public ApiResponse<PostList> getFlaggedPostsForUserInTeam(String userId, String teamId,
       Pager pager) {
     // TODO teamId length validation
-
-    return doApiGet(getUserRoute(userId) + "/posts/flagged" + pager.toQuery(), null,
+    String query = new QueryBuilder().set("in_team", teamId).toString();
+    return doApiGet(getUserRoute(userId) + "/posts/flagged" + query + pager.toQuery(false), null,
         PostList.class);
   }
 
@@ -1645,6 +1647,32 @@ public class MattermostClient
   @Override
   public ApiResponse<Config> updateConfig(Config config) {
     return doApiPut(getConfigRoute(), config, Config.class);
+  }
+
+  @Override
+  public ApiResponse<AnalyticsRows> getAnalytics(AnalyticsCategory category, String teamId) {
+    QueryBuilder queryBuilder = new QueryBuilder();
+    queryBuilder.set("name", category.getCode());
+    if (StringUtils.isNotEmpty(teamId)) {
+      queryBuilder.set("team_id", teamId);
+    }
+    return doApiGet("/analytics/old" + queryBuilder.toString(), null, AnalyticsRows.class);
+  }
+
+  @Override
+  public ApiResponse<Boolean> uploadLicenseFile(Path licenseFile) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("license", licenseFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart("/license", multiPart).checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<Boolean> removeLicense() {
+    return doApiDelete("/license").checkStatusOk();
   }
 
   // Webhooks Section
