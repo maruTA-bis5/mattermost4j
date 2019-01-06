@@ -175,7 +175,7 @@ public class MattermostClient
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
     httpClient.close();
   }
 
