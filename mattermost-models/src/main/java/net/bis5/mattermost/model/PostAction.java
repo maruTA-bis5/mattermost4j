@@ -59,6 +59,9 @@ public class PostAction {
     /* @since Mattermost Server 5.4 */
     @JsonProperty("team_id")
     private String teamId;
+    /* @since Mattermost Server 5.6 */
+    @JsonProperty("trigger_id")
+    private String triggerId;
     @JsonProperty("context")
     private Map<String, String> context;
   }
