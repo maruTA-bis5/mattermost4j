@@ -19,15 +19,15 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.vdurmont.semver4j.Semver;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -110,11 +110,11 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Mattermost API call test
@@ -132,18 +132,18 @@ public class MattermostApiTest {
     return url != null ? url : "http://localhost:8065";
   }
 
-  @BeforeClass
+  @BeforeAll
   public static void initHelper() {
     th = new TestHelper(new MattermostClient(APPLICATION)).setup();
   }
 
-  @Before
+  @BeforeEach
   public void setup() {
     client = new MattermostClient(APPLICATION, Level.WARNING);
     th.changeClient(client).initBasic();
   }
 
-  @After
+  @AfterEach
   public void tearDown() throws Exception {
     th.logout();
     client.close();
@@ -596,7 +596,7 @@ public class MattermostApiTest {
   }
 
   @Test
-  @Ignore
+  @Disabled
   public void testChannels_UpdateChannelNotifications() {
     // TODO props定数を作る
   }
@@ -1307,7 +1307,7 @@ public class MattermostApiTest {
   }
 
   @Test
-  @Ignore // API for 4.0+
+  @Disabled // API for 4.0+
   public void testTeams_AddUserToTeamFromInvite() {
 
     assertStatus(client.addTeamMember("hash", "dataToHash", "inviteId"), Status.BAD_REQUEST);
@@ -1429,7 +1429,7 @@ public class MattermostApiTest {
   }
 
   @Test
-  @Ignore // Not Implemented
+  @Disabled // Not Implemented
   public void testTeams_ImportTeamFromOtherApplication() {}
 
   @Test
@@ -1554,7 +1554,7 @@ public class MattermostApiTest {
 
 
   @Test
-  @Ignore // TODO
+  @Disabled // TODO
   public void testPosts_GetFileInfoForPost() {}
 
   @Test
@@ -1627,7 +1627,7 @@ public class MattermostApiTest {
   }
 
   @Test
-  @Ignore // FIXME work correctly from 4.0
+  @Disabled // FIXME work correctly from 4.0
   public void testPosts_SearchForTeamPosts() {
     String teamId = th.basicTeam().getId();
     String channelId = th.basicChannel().getId();
