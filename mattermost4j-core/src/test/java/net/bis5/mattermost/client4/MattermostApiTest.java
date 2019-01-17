@@ -789,7 +789,7 @@ public class MattermostApiTest {
     status.setStatus(StatusType.ONLINE.getCode());
     status.setUserId(user4.getId());
     assertNoError(client.updateUserStatus(user4.getId(), status));
-    status.setStatus(StatusType.ARAY.getCode());
+    status.setStatus(StatusType.AWAY.getCode());
     status.setUserId(user3.getId());
     assertNoError(client.updateUserStatus(user3.getId(), status));
     status.setStatus(StatusType.DND.getCode());
