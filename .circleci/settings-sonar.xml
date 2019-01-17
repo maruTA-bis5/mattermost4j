@@ -14,6 +14,10 @@
 				<sonar.login>${SONAR_TOKEN}</sonar.login>
 				<sonar.organization>maruta-bis5-github</sonar.organization>
 				<sonar.branch.name>${CIRCLE_BRANCH}</sonar.branch.name>
+				<sonar.pullrequest.provider>github</sonar.pullrequest.provider>
+				<sonar.pullrequest.github.endpoint>https://api.github.com/</sonar.pullrequest.github.endpoint>
+				<sonar.pullrequest.github.token.secured>${SONAR_GITHUB_TOKEN}</sonar.pullrequest.github.token.secured>
+				<sonar.pullrequest.github.repository>maruTA-bis5/mattermost4j</sonar.pullrequest.github.repository>
 			</properties>
 		</profile>
 	</profiles>
