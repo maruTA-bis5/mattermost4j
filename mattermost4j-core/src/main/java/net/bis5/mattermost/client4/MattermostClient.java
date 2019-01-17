@@ -73,6 +73,7 @@ import net.bis5.mattermost.client4.model.UpdateRolesRequest;
 import net.bis5.mattermost.client4.model.UpdateUserActiveRequest;
 import net.bis5.mattermost.client4.model.UpdateUserMfaRequest;
 import net.bis5.mattermost.client4.model.UpdateUserPasswordRequest;
+import net.bis5.mattermost.client4.model.UsersOrder;
 import net.bis5.mattermost.client4.model.VerifyUserEmailRequest;
 import net.bis5.mattermost.jersey.provider.MattermostModelMapperProvider;
 import net.bis5.mattermost.model.AnalyticsRows;
@@ -676,8 +677,12 @@ public class MattermostClient
    * returns a page of users on a team. Page counting starts at 0.
    */
   @Override
-  public ApiResponse<UserList> getUsersInTeam(String teamId, Pager pager, String etag) {
-    String query = new QueryBuilder().set("in_team", teamId).toString();
+  public ApiResponse<UserList> getUsersInTeam(String teamId, UsersOrder.InTeam order, Pager pager,
+      String etag) {
+    String query = new QueryBuilder() //
+        .set("in_team", teamId) //
+        .set("sort", order.getSort())//
+        .toString();
     return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
   }
 
@@ -694,8 +699,12 @@ public class MattermostClient
    * returns a page of users on a team. Page counting starts at 0.
    */
   @Override
-  public ApiResponse<UserList> getUsersInChannel(String channelId, Pager pager, String etag) {
-    String query = new QueryBuilder().set("in_channel", channelId).toString();
+  public ApiResponse<UserList> getUsersInChannel(String channelId, UsersOrder.InChannel order,
+      Pager pager, String etag) {
+    String query = new QueryBuilder() //
+        .set("in_channel", channelId) //
+        .set("sort", order.getSort())//
+        .toString();
     return doApiGet(getUsersRoute() + query + pager.toQuery(false), etag, UserList.class);
   }
 

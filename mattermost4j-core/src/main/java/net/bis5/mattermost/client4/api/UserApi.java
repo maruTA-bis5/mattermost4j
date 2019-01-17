@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.Pager;
+import net.bis5.mattermost.client4.model.UsersOrder;
 import net.bis5.mattermost.model.Audits;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Session;
@@ -105,10 +106,20 @@ public interface UserApi {
   }
 
   default ApiResponse<UserList> getUsersInTeam(String teamId, Pager pager) {
-    return getUsersInTeam(teamId, pager, null);
+    return getUsersInTeam(teamId, UsersOrder.InTeam.NONE, pager);
   }
 
-  ApiResponse<UserList> getUsersInTeam(String teamId, Pager pager, String etag);
+  default ApiResponse<UserList> getUsersInTeam(String teamId, UsersOrder.InTeam order,
+      Pager pager) {
+    return getUsersInTeam(teamId, order, pager, null);
+  }
+
+  default ApiResponse<UserList> getUsersInTeam(String teamId, Pager pager, String etag) {
+    return getUsersInTeam(teamId, UsersOrder.InTeam.NONE, pager, etag);
+  }
+
+  ApiResponse<UserList> getUsersInTeam(String teamId, UsersOrder.InTeam order, Pager pager,
+      String etag);
 
   default ApiResponse<UserList> getUsersNotInTeam(String teamId) {
     return getUsersNotInTeam(teamId, Pager.defaultPager());
@@ -125,10 +136,20 @@ public interface UserApi {
   }
 
   default ApiResponse<UserList> getUsersInChannel(String channelId, Pager pager) {
-    return getUsersInChannel(channelId, pager, null);
+    return getUsersInChannel(channelId, UsersOrder.InChannel.NONE, pager);
   }
 
-  ApiResponse<UserList> getUsersInChannel(String channelId, Pager pager, String etag);
+  default ApiResponse<UserList> getUsersInChannel(String channelId, UsersOrder.InChannel order,
+      Pager pager) {
+    return getUsersInChannel(channelId, order, pager, null);
+  }
+
+  default ApiResponse<UserList> getUsersInChannel(String channelId, Pager pager, String etag) {
+    return getUsersInChannel(channelId, UsersOrder.InChannel.NONE, pager, etag);
+  }
+
+  ApiResponse<UserList> getUsersInChannel(String channelId, UsersOrder.InChannel order, Pager pager,
+      String etag);
 
   default ApiResponse<UserList> getUsersNotInChannel(String teamId, String channelId) {
     return getUsersNotInChannel(teamId, channelId, Pager.defaultPager());

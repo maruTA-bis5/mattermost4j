@@ -34,7 +34,7 @@ import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 @JsonDeserialize(using = StatusTypeDeserializer.class)
 @Getter
 public enum StatusType implements HasCode<StatusType> {
-  OFFLINE("offline"), ARAY("away"), ONLINE("online");
+  OFFLINE("offline"), ARAY("away"), ONLINE("online"), DND("dnd");
   private final String code;
 
   private StatusType(String code) {

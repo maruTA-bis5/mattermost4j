@@ -138,12 +138,12 @@ public class TestHelper {
     return user;
   }
 
-  public User createUser() {
+  public User createUser(String username) {
     String id = newId();
 
     User user = new User();
     user.setEmail(generateTestEmail());
-    user.setUsername(generateTestUsername());
+    user.setUsername(username);
     user.setNickname("nn_" + id);
     user.setFirstName("f_" + id);
     user.setLastName("l_" + id);
@@ -152,6 +152,10 @@ public class TestHelper {
     user = checkNoError(client.createUser(user)).readEntity();
     user.setPassword("Password1");
     return user;
+  }
+
+  public User createUser() {
+    return createUser(generateTestUsername());
   }
 
   public Team createTeam() {

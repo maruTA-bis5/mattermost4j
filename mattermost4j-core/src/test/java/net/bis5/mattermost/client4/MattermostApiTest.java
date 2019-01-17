@@ -27,6 +27,7 @@ import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.vdurmont.semver4j.Semver;
 import java.io.FileNotFoundException;
@@ -50,6 +51,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import net.bis5.mattermost.client4.hook.IncomingWebhookClient;
 import net.bis5.mattermost.client4.model.AnalyticsCategory;
+import net.bis5.mattermost.client4.model.UsersOrder.InChannel;
+import net.bis5.mattermost.client4.model.UsersOrder.InTeam;
 import net.bis5.mattermost.model.AnalyticsRow;
 import net.bis5.mattermost.model.AnalyticsRows;
 import net.bis5.mattermost.model.Audit;
@@ -88,6 +91,7 @@ import net.bis5.mattermost.model.Preferences;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SessionList;
+import net.bis5.mattermost.model.StatusType;
 import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.TeamExists;
@@ -769,6 +773,57 @@ public class MattermostApiTest {
   }
 
   @Test
+  public void testUsers_GetUsers_InChannel_Order() {
+    th.logout().loginSystemAdmin();
+    User user1 = th.createUser("order1_" + th.newId());
+    th.linkUserToTeam(user1, th.basicTeam());
+    User user2 = th.createUser("order2_" + th.newId());
+    th.linkUserToTeam(user2, th.basicTeam());
+    User user3 = th.createUser("order3_" + th.newId());
+    th.linkUserToTeam(user3, th.basicTeam());
+    User user4 = th.createUser("order4_" + th.newId());
+    th.linkUserToTeam(user4, th.basicTeam());
+
+    // state order: user4, user3, user2, user1
+    net.bis5.mattermost.model.Status status = new net.bis5.mattermost.model.Status();
+    status.setStatus(StatusType.ONLINE.getCode());
+    status.setUserId(user4.getId());
+    assertNoError(client.updateUserStatus(user4.getId(), status));
+    status.setStatus(StatusType.ARAY.getCode());
+    status.setUserId(user3.getId());
+    assertNoError(client.updateUserStatus(user3.getId(), status));
+    status.setStatus(StatusType.DND.getCode());
+    status.setUserId(user2.getId());
+    assertNoError(client.updateUserStatus(user2.getId(), status));
+    status.setStatus(StatusType.OFFLINE.getCode());
+    status.setUserId(user1.getId());
+    assertNoError(client.updateUserStatus(user1.getId(), status));
+    th.logout().loginAs(user1);
+
+    List<String> expectedIdsByUsername =
+        Arrays.asList(user1.getId(), user2.getId(), user3.getId(), user4.getId());
+    List<String> expectedIdsByStatus =
+        Arrays.asList(user4.getId(), user3.getId(), user2.getId(), user1.getId());
+
+    Channel channel = th.createPublicChannel();
+    assertNoError(client.addChannelMember(channel.getId(), user2.getId()));
+    assertNoError(client.addChannelMember(channel.getId(), user3.getId()));
+    assertNoError(client.addChannelMember(channel.getId(), user4.getId()));
+
+    UserList usersByUsername = assertNoError(
+        client.getUsersInChannel(channel.getId(), InChannel.NONE, Pager.defaultPager()))
+            .readEntity();
+    List<String> ids = usersByUsername.stream().map(User::getId).collect(Collectors.toList());
+    assertIterableEquals(expectedIdsByUsername, ids);
+
+    UserList usersByStatus = assertNoError(
+        client.getUsersInChannel(channel.getId(), InChannel.STATUS, Pager.defaultPager()))
+            .readEntity();
+    ids = usersByStatus.stream().map(User::getId).collect(Collectors.toList());
+    assertIterableEquals(expectedIdsByStatus, ids);
+  }
+
+  @Test
   public void testUsers_GetUsers_NotInChannel() {
     Set<String> notInChannelUserIds = new HashSet<>(
         Arrays.asList(th.basicUser().getId(), th.basicUser2().getId(), th.teamAdminUser().getId()));
@@ -798,6 +853,34 @@ public class MattermostApiTest {
     Set<String> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
     assertThat(userIds, not(hasItems(notInTeamUser.getId())));
     assertThat(userIds, hasItems(inTeamUserIds.toArray(new String[0])));
+  }
+
+  @Test
+  public void testUsers_GetUsers_InTeam_Order() {
+    th.logout().loginSystemAdmin();
+    User user1 = th.createUser("order1_" + th.newId());
+    th.logout().loginAs(user1);
+    Team team = th.createTeam();
+    User user2 = th.createUser("order2_" + th.newId());
+    User user3 = th.createUser("order3_" + th.newId());
+    th.linkUserToTeam(user2, team);
+    th.linkUserToTeam(user3, team);
+
+    // create_at order : user3, user2, user1
+    List<String> expectedIdsByCreateAt = Arrays.asList(user3.getId(), user2.getId(), user1.getId());
+    // username order: user1, user2, user3
+    List<String> expectedIdsByUsername = Arrays.asList(user1.getId(), user2.getId(), user3.getId());
+
+    UserList users =
+        assertNoError(client.getUsersInTeam(team.getId(), InTeam.CREATE_AT, Pager.defaultPager()))
+            .readEntity();
+    List<String> ids = users.stream().map(User::getId).collect(Collectors.toList());
+    assertIterableEquals(expectedIdsByCreateAt, ids);
+
+    users = assertNoError(client.getUsersInTeam(team.getId(), InTeam.NONE, Pager.defaultPager()))
+        .readEntity();
+    ids = users.stream().map(User::getId).collect(Collectors.toList());
+    assertIterableEquals(expectedIdsByUsername, ids);
   }
 
   @Test
