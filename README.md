@@ -12,7 +12,7 @@ Mattermost API v4 client for Java.
 - JDK 8 (9+ will support soon)
 - Mattermost Server
     - ESR (currently 4.10)
-    - or Latest (5.6)
+    - or Latest (5.7)
 
 ## Usage
 ### Basic API Client
