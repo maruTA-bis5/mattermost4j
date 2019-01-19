@@ -129,6 +129,7 @@ import net.bis5.mattermost.model.TeamUnread;
 import net.bis5.mattermost.model.TeamUnreadList;
 import net.bis5.mattermost.model.User;
 import net.bis5.mattermost.model.UserAccessToken;
+import net.bis5.mattermost.model.UserAccessTokenList;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
@@ -953,6 +954,11 @@ public class MattermostClient
   public ApiResponse<UserAccessToken> createUserAccessToken(String userId, String description) {
     return doApiPost(getUserTokensRoute(userId), UserAccessTokenCreateRequest.of(description),
         UserAccessToken.class);
+  }
+
+  @Override
+  public ApiResponse<UserAccessTokenList> getUserAccessTokens(String userId, Pager pager) {
+    return doApiGet(getUserTokensRoute(userId), pager.toQuery(), UserAccessTokenList.class);
   }
 
   // Team Section

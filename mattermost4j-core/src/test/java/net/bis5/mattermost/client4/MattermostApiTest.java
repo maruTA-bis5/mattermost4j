@@ -108,6 +108,7 @@ import net.bis5.mattermost.model.TeamUnreadList;
 import net.bis5.mattermost.model.TriggerWhen;
 import net.bis5.mattermost.model.User;
 import net.bis5.mattermost.model.UserAccessToken;
+import net.bis5.mattermost.model.UserAccessTokenList;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
@@ -1238,14 +1239,17 @@ public class MattermostApiTest {
       assertStatus(client.switchAccountType(request), Status.NOT_IMPLEMENTED);
     }
 
-    @Test
-    public void createUserAccessToken() {
+    private void setupUserAccessTokenRolesForNormalUser(String userId) {
       th.logout().loginSystemAdmin();
-      String userId = th.basicUser().getId();
       assertNoError(
           client.updateUserRoles(userId, Role.SYSTEM_USER_ACCESS_TOKEN, Role.SYSTEM_USER));
-
       th.logout().loginBasic();
+    }
+
+    @Test
+    public void createUserAccessToken() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
       String description = userId + "_UserAccessTokenDesc";
 
       UserAccessToken token =
@@ -1254,6 +1258,24 @@ public class MattermostApiTest {
       assertEquals(userId, token.getUserId());
       assertEquals(description, token.getDescription());
       assertNotNull(token.getToken());
+    }
+
+    @Test
+    public void getUserAccessTokens() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description1 = th.newRandomString(32);
+      UserAccessToken token1 =
+          assertNoError(client.createUserAccessToken(userId, description1)).readEntity();
+      String description2 = th.newRandomString(32);
+      UserAccessToken token2 =
+          assertNoError(client.createUserAccessToken(userId, description2)).readEntity();
+
+      Set<String> expectedIds = new HashSet<>(Arrays.asList(token1.getId(), token2.getId()));
+      UserAccessTokenList tokens = assertNoError(client.getUserAccessTokens(userId)).readEntity();
+      assertEquals(2, tokens.size());
+      assertIterableEquals(expectedIds,
+          tokens.stream().map(UserAccessToken::getId).collect(Collectors.toSet()));
     }
   }
 
