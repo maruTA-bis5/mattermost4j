@@ -130,8 +130,8 @@ public class TestHelper {
     user.setFirstName("f_" + id);
     user.setLastName("l_" + id);
     user.setPassword("Password1");
-    user.setRoles(Arrays.asList(Role.ROLE_SYSTEM_ADMIN, Role.ROLE_SYSTEM_USER).stream()
-        .map(r -> r.getId()).collect(Collectors.joining(" ")));
+    user.setRoles(Arrays.asList(Role.SYSTEM_ADMIN, Role.SYSTEM_USER).stream().map(Role::getRoleName)
+        .collect(Collectors.joining(" ")));
 
     user = checkNoError(client.createUser(user)).readEntity();
     user.setPassword("Password1");
@@ -276,7 +276,7 @@ public class TestHelper {
   }
 
   public TestHelper updateUserToNonTeamAdmin(User user, Team team) {
-    checkNoError(client.updateTeamMemberRoles(team.getId(), user.getId(), Role.ROLE_TEAM_USER));
+    checkNoError(client.updateTeamMemberRoles(team.getId(), user.getId(), Role.TEAM_USER));
     return this;
   }
 

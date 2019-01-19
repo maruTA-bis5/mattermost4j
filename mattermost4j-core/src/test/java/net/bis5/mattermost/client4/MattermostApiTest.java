@@ -606,7 +606,7 @@ public class MattermostApiTest {
       client.addChannelMember(channel.getId(), channelUser.getId());
 
       ApiResponse<Boolean> response = assertNoError(client.updateChannelRoles(channel.getId(),
-          channelUser.getId(), Role.ROLE_CHANNEL_ADMIN, Role.ROLE_CHANNEL_USER));
+          channelUser.getId(), Role.CHANNEL_ADMIN, Role.CHANNEL_USER));
       boolean result = response.readEntity().booleanValue();
 
       assertThat(result, is(true));
@@ -1050,8 +1050,8 @@ public class MattermostApiTest {
     public void updateUserRoles() {
       th.loginSystemAdmin();
 
-      ApiResponse<Boolean> response = assertNoError(client.updateUserRoles(th.basicUser().getId(),
-          Role.ROLE_SYSTEM_ADMIN, Role.ROLE_SYSTEM_USER));
+      ApiResponse<Boolean> response = assertNoError(
+          client.updateUserRoles(th.basicUser().getId(), Role.SYSTEM_ADMIN, Role.SYSTEM_USER));
       boolean result = response.readEntity();
 
       assertThat(result, is(true));
@@ -1491,9 +1491,8 @@ public class MattermostApiTest {
     public void updateTeamMemberRoles() {
       th.loginTeamAdmin();
 
-      ApiResponse<Boolean> response =
-          assertNoError(client.updateTeamMemberRoles(th.basicTeam().getId(), th.basicUser().getId(),
-              Role.ROLE_TEAM_ADMIN));
+      ApiResponse<Boolean> response = assertNoError(client
+          .updateTeamMemberRoles(th.basicTeam().getId(), th.basicUser().getId(), Role.TEAM_ADMIN));
       boolean result = response.readEntity();
 
       assertThat(result, is(true));

@@ -31,7 +31,7 @@ public class UpdateRolesRequest {
   private String roles;
 
   public UpdateRolesRequest(Role... role) {
-    this.roles = Arrays.stream(role).map(r -> r.getId()).collect(Collectors.joining(" "));
+    this.roles = Arrays.stream(role).map(Role::getRoleName).collect(Collectors.joining(" "));
   }
 
 }
