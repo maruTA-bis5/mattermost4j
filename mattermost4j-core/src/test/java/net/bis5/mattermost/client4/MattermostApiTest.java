@@ -1263,7 +1263,8 @@ public class MattermostApiTest {
     public void getTeams() {
       Team team = th.loginSystemAdmin().createTeam();
 
-      ApiResponse<TeamList> response = assertNoError(client.getAllTeams(Pager.of(0, 60), null));
+      ApiResponse<TeamList> response =
+          assertNoError(client.getAllTeams(Pager.of(0, Integer.MAX_VALUE), null));
       List<Team> teams = response.readEntity();
 
       assertThat(teams.stream().map(Team::getId).collect(Collectors.toSet()),
