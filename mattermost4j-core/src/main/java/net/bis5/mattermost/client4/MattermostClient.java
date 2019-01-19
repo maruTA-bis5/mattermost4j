@@ -73,6 +73,7 @@ import net.bis5.mattermost.client4.model.UpdateRolesRequest;
 import net.bis5.mattermost.client4.model.UpdateUserActiveRequest;
 import net.bis5.mattermost.client4.model.UpdateUserMfaRequest;
 import net.bis5.mattermost.client4.model.UpdateUserPasswordRequest;
+import net.bis5.mattermost.client4.model.UserAccessTokenCreateRequest;
 import net.bis5.mattermost.client4.model.UsersOrder;
 import net.bis5.mattermost.client4.model.VerifyUserEmailRequest;
 import net.bis5.mattermost.jersey.provider.MattermostModelMapperProvider;
@@ -127,6 +128,7 @@ import net.bis5.mattermost.model.TeamStats;
 import net.bis5.mattermost.model.TeamUnread;
 import net.bis5.mattermost.model.TeamUnreadList;
 import net.bis5.mattermost.model.User;
+import net.bis5.mattermost.model.UserAccessToken;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
@@ -228,6 +230,10 @@ public class MattermostClient
 
   public String getUserByEmailRoute(String email) {
     return getUsersRoute() + String.format("/email/%s", StringUtils.stripToEmpty(email));
+  }
+
+  public String getUserTokensRoute(String userId) {
+    return getUserRoute(userId) + "/tokens";
   }
 
   public String getTeamsRoute() {
@@ -941,6 +947,12 @@ public class MattermostClient
     multiPart.bodyPart(body);
 
     return doApiPostMultiPart(getUserRoute(userId) + "/image", multiPart).checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<UserAccessToken> createUserAccessToken(String userId, String description) {
+    return doApiPost(getUserTokensRoute(userId), UserAccessTokenCreateRequest.of(description),
+        UserAccessToken.class);
   }
 
   // Team Section

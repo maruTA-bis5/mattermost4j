@@ -28,6 +28,7 @@ import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.vdurmont.semver4j.Semver;
 import java.io.FileNotFoundException;
@@ -106,6 +107,7 @@ import net.bis5.mattermost.model.TeamUnread;
 import net.bis5.mattermost.model.TeamUnreadList;
 import net.bis5.mattermost.model.TriggerWhen;
 import net.bis5.mattermost.model.User;
+import net.bis5.mattermost.model.UserAccessToken;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
@@ -1234,6 +1236,24 @@ public class MattermostApiTest {
       th.loginBasic();
 
       assertStatus(client.switchAccountType(request), Status.NOT_IMPLEMENTED);
+    }
+
+    @Test
+    public void createUserAccessToken() {
+      th.logout().loginSystemAdmin();
+      String userId = th.basicUser().getId();
+      assertNoError(
+          client.updateUserRoles(userId, Role.SYSTEM_USER_ACCESS_TOKEN, Role.SYSTEM_USER));
+
+      th.logout().loginBasic();
+      String description = userId + "_UserAccessTokenDesc";
+
+      UserAccessToken token =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+
+      assertEquals(userId, token.getUserId());
+      assertEquals(description, token.getDescription());
+      assertNotNull(token.getToken());
     }
   }
 

@@ -12,22 +12,16 @@
  * the License.
  */
 
-package net.bis5.mattermost.model;
+package net.bis5.mattermost.client4.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.Value;
 
 /**
- * An User Access Token.
+ * Create user access token request payload.
  */
-@Data
-public class UserAccessToken {
+@Value(staticConstructor = "of")
+public class UserAccessTokenCreateRequest {
 
-  private String id;
-  private String token;
-  private String userId;
   private String description;
-  @JsonProperty("is_active")
-  private boolean isActive;
 
 }

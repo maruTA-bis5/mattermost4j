@@ -25,6 +25,7 @@ import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SessionList;
 import net.bis5.mattermost.model.TeamUnreadList;
 import net.bis5.mattermost.model.User;
+import net.bis5.mattermost.model.UserAccessToken;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
@@ -249,4 +250,5 @@ public interface UserApi {
 
   ApiResponse<Boolean> setProfileImage(String userId, Path imageFilePath);
 
+  ApiResponse<UserAccessToken> createUserAccessToken(String userId, String description);
 }
