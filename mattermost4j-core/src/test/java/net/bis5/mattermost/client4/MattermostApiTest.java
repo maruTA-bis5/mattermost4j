@@ -1271,11 +1271,10 @@ public class MattermostApiTest {
       UserAccessToken token2 =
           assertNoError(client.createUserAccessToken(userId, description2)).readEntity();
 
-      Set<String> expectedIds = new HashSet<>(Arrays.asList(token1.getId(), token2.getId()));
       UserAccessTokenList tokens = assertNoError(client.getUserAccessTokens(userId)).readEntity();
       assertEquals(2, tokens.size());
-      assertIterableEquals(expectedIds,
-          tokens.stream().map(UserAccessToken::getId).collect(Collectors.toSet()));
+      assertThat(tokens.stream().map(UserAccessToken::getId).collect(Collectors.toSet()),
+          containsInAnyOrder(token1.getId(), token2.getId()));
     }
   }
 
