@@ -1276,6 +1276,21 @@ public class MattermostApiTest {
       assertThat(tokens.stream().map(UserAccessToken::getId).collect(Collectors.toSet()),
           containsInAnyOrder(token1.getId(), token2.getId()));
     }
+
+    @Test
+    public void getUserAccessTokensAllUsers() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId + "_UserAccessTokenDesc";
+      UserAccessToken token =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+
+      th.logout().loginSystemAdmin();
+
+      UserAccessTokenList tokens = assertNoError(client.getUserAccessTokensAllUsers()).readEntity();
+      assertTrue(tokens.stream().map(UserAccessToken::getId).collect(Collectors.toSet())
+          .contains(token.getId()));
+    }
   }
 
   // Teams

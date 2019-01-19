@@ -237,6 +237,10 @@ public class MattermostClient
     return getUserRoute(userId) + "/tokens";
   }
 
+  public String getUserTokensRoute() {
+    return getUsersRoute() + "/tokens";
+  }
+
   public String getTeamsRoute() {
     return "/teams";
   }
@@ -958,7 +962,12 @@ public class MattermostClient
 
   @Override
   public ApiResponse<UserAccessTokenList> getUserAccessTokens(String userId, Pager pager) {
-    return doApiGet(getUserTokensRoute(userId), pager.toQuery(), UserAccessTokenList.class);
+    return doApiGet(getUserTokensRoute(userId) + pager.toQuery(), null, UserAccessTokenList.class);
+  }
+
+  @Override
+  public ApiResponse<UserAccessTokenList> getUserAccessTokensAllUsers(Pager pager) {
+    return doApiGet(getUserTokensRoute() + pager.toQuery(), null, UserAccessTokenList.class);
   }
 
   // Team Section

@@ -259,4 +259,10 @@ public interface UserApi {
 
   ApiResponse<UserAccessTokenList> getUserAccessTokens(String userId, Pager pager);
 
+  default ApiResponse<UserAccessTokenList> getUserAccessTokensAllUsers() {
+    return getUserAccessTokensAllUsers(Pager.defaultPager());
+  }
+
+  ApiResponse<UserAccessTokenList> getUserAccessTokensAllUsers(Pager pager);
+
 }
