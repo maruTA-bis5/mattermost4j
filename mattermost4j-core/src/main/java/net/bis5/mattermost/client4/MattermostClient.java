@@ -65,6 +65,7 @@ import net.bis5.mattermost.client4.model.DeauthorizeOAuthAppRequest;
 import net.bis5.mattermost.client4.model.LoginRequest;
 import net.bis5.mattermost.client4.model.ResetPasswordRequest;
 import net.bis5.mattermost.client4.model.RevokeSessionRequest;
+import net.bis5.mattermost.client4.model.RevokeTokenRequest;
 import net.bis5.mattermost.client4.model.SearchPostsRequest;
 import net.bis5.mattermost.client4.model.SendPasswordResetEmailRequest;
 import net.bis5.mattermost.client4.model.SendVerificationEmailRequest;
@@ -968,6 +969,11 @@ public class MattermostClient
   @Override
   public ApiResponse<UserAccessTokenList> getUserAccessTokensAllUsers(Pager pager) {
     return doApiGet(getUserTokensRoute() + pager.toQuery(), null, UserAccessTokenList.class);
+  }
+
+  public ApiResponse<Boolean> revokeUserAccessToken(String tokenId) {
+    return doApiPost(getUserTokensRoute() + "/revoke", RevokeTokenRequest.of(tokenId))
+        .checkStatusOk();
   }
 
   // Team Section

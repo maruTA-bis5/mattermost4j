@@ -265,4 +265,6 @@ public interface UserApi {
 
   ApiResponse<UserAccessTokenList> getUserAccessTokensAllUsers(Pager pager);
 
+  ApiResponse<Boolean> revokeUserAccessToken(String tokenId);
+
 }

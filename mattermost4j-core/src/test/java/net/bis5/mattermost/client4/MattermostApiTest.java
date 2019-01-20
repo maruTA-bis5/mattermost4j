@@ -1291,6 +1291,20 @@ public class MattermostApiTest {
       assertTrue(tokens.stream().map(UserAccessToken::getId).collect(Collectors.toSet())
           .contains(token.getId()));
     }
+
+    @Test
+    public void revokeUserAccessToken() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId;
+      UserAccessToken uat =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+
+      ApiResponse<Boolean> revokeResponse =
+          assertNoError(client.revokeUserAccessToken(uat.getId()));
+
+      assertTrue(revokeResponse.readEntity());
+    }
   }
 
   // Teams
