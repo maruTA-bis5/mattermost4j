@@ -1334,6 +1334,24 @@ public class MattermostApiTest {
 
       assertTrue(disableResponse.readEntity());
     }
+
+    @Test
+    public void enableUserAccessToken() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId;
+      UserAccessToken uat =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+      assertNoError(client.disableUserAccessToken(uat.getId()));
+      uat = assertNoError(client.getUserAccessToken(uat.getId())).readEntity();
+      assertFalse(uat.isActive());
+
+      ApiResponse<Boolean> enableResponse =
+          assertNoError(client.enableUserAccessToken(uat.getId()));
+
+      assertTrue(enableResponse.readEntity());
+    }
+
   }
 
   // Teams

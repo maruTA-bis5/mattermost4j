@@ -993,6 +993,12 @@ public class MattermostClient
         .checkStatusOk();
   }
 
+  @Override
+  public ApiResponse<Boolean> enableUserAccessToken(String tokenId) {
+    return doApiPost(getUserTokensRoute() + "/enable", DisableEnableTokenRequest.of(tokenId))
+        .checkStatusOk();
+  }
+
   // Team Section
 
   /**

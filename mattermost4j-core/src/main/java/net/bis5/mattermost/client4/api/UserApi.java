@@ -271,4 +271,6 @@ public interface UserApi {
 
   ApiResponse<Boolean> disableUserAccessToken(String tokenId);
 
+  ApiResponse<Boolean> enableUserAccessToken(String tokenId);
+
 }
