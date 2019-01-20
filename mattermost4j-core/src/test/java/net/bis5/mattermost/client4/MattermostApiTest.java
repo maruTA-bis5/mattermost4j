@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.vdurmont.semver4j.Semver;
 import java.io.FileNotFoundException;
@@ -1304,6 +1305,20 @@ public class MattermostApiTest {
           assertNoError(client.revokeUserAccessToken(uat.getId()));
 
       assertTrue(revokeResponse.readEntity());
+    }
+
+    @Test
+    public void getUserAccessToken() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId;
+      UserAccessToken uat =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+
+      UserAccessToken received = assertNoError(client.getUserAccessToken(uat.getId())).readEntity();
+
+      assertEquals(uat.getId(), received.getId());
+      assertNull(received.getToken()); // response does not contains actual token
     }
   }
 

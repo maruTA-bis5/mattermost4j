@@ -242,6 +242,10 @@ public class MattermostClient
     return getUsersRoute() + "/tokens";
   }
 
+  public String getUserTokenRoute(String tokenId) {
+    return getUserTokensRoute() + String.format("/%s", StringUtils.stripToEmpty(tokenId));
+  }
+
   public String getTeamsRoute() {
     return "/teams";
   }
@@ -971,9 +975,15 @@ public class MattermostClient
     return doApiGet(getUserTokensRoute() + pager.toQuery(), null, UserAccessTokenList.class);
   }
 
+  @Override
   public ApiResponse<Boolean> revokeUserAccessToken(String tokenId) {
     return doApiPost(getUserTokensRoute() + "/revoke", RevokeTokenRequest.of(tokenId))
         .checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<UserAccessToken> getUserAccessToken(String tokenId) {
+    return doApiGet(getUserTokenRoute(tokenId), null, UserAccessToken.class);
   }
 
   // Team Section

@@ -267,4 +267,6 @@ public interface UserApi {
 
   ApiResponse<Boolean> revokeUserAccessToken(String tokenId);
 
+  ApiResponse<UserAccessToken> getUserAccessToken(String tokenId);
+
 }
