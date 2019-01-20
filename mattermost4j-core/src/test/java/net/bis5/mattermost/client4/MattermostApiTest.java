@@ -28,6 +28,8 @@ import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.vdurmont.semver4j.Semver;
 import java.io.FileNotFoundException;
@@ -106,6 +108,8 @@ import net.bis5.mattermost.model.TeamUnread;
 import net.bis5.mattermost.model.TeamUnreadList;
 import net.bis5.mattermost.model.TriggerWhen;
 import net.bis5.mattermost.model.User;
+import net.bis5.mattermost.model.UserAccessToken;
+import net.bis5.mattermost.model.UserAccessTokenList;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
@@ -1235,6 +1239,140 @@ public class MattermostApiTest {
 
       assertStatus(client.switchAccountType(request), Status.NOT_IMPLEMENTED);
     }
+
+    private void setupUserAccessTokenRolesForNormalUser(String userId) {
+      th.logout().loginSystemAdmin();
+      assertNoError(
+          client.updateUserRoles(userId, Role.SYSTEM_USER_ACCESS_TOKEN, Role.SYSTEM_USER));
+      th.logout().loginBasic();
+    }
+
+    @Test
+    public void createUserAccessToken() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId + "_UserAccessTokenDesc";
+
+      UserAccessToken token =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+
+      assertEquals(userId, token.getUserId());
+      assertEquals(description, token.getDescription());
+      assertNotNull(token.getToken());
+    }
+
+    @Test
+    public void getUserAccessTokens() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description1 = th.newRandomString(32);
+      UserAccessToken token1 =
+          assertNoError(client.createUserAccessToken(userId, description1)).readEntity();
+      String description2 = th.newRandomString(32);
+      UserAccessToken token2 =
+          assertNoError(client.createUserAccessToken(userId, description2)).readEntity();
+
+      UserAccessTokenList tokens = assertNoError(client.getUserAccessTokens(userId)).readEntity();
+      assertEquals(2, tokens.size());
+      assertThat(tokens.stream().map(UserAccessToken::getId).collect(Collectors.toSet()),
+          containsInAnyOrder(token1.getId(), token2.getId()));
+    }
+
+    @Test
+    public void getUserAccessTokensAllUsers() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId + "_UserAccessTokenDesc";
+      UserAccessToken token =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+
+      th.logout().loginSystemAdmin();
+
+      UserAccessTokenList tokens = assertNoError(client.getUserAccessTokensAllUsers()).readEntity();
+      assertTrue(tokens.stream().map(UserAccessToken::getId).collect(Collectors.toSet())
+          .contains(token.getId()));
+    }
+
+    @Test
+    public void revokeUserAccessToken() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId;
+      UserAccessToken uat =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+
+      ApiResponse<Boolean> revokeResponse =
+          assertNoError(client.revokeUserAccessToken(uat.getId()));
+
+      assertTrue(revokeResponse.readEntity());
+    }
+
+    @Test
+    public void getUserAccessToken() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId;
+      UserAccessToken uat =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+
+      UserAccessToken received = assertNoError(client.getUserAccessToken(uat.getId())).readEntity();
+
+      assertEquals(uat.getId(), received.getId());
+      assertNull(received.getToken()); // response does not contains actual token
+    }
+
+    @Test
+    public void disableUserAccessToken() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId;
+      UserAccessToken uat =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+
+      ApiResponse<Boolean> disableResponse =
+          assertNoError(client.disableUserAccessToken(uat.getId()));
+
+      assertTrue(disableResponse.readEntity());
+    }
+
+    @Test
+    public void enableUserAccessToken() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId;
+      UserAccessToken uat =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+      assertNoError(client.disableUserAccessToken(uat.getId()));
+      uat = assertNoError(client.getUserAccessToken(uat.getId())).readEntity();
+      assertFalse(uat.isActive());
+
+      ApiResponse<Boolean> enableResponse =
+          assertNoError(client.enableUserAccessToken(uat.getId()));
+
+      assertTrue(enableResponse.readEntity());
+    }
+
+    @Test
+    public void searchTokens() {
+      setupUserAccessTokenRolesForNormalUser(th.basicUser().getId());
+      setupUserAccessTokenRolesForNormalUser(th.basicUser2().getId());
+      setupUserAccessTokenRolesForNormalUser(th.teamAdminUser().getId());
+      client.createUserAccessToken(th.basicUser().getId(), th.basicUser().getId()).readEntity();
+      th.logout().loginBasic2();
+      UserAccessToken user2TokenA = client
+          .createUserAccessToken(th.basicUser2().getId(), th.basicUser2().getId()).readEntity();
+      UserAccessToken user2TokenB = client
+          .createUserAccessToken(th.basicUser2().getId(), th.basicUser2().getId()).readEntity();
+      th.logout().loginSystemAdmin();
+
+      String term = th.basicUser2().getUsername();
+
+      UserAccessTokenList foundTokens = assertNoError(client.searchTokens(term)).readEntity();
+
+      assertThat(foundTokens.stream().map(UserAccessToken::getId).collect(Collectors.toSet()),
+          containsInAnyOrder(user2TokenA.getId(), user2TokenB.getId()));
+    }
+
   }
 
   // Teams

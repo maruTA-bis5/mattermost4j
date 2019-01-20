@@ -62,10 +62,13 @@ import net.bis5.mattermost.client4.model.AnalyticsCategory;
 import net.bis5.mattermost.client4.model.AttachDeviceIdRequest;
 import net.bis5.mattermost.client4.model.CheckUserMfaRequest;
 import net.bis5.mattermost.client4.model.DeauthorizeOAuthAppRequest;
+import net.bis5.mattermost.client4.model.DisableEnableTokenRequest;
 import net.bis5.mattermost.client4.model.LoginRequest;
 import net.bis5.mattermost.client4.model.ResetPasswordRequest;
 import net.bis5.mattermost.client4.model.RevokeSessionRequest;
+import net.bis5.mattermost.client4.model.RevokeTokenRequest;
 import net.bis5.mattermost.client4.model.SearchPostsRequest;
+import net.bis5.mattermost.client4.model.SearchTokensRequest;
 import net.bis5.mattermost.client4.model.SendPasswordResetEmailRequest;
 import net.bis5.mattermost.client4.model.SendVerificationEmailRequest;
 import net.bis5.mattermost.client4.model.SwitchAccountTypeResult;
@@ -73,6 +76,7 @@ import net.bis5.mattermost.client4.model.UpdateRolesRequest;
 import net.bis5.mattermost.client4.model.UpdateUserActiveRequest;
 import net.bis5.mattermost.client4.model.UpdateUserMfaRequest;
 import net.bis5.mattermost.client4.model.UpdateUserPasswordRequest;
+import net.bis5.mattermost.client4.model.UserAccessTokenCreateRequest;
 import net.bis5.mattermost.client4.model.UsersOrder;
 import net.bis5.mattermost.client4.model.VerifyUserEmailRequest;
 import net.bis5.mattermost.jersey.provider.MattermostModelMapperProvider;
@@ -127,6 +131,8 @@ import net.bis5.mattermost.model.TeamStats;
 import net.bis5.mattermost.model.TeamUnread;
 import net.bis5.mattermost.model.TeamUnreadList;
 import net.bis5.mattermost.model.User;
+import net.bis5.mattermost.model.UserAccessToken;
+import net.bis5.mattermost.model.UserAccessTokenList;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
@@ -228,6 +234,18 @@ public class MattermostClient
 
   public String getUserByEmailRoute(String email) {
     return getUsersRoute() + String.format("/email/%s", StringUtils.stripToEmpty(email));
+  }
+
+  public String getUserTokensRoute(String userId) {
+    return getUserRoute(userId) + "/tokens";
+  }
+
+  public String getUserTokensRoute() {
+    return getUsersRoute() + "/tokens";
+  }
+
+  public String getUserTokenRoute(String tokenId) {
+    return getUserTokensRoute() + String.format("/%s", StringUtils.stripToEmpty(tokenId));
   }
 
   public String getTeamsRoute() {
@@ -941,6 +959,51 @@ public class MattermostClient
     multiPart.bodyPart(body);
 
     return doApiPostMultiPart(getUserRoute(userId) + "/image", multiPart).checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<UserAccessToken> createUserAccessToken(String userId, String description) {
+    return doApiPost(getUserTokensRoute(userId), UserAccessTokenCreateRequest.of(description),
+        UserAccessToken.class);
+  }
+
+  @Override
+  public ApiResponse<UserAccessTokenList> getUserAccessTokens(String userId, Pager pager) {
+    return doApiGet(getUserTokensRoute(userId) + pager.toQuery(), null, UserAccessTokenList.class);
+  }
+
+  @Override
+  public ApiResponse<UserAccessTokenList> getUserAccessTokensAllUsers(Pager pager) {
+    return doApiGet(getUserTokensRoute() + pager.toQuery(), null, UserAccessTokenList.class);
+  }
+
+  @Override
+  public ApiResponse<Boolean> revokeUserAccessToken(String tokenId) {
+    return doApiPost(getUserTokensRoute() + "/revoke", RevokeTokenRequest.of(tokenId))
+        .checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<UserAccessToken> getUserAccessToken(String tokenId) {
+    return doApiGet(getUserTokenRoute(tokenId), null, UserAccessToken.class);
+  }
+
+  @Override
+  public ApiResponse<Boolean> disableUserAccessToken(String tokenId) {
+    return doApiPost(getUserTokensRoute() + "/disable", DisableEnableTokenRequest.of(tokenId))
+        .checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<Boolean> enableUserAccessToken(String tokenId) {
+    return doApiPost(getUserTokensRoute() + "/enable", DisableEnableTokenRequest.of(tokenId))
+        .checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<UserAccessTokenList> searchTokens(String term) {
+    return doApiPost(getUserTokensRoute() + "/search", SearchTokensRequest.of(term),
+        UserAccessTokenList.class);
   }
 
   // Team Section

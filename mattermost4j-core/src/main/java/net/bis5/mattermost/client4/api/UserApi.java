@@ -25,6 +25,8 @@ import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SessionList;
 import net.bis5.mattermost.model.TeamUnreadList;
 import net.bis5.mattermost.model.User;
+import net.bis5.mattermost.model.UserAccessToken;
+import net.bis5.mattermost.model.UserAccessTokenList;
 import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
@@ -248,5 +250,29 @@ public interface UserApi {
   ApiResponse<Boolean> sendVerificationEmail(String email);
 
   ApiResponse<Boolean> setProfileImage(String userId, Path imageFilePath);
+
+  ApiResponse<UserAccessToken> createUserAccessToken(String userId, String description);
+
+  default ApiResponse<UserAccessTokenList> getUserAccessTokens(String userId) {
+    return getUserAccessTokens(userId, Pager.defaultPager());
+  }
+
+  ApiResponse<UserAccessTokenList> getUserAccessTokens(String userId, Pager pager);
+
+  default ApiResponse<UserAccessTokenList> getUserAccessTokensAllUsers() {
+    return getUserAccessTokensAllUsers(Pager.defaultPager());
+  }
+
+  ApiResponse<UserAccessTokenList> getUserAccessTokensAllUsers(Pager pager);
+
+  ApiResponse<Boolean> revokeUserAccessToken(String tokenId);
+
+  ApiResponse<UserAccessToken> getUserAccessToken(String tokenId);
+
+  ApiResponse<Boolean> disableUserAccessToken(String tokenId);
+
+  ApiResponse<Boolean> enableUserAccessToken(String tokenId);
+
+  ApiResponse<UserAccessTokenList> searchTokens(String term);
 
 }
