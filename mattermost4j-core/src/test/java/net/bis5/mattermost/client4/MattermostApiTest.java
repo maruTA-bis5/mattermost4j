@@ -1320,6 +1320,20 @@ public class MattermostApiTest {
       assertEquals(uat.getId(), received.getId());
       assertNull(received.getToken()); // response does not contains actual token
     }
+
+    @Test
+    public void disableUserAccessToken() {
+      String userId = th.basicUser().getId();
+      setupUserAccessTokenRolesForNormalUser(userId);
+      String description = userId;
+      UserAccessToken uat =
+          assertNoError(client.createUserAccessToken(userId, description)).readEntity();
+
+      ApiResponse<Boolean> disableResponse =
+          assertNoError(client.disableUserAccessToken(uat.getId()));
+
+      assertTrue(disableResponse.readEntity());
+    }
   }
 
   // Teams
