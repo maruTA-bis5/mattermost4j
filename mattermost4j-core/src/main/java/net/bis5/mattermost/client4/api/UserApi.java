@@ -273,4 +273,6 @@ public interface UserApi {
 
   ApiResponse<Boolean> enableUserAccessToken(String tokenId);
 
+  ApiResponse<UserAccessTokenList> searchTokens(String term);
+
 }

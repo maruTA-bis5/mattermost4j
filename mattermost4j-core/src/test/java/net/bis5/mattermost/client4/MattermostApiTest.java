@@ -1352,6 +1352,27 @@ public class MattermostApiTest {
       assertTrue(enableResponse.readEntity());
     }
 
+    @Test
+    public void searchTokens() {
+      setupUserAccessTokenRolesForNormalUser(th.basicUser().getId());
+      setupUserAccessTokenRolesForNormalUser(th.basicUser2().getId());
+      setupUserAccessTokenRolesForNormalUser(th.teamAdminUser().getId());
+      client.createUserAccessToken(th.basicUser().getId(), th.basicUser().getId()).readEntity();
+      th.logout().loginBasic2();
+      UserAccessToken user2TokenA = client
+          .createUserAccessToken(th.basicUser2().getId(), th.basicUser2().getId()).readEntity();
+      UserAccessToken user2TokenB = client
+          .createUserAccessToken(th.basicUser2().getId(), th.basicUser2().getId()).readEntity();
+      th.logout().loginSystemAdmin();
+
+      String term = th.basicUser2().getUsername();
+
+      UserAccessTokenList foundTokens = assertNoError(client.searchTokens(term)).readEntity();
+
+      assertThat(foundTokens.stream().map(UserAccessToken::getId).collect(Collectors.toSet()),
+          containsInAnyOrder(user2TokenA.getId(), user2TokenB.getId()));
+    }
+
   }
 
   // Teams
