@@ -87,6 +87,7 @@ import net.bis5.mattermost.model.OutgoingWebhookList;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
+import net.bis5.mattermost.model.PostSearchResults;
 import net.bis5.mattermost.model.Preference;
 import net.bis5.mattermost.model.PreferenceCategory;
 import net.bis5.mattermost.model.Preferences;
@@ -1868,7 +1869,6 @@ public class MattermostApiTest {
     }
 
     @Test
-    @Disabled // FIXME work correctly from 4.0
     public void searchForTeamPosts() {
       String teamId = th.basicTeam().getId();
       String channelId = th.basicChannel().getId();
@@ -1879,7 +1879,8 @@ public class MattermostApiTest {
       post2 = assertNoError(client.createPost(post2)).readEntity();
       post3 = assertNoError(client.createPost(post3)).readEntity();
 
-      ApiResponse<PostList> response = assertNoError(client.searchPosts(teamId, "hello", false));
+      ApiResponse<PostSearchResults> response =
+          assertNoError(client.searchPosts(teamId, "hello", false));
       PostList posts = response.readEntity();
 
       assertThat(posts.getPosts().keySet(), hasItem(post1.getId()));
@@ -1888,8 +1889,8 @@ public class MattermostApiTest {
       response = assertNoError(client.searchPosts(teamId, "hello world", true));
       posts = response.readEntity();
 
-      assertThat(posts.getPosts().keySet(), hasItems(post1.getId(), post2.getId()));
-      assertThat(posts.getPosts().keySet(), not(hasItem(post3.getId())));
+      assertThat(posts.getPosts().keySet(), hasItems(post1.getId(), post3.getId()));
+      assertThat(posts.getPosts().keySet(), not(hasItem(post2.getId())));
     }
 
     @Test
