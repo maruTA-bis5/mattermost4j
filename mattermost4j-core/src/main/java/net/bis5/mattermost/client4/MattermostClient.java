@@ -111,6 +111,7 @@ import net.bis5.mattermost.model.OutgoingWebhookList;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
+import net.bis5.mattermost.model.PostSearchResults;
 import net.bis5.mattermost.model.Preference;
 import net.bis5.mattermost.model.PreferenceCategory;
 import net.bis5.mattermost.model.Preferences;
@@ -1625,10 +1626,11 @@ public class MattermostClient
    * returns any posts with matching term string.
    */
   @Override
-  public ApiResponse<PostList> searchPosts(String teamId, String terms, boolean isOrSearch) {
+  public ApiResponse<PostSearchResults> searchPosts(String teamId, String terms,
+      boolean isOrSearch) {
     SearchPostsRequest request =
         SearchPostsRequest.builder().terms(terms).isOrSearch(isOrSearch).build();
-    return doApiPost(getTeamRoute(teamId) + "/posts/search", request, PostList.class);
+    return doApiPost(getTeamRoute(teamId) + "/posts/search", request, PostSearchResults.class);
   }
 
   // TODO File Section

@@ -21,6 +21,7 @@ import net.bis5.mattermost.client4.Pager;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
+import net.bis5.mattermost.model.PostSearchResults;
 
 /**
  * Post API.
@@ -116,10 +117,10 @@ public interface PostApi {
 
   ApiResponse<PostList> getPostsBefore(String channelId, String postId, Pager pager, String etag);
 
-  default ApiResponse<PostList> searchPosts(String teamId, String terms) {
+  default ApiResponse<PostSearchResults> searchPosts(String teamId, String terms) {
     return searchPosts(teamId, terms, false);
   }
 
-  ApiResponse<PostList> searchPosts(String teamId, String terms, boolean isOrSearch);
+  ApiResponse<PostSearchResults> searchPosts(String teamId, String terms, boolean isOrSearch);
 
 }
