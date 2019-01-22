@@ -134,12 +134,26 @@ import org.junit.jupiter.api.Test;
 public class MattermostApiTest {
 
   private static final String APPLICATION = getApplicationUrl();
+  private static final String INBUCKET_HOST = getInbucketHost();
+  private static final String INBUCKET_PORT = getInbucketPort();
   private MattermostClient client;
   private static TestHelper th;
 
   private static String getApplicationUrl() {
-    String url = System.getenv("MATTERMOST_URL");
-    return url != null ? url : "http://localhost:8065";
+    return getEnv("MATTERMOST_URL", "http://localhost:8065");
+  }
+
+  private static String getEnv(String varName, String defaultValue) {
+    String val = System.getenv(varName);
+    return val != null ? val : defaultValue;
+  }
+
+  private static String getInbucketHost() {
+    return getEnv("INBUCKET_HOST", "localhost");
+  }
+
+  private static String getInbucketPort() {
+    return getEnv("INBUCKET_PORT", "2500");
   }
 
   @BeforeAll
@@ -2683,6 +2697,13 @@ public class MattermostApiTest {
   // System
   @Nested
   class SystemApiTest {
+    @Test
+    public void databaseRecycle() {
+      th.logout().loginSystemAdmin();
+
+      ApiResponse<Boolean> result = assertNoError(client.databaseRecycle());
+      assertTrue(result.readEntity());
+    }
 
     @Test
     public void getAnalytics() {
@@ -2733,6 +2754,50 @@ public class MattermostApiTest {
     }
 
     @Test
+    public void getOldClientConfig() {
+      ApiResponse<Map<String, String>> response = assertNoError(client.getOldClientConfig());
+      Map<String, String> clientConfig = response.readEntity();
+      assertTrue(clientConfig.containsKey("Version"));
+    }
+
+    @Test
+    public void getOldClientLicense() {
+      ApiResponse<Map<String, String>> response = assertNoError(client.getOldClientLicense());
+      Map<String, String> clientLicense = response.readEntity();
+      assertTrue(clientLicense.containsKey("IsLicensed"));
+    }
+
+    @Test
+    public void ping() {
+      ApiResponse<Boolean> result = assertNoError(client.getPing());
+      assertTrue(result.readEntity());
+    }
+
+    @Test
+    public void invalidateCache() {
+      th.logout().loginSystemAdmin();
+
+      ApiResponse<Boolean> result = assertNoError(client.invalidateCaches());
+      assertTrue(result.readEntity());
+    }
+
+    @Test
+    public void reloadConfig() {
+      th.logout().loginSystemAdmin();
+
+      ApiResponse<Boolean> result = assertNoError(client.reloadConfig());
+      assertTrue(result.readEntity());
+    }
+
+    @Test
+    public void testEmail() {
+      th.useSmtp(INBUCKET_HOST, INBUCKET_PORT).logout().loginSystemAdmin();
+
+      ApiResponse<Boolean> result = assertNoError(client.testEmail());
+      assertTrue(result.readEntity());
+    }
+
+    @Test
     public void uploadLicenseFile() throws IOException {
       Path licenseFile = Files.createTempFile(null, null); // invalid contents
       licenseFile.toFile().deleteOnExit();
@@ -2753,5 +2818,4 @@ public class MattermostApiTest {
       assertNoError(client.removeLicense());
     }
   }
-
 }

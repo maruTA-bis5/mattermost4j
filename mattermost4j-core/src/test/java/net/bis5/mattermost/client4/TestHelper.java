@@ -27,6 +27,7 @@ import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.TeamType;
 import net.bis5.mattermost.model.User;
+import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
 import org.apache.commons.lang3.RandomStringUtils;
 
 /**
@@ -71,14 +72,22 @@ public class TestHelper {
     config.getServiceSettings().setEnableCommands(true);
     config.getServiceSettings().setEnableEmailInvitations(true);
     config.getServiceSettings().setEnableUserAccessTokens(true);
-    // TODO un-comment these lines when Dockerfile setup.
-    // config.getEmailSettings().setSendEmailNotifications(true);
-    // config.getEmailSettings().setSmtpServer("localhost");
-    // config.getEmailSettings().setSmtpPort("9000");
-    // config.getEmailSettings().setFeedbackEmail("test@example.com");
     config.getTeamSettings().setEnableOpenServer(true);
     config = checkNoError(client.updateConfig(config)).readEntity();
     client.logout();
+    return this;
+  }
+
+  public TestHelper useSmtp(String inbucketHost, String inbucketPort) {
+    logout().loginSystemAdmin();
+    Config config = client.getConfig().readEntity();
+    config.getEmailSettings().setSendEmailNotifications(true);
+    config.getEmailSettings().setSmtpServer(inbucketHost);
+    config.getEmailSettings().setSmtpPort(inbucketPort);
+    config.getEmailSettings().setFeedbackEmail("test@example.com");
+    config.getEmailSettings().setConnectionSecurity(ConnectionSecurity.NONE);
+    config = checkNoError(client.updateConfig(config)).readEntity();
+    logout().loginBasic();
     return this;
   }
 
