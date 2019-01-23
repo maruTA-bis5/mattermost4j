@@ -15,6 +15,7 @@
 package net.bis5.mattermost.jersey.provider;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.ws.rs.ext.ContextResolver;
@@ -29,10 +30,18 @@ import net.bis5.mattermost.model.serialize.MattermostPropertyNamingStrategy;
 @Provider
 public class MattermostModelMapperProvider implements ContextResolver<ObjectMapper> {
 
-  final ObjectMapper defaultObjectMapper = createDefaultObjectMapper();
+  final ObjectMapper defaultObjectMapper;
+  private final boolean ignoreUnknownProperties;
+
+  public MattermostModelMapperProvider(boolean ignoreUnknownProperties) {
+    this.ignoreUnknownProperties = ignoreUnknownProperties;
+    defaultObjectMapper = createDefaultObjectMapper();
+  }
+
 
   protected ObjectMapper createDefaultObjectMapper() {
     return new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, !ignoreUnknownProperties)
         .setSerializationInclusion(Include.NON_EMPTY)
         .setPropertyNamingStrategy(new MattermostPropertyNamingStrategy());
   }
