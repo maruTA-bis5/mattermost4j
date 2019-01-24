@@ -17,7 +17,16 @@ Mattermost API v4 client for Java.
 ## Usage
 ### Basic API Client
 ```java
-MattermostClient client = new MattermostClient("YOUR-MATTERMOST-URL");
+// Create client instance
+MattermostClient client;
+// case 1. use constructor - log disable and prohibit unknown properties
+client = new MattermostClient("YOUR-MATTERMOST-URL");
+// case 2. use builder
+client = MattermostClient.builder()
+    .url("YOUR-MATTERMOST-URL")
+	.logLevel(Level.INFO)
+	.ignoreUnknownProperties()
+	.build();
 
 // Login by id + password
 client.login(loginId, password);
@@ -27,6 +36,7 @@ client.setAccessToken(token);
 
 ### Use Incoming Webhook
 ```
+// You can also use builder for create client instance.
 MattermostClient client = new MattermostClient("YOUR-MATTERMOST-URL")
 
 IncomingWebhookRequest payload = new IncomingWebhookRequest();
