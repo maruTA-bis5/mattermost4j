@@ -33,6 +33,10 @@ public class MattermostModelMapperProvider implements ContextResolver<ObjectMapp
   final ObjectMapper defaultObjectMapper;
   private final boolean ignoreUnknownProperties;
 
+  public MattermostModelMapperProvider() {
+    this(false);
+  }
+
   public MattermostModelMapperProvider(boolean ignoreUnknownProperties) {
     this.ignoreUnknownProperties = ignoreUnknownProperties;
     defaultObjectMapper = createDefaultObjectMapper();
