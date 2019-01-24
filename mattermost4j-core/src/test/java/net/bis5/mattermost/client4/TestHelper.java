@@ -16,6 +16,7 @@ package net.bis5.mattermost.client4;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.Response.Status;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.bis5.mattermost.client4.model.ApiError;
@@ -294,8 +295,14 @@ public class TestHelper {
   public <T> ApiResponse<T> checkNoError(ApiResponse<T> response) {
     response.getRawResponse().bufferEntity();
     try {
+      // if ignoreUnknownProperty is true, no exception will be thrown
       ApiError error = response.readError();
-      throw new AssertionError("Expected no error, got " + error);
+      Status.Family responseStatus = Status.Family.familyOf(error.getStatusCode());
+      if (responseStatus == Status.Family.CLIENT_ERROR
+          || responseStatus == Status.Family.SERVER_ERROR) {
+        throw new AssertionError("Expected no error, got " + error);
+      }
+      // no error
     } catch (ProcessingException ex) {
       // no error
     }

@@ -167,10 +167,41 @@ public class MattermostClient
   private String authToken;
   private AuthType authType;
   private final Level clientLogLevel;
+  private final boolean ignoreUnknownProperties;
   private final Client httpClient;
 
+  public static MattermostClientBuilder builder() {
+    return new MattermostClientBuilder();
+  }
+
+  public static class MattermostClientBuilder {
+    private Level logLevel;
+    private String url;
+    private boolean ignoreUnknownProperties;
+
+    public MattermostClientBuilder logLevel(Level logLevel) {
+      this.logLevel = logLevel;
+      return this;
+    }
+
+    public MattermostClientBuilder url(String url) {
+      this.url = url;
+      return this;
+    }
+
+    public MattermostClientBuilder ignoreUnknownProperties() {
+      this.ignoreUnknownProperties = true;
+      return this;
+    }
+
+    public MattermostClient build() {
+      return new MattermostClient(url, logLevel, ignoreUnknownProperties);
+    }
+  }
+
   protected Client buildClient() {
-    ClientBuilder builder = ClientBuilder.newBuilder().register(MattermostModelMapperProvider.class)
+    ClientBuilder builder = ClientBuilder.newBuilder()
+        .register(new MattermostModelMapperProvider(ignoreUnknownProperties))
         .register(JacksonFeature.class).register(MultiPartFeature.class)
         // needs for PUT request with null entity
         // (/commands/{command_id}/regen_token)
@@ -195,11 +226,17 @@ public class MattermostClient
    * Create new MattermosClient instance.
    */
   public MattermostClient(String url, Level logLevel) {
+    this(url, logLevel, false);
+  }
+
+  MattermostClient(String url, Level logLevel, boolean ignoreUnknownProperties) {
     this.url = url;
     this.apiUrl = url + API_URL_SUFFIX;
     this.clientLogLevel = logLevel;
+    this.ignoreUnknownProperties = ignoreUnknownProperties;
     this.httpClient = buildClient();
   }
+
 
   public void setOAuthToken(String token) {
     this.authToken = token;

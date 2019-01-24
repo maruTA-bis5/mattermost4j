@@ -158,12 +158,19 @@ public class MattermostApiTest {
 
   @BeforeAll
   public static void initHelper() {
-    th = new TestHelper(new MattermostClient(APPLICATION)).setup();
+    th = new TestHelper(createNewClient()).setup();
+  }
+
+  private static MattermostClient createNewClient() {
+    return MattermostClient.builder() //
+        .url(APPLICATION) //
+        .logLevel(Level.WARNING) //
+        .build();
   }
 
   @BeforeEach
   public void setup() {
-    client = new MattermostClient(APPLICATION, Level.WARNING);
+    client = createNewClient();
     th.changeClient(client).initBasic();
   }
 
