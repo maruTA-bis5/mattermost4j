@@ -116,6 +116,7 @@
 					<links>
 						<link>https://docs.oracle.com/javase/8/docs/api/</link>
 					</links>
+					<sourcepath>target/generated-sources/delombok</sourcepath>
 				</configuration>
 				<executions>
 					<execution>
@@ -166,6 +167,23 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok-maven-plugin</artifactId>
+				<version>1.16.10.0</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>delombok</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<addOutputDirectory>false</addOutputDirectory>
+					<sourceDirectory>src/main/java</sourceDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 		<pluginManagement>
