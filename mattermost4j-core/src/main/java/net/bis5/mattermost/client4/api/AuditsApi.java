@@ -24,13 +24,24 @@ import net.bis5.mattermost.model.Audits;
  * @author Takayuki Maruyama
  */
 public interface AuditsApi {
+
+  /**
+   * returns a list of audits for the whole system.
+   */
   default ApiResponse<Audits> getAudits() {
     return getAudits(Pager.defaultPager());
   }
 
+  /**
+   * returns a list of audits for the whole system.
+   */
   default ApiResponse<Audits> getAudits(Pager pager) {
     return getAudits(pager, null);
   }
 
+  /**
+   * returns a list of audits for the whole system.
+   */
   ApiResponse<Audits> getAudits(Pager pager, String etag);
+
 }

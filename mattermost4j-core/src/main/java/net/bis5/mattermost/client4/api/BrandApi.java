@@ -24,7 +24,14 @@ import net.bis5.mattermost.client4.ApiResponse;
  */
 public interface BrandApi {
 
+  /**
+   * retrieves the previously uploaded brand image.
+   */
   ApiResponse<Object> getBrandImage();
 
+  /**
+   * sets the brand image for the system.
+   */
   boolean uploadBrandImage(Path dataFIle);
+
 }

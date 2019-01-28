@@ -27,30 +27,69 @@ import net.bis5.mattermost.model.OAuthApp;
  */
 public interface OAuthApi {
 
+  /**
+   * will register a new OAuth 2.0 client application with Mattermost acting as an OAuth 2.0 service
+   * provider.
+   */
   ApiResponse<OAuthApp> createOAuthApp(OAuthApp app);
 
+  /**
+   * gets a page of registered OAuth 2.0 client applications with Mattermost acting as an OAuth 2.0
+   * service provider.
+   */
   default ApiResponse<List<OAuthApp>> getOAuthApps() {
     return getOAuthApps(Pager.defaultPager());
   }
 
+  /**
+   * gets a page of registered OAuth 2.0 client applications with Mattermost acting as an OAuth 2.0
+   * service provider.
+   */
   ApiResponse<List<OAuthApp>> getOAuthApps(Pager pager);
 
+  /**
+   * gets a registered OAuth 2.0 client application with Mattermost acting as an OAuth 2.0 service
+   * provider.
+   */
   ApiResponse<OAuthApp> getOAuthApp(String appId);
 
+  /**
+   * gets a sanitized version of a registered OAuth 2.0 client application with Mattermost acting as
+   * an OAuth 2.0 service provider.
+   */
   ApiResponse<OAuthApp> getOAuthAppInfo(String appId);
 
+  /**
+   * deletes a registered OAuth 2.0 client application.
+   */
   ApiResponse<Boolean> deleteOAuthApp(String appId);
 
+  /**
+   * regenerates the client secret for a registered OAuth 2.0 client application.
+   */
   ApiResponse<OAuthApp> regenerateOAuthAppSecret(String appId);
 
+  /**
+   * gets a page of OAuth 2.0 client applications the user authorized to use access their account.
+   */
   default ApiResponse<List<OAuthApp>> getAuthorizedOAuthAppsForUser(String userId) {
     return getAuthorizedOAuthAppsForUser(userId, Pager.defaultPager());
   }
 
+  /**
+   * gets a page of OAuth 2.0 client applications the user authorized to use access their account.
+   */
   ApiResponse<List<OAuthApp>> getAuthorizedOAuthAppsForUser(String userId, Pager pager);
 
+  /**
+   * will authorize an OAuth 2.0 client application to access a user's account and provide a
+   * redirect link to follow.
+   */
   String authorizeOAuthApp(AuthorizeRequest authRequest);
 
+  /**
+   * will deauthorize an OAuth 2.0 client application from accessing a user's account.
+   */
   ApiResponse<Boolean> deauthorizeOAuthApp(String appId);
 
 }
