@@ -120,7 +120,7 @@ public class Config {
   /**
    * Should not use this.
    * 
-   * @deprecated This is typo. Please use {@link #setClientRequirements()}
+   * @deprecated This is typo. Please use {@link #setClientRequirements(ClientRequirements)}
    */
   @Deprecated
   public void setClientRequremenets(ClientRequirements clientRequirements) {
