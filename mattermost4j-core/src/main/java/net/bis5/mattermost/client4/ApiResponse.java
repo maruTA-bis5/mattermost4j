@@ -66,7 +66,7 @@ public abstract class ApiResponse<T> {
   /**
    * a convenience function for checking the standard OK response from the web service.
    * 
-   * @return
+   * @return The api response contains {@code true} when status OK, otherwise {@code false}.
    */
   public ApiResponse<Boolean> checkStatusOk() {
     Response response = getRawResponse();

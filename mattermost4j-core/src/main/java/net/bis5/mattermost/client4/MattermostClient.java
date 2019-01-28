@@ -604,8 +604,6 @@ public class MattermostClient
 
   /**
    * terminates the current user's session.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> logout() {
@@ -621,8 +619,6 @@ public class MattermostClient
 
   /**
    * changes a user's login type from one type to another.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<SwitchAccountTypeResult> switchAccountType(SwitchRequest switchRequest) {
@@ -1153,7 +1149,6 @@ public class MattermostClient
    * @param permanent {@code true}: Permanently delete the team, to be used for compliance reasons
    *        only.
    * @see #deleteTeam(String)
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteTeam(String teamId, boolean permanent) {
@@ -1676,8 +1671,6 @@ public class MattermostClient
 
   /**
    * will ping the server and to see if it is up and running.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> getPing() {
@@ -1686,8 +1679,6 @@ public class MattermostClient
 
   /**
    * will attempt to connect to the configured SMTP server.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> testEmail() {
@@ -1696,8 +1687,6 @@ public class MattermostClient
 
   /**
    * will retrieve the server config with some sanitized items.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Config> getConfig() {
@@ -1706,8 +1695,6 @@ public class MattermostClient
 
   /**
    * will reload the server configuration.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> reloadConfig() {
@@ -1734,8 +1721,6 @@ public class MattermostClient
 
   /**
    * will recycle the connections. Discard current connection and get new one.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> databaseRecycle() {
@@ -1744,8 +1729,6 @@ public class MattermostClient
 
   /**
    * will purge the cache and can affect the performance while is cleaning.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> invalidateCaches() {
@@ -1958,8 +1941,6 @@ public class MattermostClient
 
   /**
    * returns metadata for the SAML configuration.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<String> getSamlMetadata() {
@@ -1997,8 +1978,6 @@ public class MattermostClient
   /**
    * deletes the SAML IDP certificate from the server and updates the config to not use it and
    * disable SAML.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteSamlIdpCertificate() {
@@ -2008,8 +1987,6 @@ public class MattermostClient
   /**
    * deletes the saml IDP certificate from the server and updates the config to not use it and
    * disable SAML.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteSamlPublicCertificate() {
@@ -2019,8 +1996,6 @@ public class MattermostClient
   /**
    * deletes the SAML IDP certificate from the server and updates the config to not use it and
    * disable SAML.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> deleteSamlPrivateCertificate() {
@@ -2029,8 +2004,6 @@ public class MattermostClient
 
   /**
    * returns metadata for the SAML configuration.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<SamlCertificateStatus> getSamlCertificateStatus() {
@@ -2082,8 +2055,6 @@ public class MattermostClient
 
   /**
    * will force a sync with the configured LDAP server.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> syncLdap() {
@@ -2092,8 +2063,6 @@ public class MattermostClient
 
   /**
    * will attempt to connect to the configured LDAP server and return OK if configured correctly.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Boolean> testLdap() {
@@ -2114,8 +2083,6 @@ public class MattermostClient
 
   /**
    * retrieves the previously uploaded brand image.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<Object> getBrandImage() {
@@ -2327,8 +2294,6 @@ public class MattermostClient
   /**
    * returns a valid token, stun server and turn server with credentials to use with the Mattermost
    * WebRTC service.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<WebrtcInfoResponse> getWebrtcToken() {
@@ -2357,8 +2322,6 @@ public class MattermostClient
 
   /**
    * returns a list of custom emoji in the system.
-   * 
-   * @return
    */
   @Override
   public ApiResponse<EmojiList> getEmojiList(Pager pager) {
