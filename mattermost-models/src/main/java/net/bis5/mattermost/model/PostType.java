@@ -42,7 +42,7 @@ public enum PostType implements HasCode<PostType> {
   /**
    * This post type is not used currently.
    * 
-   * @deprecated use {@link POST_JOIN_CHANNEL} or {@link POST_LEAVE_CHANNEL} instead.
+   * @deprecated use {@link #JOIN_CHANNEL} or {@link #LEAVE_CHANNEL} instead.
    */
   @Deprecated
   JOIN_LEAVE("system_join_leave"), //
@@ -51,7 +51,7 @@ public enum PostType implements HasCode<PostType> {
   /**
    * This post type is not used currently.
    * 
-   * @deprecated use {@link POST_ADD_TO_CHANNEL} or {@link POST_REMOVE_FROM_CHANNEL} instead.
+   * @deprecated use {@link #ADD_TO_CHANNEL} or {@link #REMOVE_FROM_CHANNEL} instead.
    */
   @Deprecated
   ADD_REMOVE("system_add_remove"), //
