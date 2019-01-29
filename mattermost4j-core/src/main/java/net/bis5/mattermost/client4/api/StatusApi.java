@@ -15,9 +15,9 @@
 package net.bis5.mattermost.client4.api;
 
 import java.util.Collection;
-import java.util.List;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.model.Status;
+import net.bis5.mattermost.model.StatusList;
 
 /**
  * Status API.
@@ -32,11 +32,11 @@ public interface StatusApi {
 
   ApiResponse<Status> getUserStatus(String userId, String etag);
 
-  default ApiResponse<List<Status>> getUsersStatusesByIds(Collection<String> userIds) {
+  default ApiResponse<StatusList> getUsersStatusesByIds(Collection<String> userIds) {
     return getUsersStatusesByIds(userIds.toArray(new String[0]));
   }
 
-  ApiResponse<List<Status>> getUsersStatusesByIds(String... userIds);
+  ApiResponse<StatusList> getUsersStatusesByIds(String... userIds);
 
   ApiResponse<Status> updateUserStatus(String userId, Status userStatus);
 }
