@@ -2825,4 +2825,31 @@ public class MattermostApiTest {
       assertNoError(client.removeLicense());
     }
   }
+
+  // Status
+  @Nested
+  class StatusApiTest {
+    @Test
+    public void getUserStatus() {
+      String userId = th.basicUser().getId();
+      assertNoError(client.viewChannel(userId, new ChannelView(th.basicChannel().getId())));
+
+      net.bis5.mattermost.model.Status status =
+          assertNoError(client.getUserStatus(userId)).readEntity();
+
+      assertEquals(StatusType.ONLINE.getCode(), status.getStatus());
+    }
+
+    @Test
+    public void updateUserStatus() {
+      String userId = th.basicUser().getId();
+      net.bis5.mattermost.model.Status newStatus = new net.bis5.mattermost.model.Status();
+      newStatus.setUserId(userId);
+      newStatus.setStatus(StatusType.DND.getCode());
+
+      newStatus = assertNoError(client.updateUserStatus(userId, newStatus)).readEntity();
+
+      assertEquals(StatusType.DND.getCode(), newStatus.getStatus());
+    }
+  }
 }
