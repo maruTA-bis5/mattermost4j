@@ -120,6 +120,7 @@ import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.SamlCertificateStatus;
 import net.bis5.mattermost.model.SessionList;
 import net.bis5.mattermost.model.Status;
+import net.bis5.mattermost.model.StatusList;
 import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.TeamExists;
@@ -2277,8 +2278,8 @@ public class MattermostClient
    * returns a list of users status based on the provided user ids.
    */
   @Override
-  public ApiResponse<List<Status>> getUsersStatusesByIds(String... userIds) {
-    return doApiPost(getUserStatusesRoute() + "/ids", userIds, listType());
+  public ApiResponse<StatusList> getUsersStatusesByIds(String... userIds) {
+    return doApiPost(getUserStatusesRoute() + "/ids", userIds, StatusList.class);
   }
 
   /**

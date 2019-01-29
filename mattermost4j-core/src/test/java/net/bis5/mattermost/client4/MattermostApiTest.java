@@ -94,6 +94,7 @@ import net.bis5.mattermost.model.Preferences;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SessionList;
+import net.bis5.mattermost.model.StatusList;
 import net.bis5.mattermost.model.StatusType;
 import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
@@ -2838,6 +2839,25 @@ public class MattermostApiTest {
           assertNoError(client.getUserStatus(userId)).readEntity();
 
       assertEquals(StatusType.ONLINE.getCode(), status.getStatus());
+    }
+
+    @Test
+    public void getUserStatusesByIds() {
+      String loginUserId = th.basicUser().getId();
+      assertNoError(client.viewChannel(loginUserId, new ChannelView(th.basicChannel().getId())));
+      String otherUserId = th.basicUser2().getId();
+
+      List<String> userIds = Arrays.asList(loginUserId, otherUserId);
+      StatusList statuses = assertNoError(client.getUsersStatusesByIds(userIds)).readEntity();
+
+      assertEquals(2, statuses.size());
+      for (net.bis5.mattermost.model.Status status : statuses) {
+        if (status.getUserId().equals(loginUserId)) {
+          assertEquals(StatusType.ONLINE.getCode(), status.getStatus());
+        } else {
+          assertEquals(StatusType.OFFLINE.getCode(), status.getStatus());
+        }
+      }
     }
 
     @Test
