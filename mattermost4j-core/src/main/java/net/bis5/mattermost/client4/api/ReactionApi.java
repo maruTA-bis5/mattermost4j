@@ -25,10 +25,20 @@ import net.bis5.mattermost.model.Reaction;
  */
 public interface ReactionApi {
 
+  /**
+   * saves an emoji reaction for a post. Returns the saved reaction if successful, otherwise an
+   * error will be returned.
+   */
   ApiResponse<Reaction> saveReaction(Reaction reaction);
 
+  /**
+   * returns a list of reactions to a post.
+   */
   ApiResponse<List<Reaction>> getReactions(String postId);
 
+  /**
+   * deletes reaction of a user in a post.
+   */
   ApiResponse<Boolean> deleteReaction(Reaction reaction);
 
 }

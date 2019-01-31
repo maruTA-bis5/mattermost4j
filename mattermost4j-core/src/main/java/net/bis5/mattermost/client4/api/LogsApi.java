@@ -26,12 +26,23 @@ import net.bis5.mattermost.client4.Pager;
  */
 public interface LogsApi {
 
+  /**
+   * page of logs as a string list.
+   */
   default ApiResponse<List<String>> getLogs() {
     return getLogs(Pager.defaultPager());
   }
 
+  /**
+   * page of logs as a string list.
+   */
   ApiResponse<List<String>> getLogs(Pager pager);
 
+  /**
+   * This method is a convenience Web Service call so clients can log messages into the server-side
+   * logs. For example we typically log javascript error messages into the server-side. It returns
+   * the log message if the logging was successful.
+   */
   ApiResponse<Map<String, String>> postLog(Map<String, String> message);
 
 }

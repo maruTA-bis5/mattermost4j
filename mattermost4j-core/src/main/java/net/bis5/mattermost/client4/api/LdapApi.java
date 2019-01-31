@@ -23,8 +23,14 @@ import net.bis5.mattermost.client4.ApiResponse;
  */
 public interface LdapApi {
 
+  /**
+   * will force a sync with the configured LDAP server.
+   */
   ApiResponse<Boolean> syncLdap();
 
+  /**
+   * will attempt to connect to the configured LDAP server and return OK if configured correctly.
+   */
   ApiResponse<Boolean> testLdap();
 
 }

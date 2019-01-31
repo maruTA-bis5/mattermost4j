@@ -25,19 +25,47 @@ import net.bis5.mattermost.model.SamlCertificateStatus;
  */
 public interface SamlApi {
 
+  /**
+   * returns metadata for the SAML configuration.
+   */
   ApiResponse<String> getSamlMetadata();
 
+  /**
+   * will upload an IDP certificate for SAML and set the config to use it.
+   */
   boolean uploadSamlIdpCertificate(Path dataFile, String fileName);
 
+  /**
+   * will upload a public certificate for SAML and set the config to use it.
+   */
   boolean uploadSamlPublicCertificate(Path dataFile, String fileName);
 
+  /**
+   * will upload a private key for SAML and set the config to use it.
+   */
   boolean uploadSamlPrivateCertificate(Path dataFile, String fileName);
 
+  /**
+   * deletes the SAML IDP certificate from the server and updates the config to not use it and
+   * disable SAML.
+   */
   ApiResponse<Boolean> deleteSamlIdpCertificate();
 
+  /**
+   * deletes the saml IDP certificate from the server and updates the config to not use it and
+   * disable SAML.
+   */
   ApiResponse<Boolean> deleteSamlPublicCertificate();
 
+  /**
+   * deletes the SAML IDP certificate from the server and updates the config to not use it and
+   * disable SAML.
+   */
   ApiResponse<Boolean> deleteSamlPrivateCertificate();
 
+  /**
+   * returns metadata for the SAML configuration.
+   */
   ApiResponse<SamlCertificateStatus> getSamlCertificateStatus();
+
 }

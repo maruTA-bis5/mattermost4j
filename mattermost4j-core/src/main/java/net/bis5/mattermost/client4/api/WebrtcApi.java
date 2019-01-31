@@ -24,6 +24,10 @@ import net.bis5.mattermost.model.WebrtcInfoResponse;
  */
 public interface WebrtcApi {
 
+  /**
+   * returns a valid token, stun server and turn server with credentials to use with the Mattermost
+   * WebRTC service.
+   */
   ApiResponse<WebrtcInfoResponse> getWebrtcToken();
 
 }
