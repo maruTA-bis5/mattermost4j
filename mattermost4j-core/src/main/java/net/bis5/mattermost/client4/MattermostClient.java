@@ -440,8 +440,8 @@ public class MattermostClient
     return "/ldap";
   }
 
-  public String getBrandRoute() {
-    return "/brand";
+  public String getBrandImageRoute() {
+    return "/brand/image";
   }
 
   public String getCommandsRoute() {
@@ -545,6 +545,20 @@ public class MattermostClient
 
   private String getAuthority() {
     return authToken != null ? authType.getCode() + " " + authToken : null;
+  }
+
+  protected ApiResponse<Path> doApiGetImage(String url, String etag) throws IOException {
+    ApiResponse<InputStream> imageResponse = doApiGet(url, etag, InputStream.class);
+    if (imageResponse.hasError()) {
+      ApiResponse<Path> errorResponse = ApiResponse.of(imageResponse.getRawResponse(), Path.class);
+      return errorResponse;
+    }
+
+    String suffix = detectImageSuffix(imageResponse.getRawResponse());
+    Path imageFile = Files.createTempFile(null, suffix);
+    Files.copy(imageResponse.readEntity(), imageFile, StandardCopyOption.REPLACE_EXISTING);
+    ApiResponse<Path> response = ApiResponse.of(imageResponse.getRawResponse(), imageFile);
+    return response;
   }
 
   protected static final String HEADER_ETAG_CLIENT = "If-None-Match";
@@ -1602,13 +1616,19 @@ public class MattermostClient
   // Brand Section
 
   @Override
-  public ApiResponse<Object> getBrandImage() {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Path> getBrandImage() throws IOException {
+    return doApiGetImage(getBrandImageRoute(), null);
   }
 
   @Override
-  public boolean uploadBrandImage(Path dataFile) {
-    throw new UnsupportedOperationException("not impl");// FIXME
+  public ApiResponse<Boolean> uploadBrandImage(Path dataFile) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("image", dataFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getBrandImageRoute(), multiPart).checkStatusOk();
   }
 
   // Logs Section
@@ -1772,18 +1792,7 @@ public class MattermostClient
 
   @Override
   public ApiResponse<Path> getEmojiImage(String emojiId) throws IOException {
-    ApiResponse<InputStream> emojiResponse =
-        doApiGet(getEmojiRoute(emojiId) + "/image", null, InputStream.class);
-    if (emojiResponse.hasError()) {
-      ApiResponse<Path> errorResponse = ApiResponse.of(emojiResponse.getRawResponse(), Path.class);
-      return errorResponse;
-    }
-
-    String suffix = detectImageSuffix(emojiResponse.getRawResponse());
-    Path imageFile = Files.createTempFile(null, suffix);
-    Files.copy(emojiResponse.readEntity(), imageFile, StandardCopyOption.REPLACE_EXISTING);
-    ApiResponse<Path> response = ApiResponse.of(emojiResponse.getRawResponse(), imageFile);
-    return response;
+    return doApiGetImage(getEmojiRoute(emojiId) + "/image", null);
   }
 
   private String detectImageSuffix(Response response) {

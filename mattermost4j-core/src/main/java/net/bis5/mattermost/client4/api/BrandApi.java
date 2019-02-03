@@ -14,6 +14,7 @@
 
 package net.bis5.mattermost.client4.api;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import net.bis5.mattermost.client4.ApiResponse;
 
@@ -27,11 +28,11 @@ public interface BrandApi {
   /**
    * retrieves the previously uploaded brand image.
    */
-  ApiResponse<Object> getBrandImage();
+  ApiResponse<Path> getBrandImage() throws IOException;
 
   /**
    * sets the brand image for the system.
    */
-  boolean uploadBrandImage(Path dataFIle);
+  ApiResponse<Boolean> uploadBrandImage(Path dataFIle);
 
 }

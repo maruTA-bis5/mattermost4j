@@ -2930,4 +2930,29 @@ public class MattermostApiTest {
 
   }
 
+  // Brand
+  @Nested
+  class BrandApiTest {
+    @Test
+    public void getBrandImageForNotEmpty() throws URISyntaxException, IOException {
+      th.logout().loginSystemAdmin();
+      Path brandImage = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+      boolean uploadResult = assertNoError(client.uploadBrandImage(brandImage)).readEntity();
+      assertTrue(uploadResult);
+      th.logout().loginBasic();
+
+      assertNoError(client.getBrandImage());
+    }
+
+    @Test
+    public void uploadBrandImage() throws URISyntaxException {
+      th.logout().loginSystemAdmin();
+      Path brandImage = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+
+      boolean uploadResult = assertNoError(client.uploadBrandImage(brandImage)).readEntity();
+
+      assertTrue(uploadResult);
+    }
+  }
+
 }
