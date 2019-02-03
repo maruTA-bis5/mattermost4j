@@ -116,6 +116,7 @@ import net.bis5.mattermost.model.Preference;
 import net.bis5.mattermost.model.PreferenceCategory;
 import net.bis5.mattermost.model.Preferences;
 import net.bis5.mattermost.model.Reaction;
+import net.bis5.mattermost.model.ReactionList;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.SamlCertificateStatus;
 import net.bis5.mattermost.model.SessionList;
@@ -1809,8 +1810,8 @@ public class MattermostClient
   }
 
   @Override
-  public ApiResponse<List<Reaction>> getReactions(String postId) {
-    return doApiGet(getPostRoute(postId) + "/reactions", null, listType());
+  public ApiResponse<ReactionList> getReactions(String postId) {
+    return doApiGet(getPostRoute(postId) + "/reactions", null, ReactionList.class);
   }
 
   @Override
