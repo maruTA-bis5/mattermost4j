@@ -21,7 +21,7 @@ jobs:
       MAVEN_OPTS: -Xmx3200m
     steps:
       - checkout
-      - run: mvn verify -DskipTests=true --show-version -Dsurefire.useSystemClassLoader=false
+      - run: mvn verify -DskipTests=true --show-version -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false
   test-mattermost-base: &test-mattermost-base
     working_directory: ~/repo
     docker:
@@ -86,4 +86,4 @@ jobs:
           background: true
       - checkout
       - run: dockerize -wait tcp://127.0.0.1:8065 -timeout 120s
-      - run: mvn clean verify sonar:sonar --show-version -Dsurefire.useSystemClassLoader=false -s .circleci/settings-sonar.xml
+      - run: mvn clean verify sonar:sonar --show-version -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false -s .circleci/settings-sonar.xml
