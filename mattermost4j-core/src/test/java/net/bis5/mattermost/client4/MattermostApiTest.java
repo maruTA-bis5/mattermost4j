@@ -28,6 +28,7 @@ import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -91,6 +92,8 @@ import net.bis5.mattermost.model.PostSearchResults;
 import net.bis5.mattermost.model.Preference;
 import net.bis5.mattermost.model.PreferenceCategory;
 import net.bis5.mattermost.model.Preferences;
+import net.bis5.mattermost.model.Reaction;
+import net.bis5.mattermost.model.ReactionList;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SessionList;
@@ -2872,4 +2875,59 @@ public class MattermostApiTest {
       assertEquals(StatusType.DND.getCode(), newStatus.getStatus());
     }
   }
+
+  // Reaction
+  @Nested
+  class ReactionApiTest {
+
+    @Test
+    public void saveReaction() {
+      Post targetPost = th.basicPost();
+      User reactedUser = th.basicUser();
+      Reaction reaction = new Reaction();
+      reaction.setUserId(reactedUser.getId());
+      reaction.setPostId(targetPost.getId());
+      reaction.setEmojiName("mattermost");
+
+      Reaction savedReaction = assertNoError(client.saveReaction(reaction)).readEntity();
+
+      assertNotEquals(0l, savedReaction.getCreateAt());
+    }
+
+    @Test
+    public void deleteReaction() {
+      Post targetPost = th.basicPost();
+      User reactedUser = th.basicUser();
+      Reaction reaction = new Reaction();
+      reaction.setUserId(reactedUser.getId());
+      reaction.setPostId(targetPost.getId());
+      reaction.setEmojiName("mattermost");
+      reaction = assertNoError(client.saveReaction(reaction)).readEntity();
+
+      ApiResponse<Boolean> deleteReactionResult = assertNoError(client.deleteReaction(reaction));
+
+      assertTrue(deleteReactionResult.readEntity());
+    }
+
+    @Test
+    public void getReactions() {
+      Post targetPost = th.basicPost();
+      User reactedUser = th.basicUser();
+      Reaction reaction = new Reaction();
+      reaction.setUserId(reactedUser.getId());
+      reaction.setPostId(targetPost.getId());
+      reaction.setEmojiName("mattermost");
+      assertNoError(client.saveReaction(reaction));
+      reaction.setEmojiName("+1");
+      assertNoError(client.saveReaction(reaction));
+
+      ReactionList reactions = assertNoError(client.getReactions(targetPost.getId())).readEntity();
+
+      assertEquals(2, reactions.size());
+      assertThat(reactions.stream().map(Reaction::getEmojiName).collect(Collectors.toSet()),
+          containsInAnyOrder("mattermost", "+1"));
+    }
+
+  }
+
 }

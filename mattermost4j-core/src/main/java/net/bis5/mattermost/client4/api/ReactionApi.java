@@ -14,9 +14,9 @@
 
 package net.bis5.mattermost.client4.api;
 
-import java.util.List;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.model.Reaction;
+import net.bis5.mattermost.model.ReactionList;
 
 /**
  * Reaction API.
@@ -34,7 +34,7 @@ public interface ReactionApi {
   /**
    * returns a list of reactions to a post.
    */
-  ApiResponse<List<Reaction>> getReactions(String postId);
+  ApiResponse<ReactionList> getReactions(String postId);
 
   /**
    * deletes reaction of a user in a post.
