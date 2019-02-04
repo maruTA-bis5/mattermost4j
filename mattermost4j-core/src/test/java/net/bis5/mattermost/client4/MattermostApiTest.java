@@ -2262,6 +2262,24 @@ public class MattermostApiTest {
     }
 
     @Test
+    public void deleteIncomingWebhook() {
+      th.logout().loginTeamAdmin();
+      String channelId = th.basicChannel().getId();
+      IncomingWebhook webhook = new IncomingWebhook();
+      {
+        webhook.setChannelId(channelId);
+        webhook.setDisplayName(th.newRandomString(32));
+        webhook.setDescription(th.newRandomString(32));
+        webhook = assertNoError(client.createIncomingWebhook(webhook)).readEntity();
+      }
+
+      ApiResponse<Boolean> deleteResult =
+          assertNoError(client.deleteIncomingWebhook(webhook.getId()));
+
+      assertTrue(deleteResult.readEntity());
+    }
+
+    @Test
     public void createOutgoingWebhook() {
       th.logout().loginTeamAdmin();
       String teamId = th.basicTeam().getId();
