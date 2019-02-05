@@ -2955,8 +2955,12 @@ public class MattermostApiTest {
     public void getBrandImageForNotEmpty() throws URISyntaxException, IOException {
       th.logout().loginSystemAdmin();
       Path brandImage = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
-      boolean uploadResult = assertNoError(client.uploadBrandImage(brandImage)).readEntity();
-      assertTrue(uploadResult);
+      ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
+      if (isNotSupportVersion("5.0.0", uploadResponse)) {
+        return;
+      }
+      assertNoError(uploadResponse);
+      assertTrue(uploadResponse.readEntity());
       th.logout().loginBasic();
 
       assertNoError(client.getBrandImage());
@@ -2967,9 +2971,13 @@ public class MattermostApiTest {
       th.logout().loginSystemAdmin();
       Path brandImage = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
 
-      boolean uploadResult = assertNoError(client.uploadBrandImage(brandImage)).readEntity();
+      ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
+      if (isNotSupportVersion("5.0.0", uploadResponse)) {
+        return;
+      }
+      assertNoError(uploadResponse);
 
-      assertTrue(uploadResult);
+      assertTrue(uploadResponse.readEntity());
     }
   }
 
