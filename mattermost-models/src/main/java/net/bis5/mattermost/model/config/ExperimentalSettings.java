@@ -30,4 +30,31 @@ public class ExperimentalSettings {
   /* @since Mattermost Server 5.6 */
   private boolean enablePostMetadata;
 
+  /**
+   * Set the enable post metadata.
+   * 
+   * @deprecated Changed to {@link #setDisablePostMetadata(boolean)} for Mattermost Server 5.8+
+   * @since Mattermost Server 5.6
+   */
+  @Deprecated
+  public void setEnablePostMetadata(boolean enablePostMetadata) {
+    this.enablePostMetadata = enablePostMetadata;
+  }
+
+  /**
+   * Get the enable post metadata.
+   * 
+   * @deprecated Changed to {@link #isDisablePostMetadata()} for Mattermost Server 5.8+
+   * @since Mattermost Server 5.6
+   */
+  @Deprecated
+  public boolean isEnablePostMetadata() {
+    return enablePostMetadata;
+  }
+
+  /* @since Mattermost Server 5.8 */
+  private boolean disablePostMetadata;
+  /* @since Mattermost Server 5.8 */
+  private long linkMetadataTimeoutMilliseconds = 5000;
+
 }

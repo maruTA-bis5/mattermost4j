@@ -101,10 +101,85 @@ public class ServiceSettings {
   private boolean enableTutorial = true;
   /* @since Mattermost Server 4.7 */
   private ImageProxyType imageProxyType;
+
+  /**
+   * Set the image proxy type.
+   * 
+   * @Deprecated Changed to {@link ImageProxySettings#setImageProxyType(ImageProxyType)} for
+   *             Mattermost Server 5.8+
+   * @since Mattermost Server 4.7
+   */
+  @Deprecated
+  public void setImageProxyType(ImageProxyType imageProxyType) {
+    this.imageProxyType = imageProxyType;
+  }
+
+  /**
+   * Get the image proxy type.
+   * 
+   * @Deprecated Changed to {@link ImageProxySettings#getImageProxyType()} for Mattermost Server
+   *             5.8+
+   * @since Mattermost Server 4.7
+   */
+  @Deprecated
+  public ImageProxyType getImageProxyType() {
+    return imageProxyType;
+  }
+
   /* @since Mattermost Server 4.7 */
   private String imageProxyOptions;
+
+  /**
+   * Set the image proxy options.
+   * 
+   * @deprecated Changed to {@link ImageProxySettings#setRemoteImageProxyOptions(String)} for
+   *             Mattermost Server 5.8+
+   * @since Mattermost Server 4.7
+   */
+  @Deprecated
+  public void setImageProxyOptions(String imageProxyOptions) {
+    this.imageProxyOptions = imageProxyOptions;
+  }
+
+  /**
+   * Get the image proxy options.
+   * 
+   * @deprecated Changed to {@link ImageProxySettings#getRemoteImageProxyOptions()} for Mattermost
+   *             Server 5.8+
+   * @since Mattermost Server 4.7
+   */
+  @Deprecated
+  public String getImageProxyOptions() {
+    return imageProxyOptions;
+  }
+
   /* @since Mattermost Server 4.7 */
   private String imageProxyUrl;
+
+  /**
+   * Set the image proxy url.
+   * 
+   * @deprecated Changed to {@link ImageProxySettings#setRemoteImageProxyUrl(String)} for Mattermost
+   *             Server 5.8+
+   * @since Mattermost Server 4.7
+   */
+  @Deprecated
+  public void setImageProxyUrl(String imageProxyUrl) {
+    this.imageProxyUrl = imageProxyUrl;
+  }
+
+  /**
+   * Get the image proxy url.
+   * 
+   * @deprecated Changed to {@link ImageProxySettings#getRemoteImageProxyUrl()} for Mattermost
+   *             Server 5.8+
+   * @since Mattermost Server 4.7
+   */
+  @Deprecated
+  public String getImageProxyUrl() {
+    return imageProxyUrl;
+  }
+
   /* @since Mattermost Server 4.7 */
   private GroupUnreadChannels experimentalGroupUnreadChannels = GroupUnreadChannels.DISABLED;
   /* @since Mattermost Server 4.7 */
@@ -143,6 +218,10 @@ public class ServiceSettings {
   private long tlsStrictTransportMaxAge;
   /* @since Mattermost Server 5.6 */
   private List<String> tlsOverwriteCiphers;
+  /* @since Mattermost Server 5.8 */
+  private boolean experimentalLdapGroupSync;
+  /* @since Mattermost Server 5.8 */
+  private boolean experimentalStrictCsrfEnforcement;
 
   /**
    * This method should not use.

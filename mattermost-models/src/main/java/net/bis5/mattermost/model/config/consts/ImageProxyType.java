@@ -39,7 +39,13 @@ import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 @RequiredArgsConstructor
 public enum ImageProxyType implements HasCode<ImageProxyType> {
 
-  ACMOS_CAMO("acmos/camo");
+  ACMOS_CAMO("acmos/camo"),
+  /**
+   * Image proxy provided by Mattermost Server.
+   * 
+   * @since Mattermost Server 5.8
+   */
+  LOCAL("local");
   private final String code;
 
   public static ImageProxyType of(String code) {

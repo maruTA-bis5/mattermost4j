@@ -68,6 +68,12 @@ public class LdapSettings {
   private String loginButtonTextColor;
   /* @since Mattermost Server 5.0 */
   private String loginIdAttribute;
+  /* @since Mattermost Server 5.8 */
+  private String groupFilter;
+  /* @since Mattermost Server 5.8 */
+  private String groupDisplayNameAttribute;
+  /* @since Mattermost Server 5.8 */
+  private String groupIdAttribute;
 
   @Getter(onMethod = @__({@Deprecated}))
   @Setter(onMethod = @__({@Deprecated}))

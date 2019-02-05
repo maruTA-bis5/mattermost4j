@@ -27,6 +27,7 @@ import net.bis5.mattermost.model.config.EmailSettings;
 import net.bis5.mattermost.model.config.ExperimentalSettings;
 import net.bis5.mattermost.model.config.ExtensionSettings;
 import net.bis5.mattermost.model.config.FileSettings;
+import net.bis5.mattermost.model.config.ImageProxySettings;
 import net.bis5.mattermost.model.config.JobSettings;
 import net.bis5.mattermost.model.config.LdapSettings;
 import net.bis5.mattermost.model.config.LocalizationSettings;
@@ -106,6 +107,8 @@ public class Config {
   private ExperimentalSettings experimentalSettings;
   /* @since Mattermost Server 5.2 */
   private ExtensionSettings extensionSettings;
+  /* @since Mattermost Server 5.8 */
+  private ImageProxySettings imageProxySettings;
 
   /**
    * Should not use this.
