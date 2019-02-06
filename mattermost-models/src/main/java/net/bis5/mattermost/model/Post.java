@@ -73,5 +73,7 @@ public class Post {
   private String pendingPostId;
   @JsonProperty("has_reactions")
   private boolean hasReactions;
+  /* @since Mattermost Server 5.8 */
+  private PostMetadata metadata;
 
 }
