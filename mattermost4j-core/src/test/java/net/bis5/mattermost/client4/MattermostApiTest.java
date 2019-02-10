@@ -143,6 +143,9 @@ public class MattermostApiTest {
   private MattermostClient client;
   private static TestHelper th;
 
+  private static final String EMOJI_GLOBE = "/noto-emoji_u1f310.png";
+  private static final String EMOJI_CONSTRUCTION = "noto-emoji_u1f6a7.png";
+
   private static String getApplicationUrl() {
     return getEnv("MATTERMOST_URL", "http://localhost:8065");
   }
@@ -1113,7 +1116,7 @@ public class MattermostApiTest {
 
     @Test
     public void setUserProfileImage() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
 
       ApiResponse<Boolean> response =
           assertNoError(client.setProfileImage(th.basicUser().getId(), image));
@@ -2043,7 +2046,7 @@ public class MattermostApiTest {
   class EmojiApiTest {
     @Test
     public void createCustomEmoji() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
       Emoji emoji = new Emoji();
       String emojiName = "custom" + th.newId();
       emoji.setName(emojiName);
@@ -2062,7 +2065,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmojiList() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
       Emoji emoji1 = new Emoji();
       emoji1.setName("custom" + th.newId());
       emoji1.setCreatorId(th.basicUser().getId());
@@ -2086,7 +2089,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmoji() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2106,7 +2109,7 @@ public class MattermostApiTest {
 
     @Test
     public void deleteCustomEmoji() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2132,7 +2135,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmojiImage() throws URISyntaxException, IOException {
-      Path originalImage = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+      Path originalImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2954,7 +2957,7 @@ public class MattermostApiTest {
     @Test
     public void getBrandImageForNotEmpty() throws URISyntaxException, IOException {
       th.logout().loginSystemAdmin();
-      Path brandImage = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+      Path brandImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
       ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
       if (isNotSupportVersion("5.0.0", uploadResponse)) {
         return;
@@ -2969,7 +2972,7 @@ public class MattermostApiTest {
     @Test
     public void uploadBrandImage() throws URISyntaxException {
       th.logout().loginSystemAdmin();
-      Path brandImage = Paths.get(getClass().getResource("/noto-emoji_u1f310.png").toURI());
+      Path brandImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
 
       ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
       if (isNotSupportVersion("5.0.0", uploadResponse)) {
