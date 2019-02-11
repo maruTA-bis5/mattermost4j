@@ -26,6 +26,7 @@ import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -1832,8 +1833,26 @@ public class MattermostApiTest {
 
 
     @Test
-    @Disabled // TODO
-    public void getFileInfoForPost() {}
+    public void getFileInfoForPost() throws IOException, URISyntaxException {
+      Path file1 = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path file2 = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      String channelId = th.basicChannel().getId();
+      FileUploadResult uploadResult =
+          assertNoError(client.uploadFile(channelId, file1, file2)).readEntity();
+      FileInfo fileInfo1 = uploadResult.getFileInfos()[0];
+      FileInfo fileInfo2 = uploadResult.getFileInfos()[1];
+
+      Post post = new Post(channelId, "file attached");
+      post.setFileIds(Arrays.asList(fileInfo1.getId(), fileInfo2.getId()));
+      post = assertNoError(client.createPost(post)).readEntity();
+      String postId = post.getId();
+
+      FileInfo[] fileInfosForPost = assertNoError(client.getFileInfoForPost(postId)).readEntity();
+      assertEquals(2, fileInfosForPost.length);
+      Set<String> fileIds = new HashSet<>(Arrays.asList(fileInfo1.getId(), fileInfo2.getId()));
+      assertAll(() -> fileIds.contains(fileInfosForPost[0].getId()),
+          () -> fileIds.contains(fileInfosForPost[1].getId()));
+    }
 
     @Test
     public void getPostsForChannel() {
