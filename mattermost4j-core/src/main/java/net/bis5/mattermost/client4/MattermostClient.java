@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +45,7 @@ import net.bis5.mattermost.client4.api.ClusterApi;
 import net.bis5.mattermost.client4.api.CommandsApi;
 import net.bis5.mattermost.client4.api.ComplianceApi;
 import net.bis5.mattermost.client4.api.EmojiApi;
+import net.bis5.mattermost.client4.api.FilesApi;
 import net.bis5.mattermost.client4.api.GeneralApi;
 import net.bis5.mattermost.client4.api.LdapApi;
 import net.bis5.mattermost.client4.api.LogsApi;
@@ -63,7 +65,9 @@ import net.bis5.mattermost.client4.model.AttachDeviceIdRequest;
 import net.bis5.mattermost.client4.model.CheckUserMfaRequest;
 import net.bis5.mattermost.client4.model.DeauthorizeOAuthAppRequest;
 import net.bis5.mattermost.client4.model.DisableEnableTokenRequest;
+import net.bis5.mattermost.client4.model.FileUploadResult;
 import net.bis5.mattermost.client4.model.LoginRequest;
+import net.bis5.mattermost.client4.model.PublicFileLink;
 import net.bis5.mattermost.client4.model.ResetPasswordRequest;
 import net.bis5.mattermost.client4.model.RevokeSessionRequest;
 import net.bis5.mattermost.client4.model.RevokeTokenRequest;
@@ -103,6 +107,7 @@ import net.bis5.mattermost.model.Compliances;
 import net.bis5.mattermost.model.Config;
 import net.bis5.mattermost.model.Emoji;
 import net.bis5.mattermost.model.EmojiList;
+import net.bis5.mattermost.model.FileInfo;
 import net.bis5.mattermost.model.IncomingWebhook;
 import net.bis5.mattermost.model.IncomingWebhookList;
 import net.bis5.mattermost.model.OAuthApp;
@@ -147,6 +152,7 @@ import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
+import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -160,7 +166,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
  */
 public class MattermostClient
     implements AutoCloseable, AuditsApi, AuthenticationApi, BrandApi, ChannelApi, ClusterApi,
-    CommandsApi, ComplianceApi, EmojiApi, GeneralApi, LdapApi, LogsApi, OAuthApi, PostApi,
+    CommandsApi, ComplianceApi, EmojiApi, FilesApi, GeneralApi, LdapApi, LogsApi, OAuthApi, PostApi,
     PreferencesApi, ReactionApi, SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
 
   protected static final String API_URL_SUFFIX = "/api/v4";
@@ -547,24 +553,22 @@ public class MattermostClient
     return authToken != null ? authType.getCode() + " " + authToken : null;
   }
 
-  protected ApiResponse<Path> doApiGetImage(String url, String etag) throws IOException {
-    ApiResponse<InputStream> imageResponse = doApiGet(url, etag, InputStream.class);
-    if (imageResponse.hasError()) {
-      ApiResponse<Path> errorResponse = ApiResponse.of(imageResponse.getRawResponse(), Path.class);
+  protected ApiResponse<Path> doApiGetFile(String url, String etag) throws IOException {
+    ApiResponse<InputStream> fileResponse = doApiGet(url, etag, InputStream.class);
+    if (fileResponse.hasError()) {
+      ApiResponse<Path> errorResponse = ApiResponse.of(fileResponse.getRawResponse(), Path.class);
       return errorResponse;
     }
 
-    String suffix = detectImageSuffix(imageResponse.getRawResponse());
+    String suffix = detectSuffix(fileResponse.getRawResponse());
     Path imageFile = Files.createTempFile(null, suffix);
-    Files.copy(imageResponse.readEntity(), imageFile, StandardCopyOption.REPLACE_EXISTING);
-    ApiResponse<Path> response = ApiResponse.of(imageResponse.getRawResponse(), imageFile);
+    Files.copy(fileResponse.readEntity(), imageFile, StandardCopyOption.REPLACE_EXISTING);
+    ApiResponse<Path> response = ApiResponse.of(fileResponse.getRawResponse(), imageFile);
     return response;
   }
 
   protected static final String HEADER_ETAG_CLIENT = "If-None-Match";
   protected static final String HEADER_AUTH = "Authorization";
-
-  // TODO upload api
 
   // Authentication Section
 
@@ -1331,7 +1335,57 @@ public class MattermostClient
     return doApiPost(getTeamRoute(teamId) + "/posts/search", request, PostSearchResults.class);
   }
 
-  // TODO File Section
+  // File Section
+
+  @Override
+  public ApiResponse<FileUploadResult> uploadFile(String channelId, Path... filePaths)
+      throws IOException {
+
+    if (filePaths.length == 0) {
+      throw new IllegalArgumentException("At least one filePath required.");
+    }
+
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    for (Path filePath : filePaths) {
+      FileDataBodyPart body = new FileDataBodyPart("files", filePath.toFile());
+      multiPart.bodyPart(body);
+    }
+    multiPart.field("channel_id", channelId);
+
+    return doApiPostMultiPart(getFilesRoute(), multiPart, FileUploadResult.class);
+  }
+
+  @Override
+  public ApiResponse<Path> getFile(String fileId) throws IOException {
+    return doApiGetFile(getFileRoute(fileId), null);
+  }
+
+  @Override
+  public ApiResponse<Path> getFileThumbnail(String fileId) throws IOException {
+    return doApiGetFile(getFileRoute(fileId) + "/thumbnail", null);
+  }
+
+  @Override
+  public ApiResponse<Path> getFilePreview(String fileId) throws IOException {
+    return doApiGetFile(getFileRoute(fileId) + "/preview", null);
+  }
+
+  @Override
+  public ApiResponse<String> getPublicFileLink(String fileId) {
+    ApiResponse<PublicFileLink> response =
+        doApiGet(getFileRoute(fileId) + "/link", null, PublicFileLink.class);
+    if (response.hasError()) {
+      return ApiResponse.of(response.getRawResponse(), String.class);
+    }
+    return ApiResponse.of(response.getRawResponse(), response.readEntity().getLink());
+  }
+
+  @Override
+  public ApiResponse<FileInfo> getFileMetadata(String fileId) {
+    return doApiGet(getFileRoute(fileId) + "/info", null, FileInfo.class);
+  }
 
   // General Section
 
@@ -1617,7 +1671,7 @@ public class MattermostClient
 
   @Override
   public ApiResponse<Path> getBrandImage() throws IOException {
-    return doApiGetImage(getBrandImageRoute(), null);
+    return doApiGetFile(getBrandImageRoute(), null);
   }
 
   @Override
@@ -1792,10 +1846,10 @@ public class MattermostClient
 
   @Override
   public ApiResponse<Path> getEmojiImage(String emojiId) throws IOException {
-    return doApiGetImage(getEmojiRoute(emojiId) + "/image", null);
+    return doApiGetFile(getEmojiRoute(emojiId) + "/image", null);
   }
 
-  private String detectImageSuffix(Response response) {
+  private String detectSuffix(Response response) {
     MediaType mediaType = response.getMediaType();
     if (mediaType.isCompatible(MediaType.valueOf("image/png"))) {
       return ".png";
@@ -1806,7 +1860,16 @@ public class MattermostClient
     } else if (mediaType.isCompatible(MediaType.valueOf("image/bmp"))) {
       return ".bmp";
     } else {
-      throw new IllegalArgumentException("Unsupported Content-Type: " + mediaType.toString());
+      String contentDispositionHeader =
+          String.class.cast(response.getHeaders().getFirst("Content-Disposition"));
+      try {
+        ContentDisposition contentDisposition = new ContentDisposition(contentDispositionHeader);
+        String fileName = contentDisposition.getFileName();
+        return fileName.substring(fileName.lastIndexOf("."));
+      } catch (ParseException e) {
+        // If server returns illegal syntax, that is server bug.
+        throw new IllegalArgumentException(e);
+      }
     }
   }
 

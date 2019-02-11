@@ -10,6 +10,9 @@ License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 Jersey: https://jersey.java.net/
 License: Common Development and Distribution License (CDDL) v1.0 (https://glassfish.dev.java.net/public/CDDLv1.0.html)
 
+This product includes Noto Emoji image for testing: https://github.com/googlei18n/noto-emoji
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
 =============================
  Apache Commons Lang Notice
 =============================
