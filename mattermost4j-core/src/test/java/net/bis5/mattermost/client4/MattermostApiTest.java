@@ -1411,6 +1411,22 @@ public class MattermostApiTest {
           containsInAnyOrder(user2TokenA.getId(), user2TokenB.getId()));
     }
 
+    @Test
+    public void revokeAllActiveSessionForUser() {
+      User targetUser = th.basicUser2();
+      try (MattermostClient theUserClient = createNewClient()) {
+        theUserClient.login(targetUser.getUsername(), targetUser.getPassword());
+        assertNoError(theUserClient.getUser("me"));
+
+        th.logout().loginSystemAdmin();
+        ApiResponse<Boolean> revokeResult =
+            assertNoError(client.revokeAllActiveSessionForUser(targetUser.getId()));
+        assertTrue(revokeResult.readEntity());
+
+        assertStatus(theUserClient.getUser("me"), Status.UNAUTHORIZED);
+      }
+    }
+
   }
 
   // Teams

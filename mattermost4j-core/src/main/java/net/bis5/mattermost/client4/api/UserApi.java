@@ -491,4 +491,6 @@ public interface UserApi {
 
   ApiResponse<UserAccessTokenList> searchTokens(String term);
 
+  ApiResponse<Boolean> revokeAllActiveSessionForUser(String userId);
+
 }
