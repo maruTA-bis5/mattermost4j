@@ -1335,6 +1335,11 @@ public class MattermostClient
     return doApiPost(getTeamRoute(teamId) + "/posts/search", request, PostSearchResults.class);
   }
 
+  @Override
+  public ApiResponse<FileInfo[]> getFileInfoForPost(String postId) {
+    return doApiGet(getPostRoute(postId) + "/files/info", null, FileInfo[].class);
+  }
+
   // File Section
 
   @Override

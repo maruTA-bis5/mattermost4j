@@ -18,6 +18,7 @@ import java.sql.Date;
 import java.time.OffsetDateTime;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.Pager;
+import net.bis5.mattermost.model.FileInfo;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
@@ -215,5 +216,10 @@ public interface PostApi {
    * returns any posts with matching term string.
    */
   ApiResponse<PostSearchResults> searchPosts(String teamId, String terms, boolean isOrSearch);
+
+  /**
+   * get a list of file info attached the post.
+   */
+  ApiResponse<FileInfo[]> getFileInfoForPost(String postId);
 
 }
