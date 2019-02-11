@@ -282,6 +282,10 @@ public class MattermostClient
     return getUsersRoute() + String.format("/email/%s", StringUtils.stripToEmpty(email));
   }
 
+  public String getUserSessionsRoute(String userId) {
+    return getUserRoute(userId) + "/sessions";
+  }
+
   public String getUserTokensRoute(String userId) {
     return getUserRoute(userId) + "/tokens";
   }
@@ -820,13 +824,13 @@ public class MattermostClient
 
   @Override
   public ApiResponse<SessionList> getSessions(String userId, String etag) {
-    return doApiGet(getUserRoute(userId) + "/sessions", etag, SessionList.class);
+    return doApiGet(getUserSessionsRoute(userId), etag, SessionList.class);
   }
 
   @Override
   public ApiResponse<Boolean> revokeSession(String userId, String sessionId) {
     RevokeSessionRequest request = RevokeSessionRequest.builder().sessionId(sessionId).build();
-    return doApiPost(getUserRoute(userId) + "/sessions/revoke", request).checkStatusOk();
+    return doApiPost(getUserSessionsRoute(userId) + "/revoke", request).checkStatusOk();
   }
 
   @Override
@@ -921,6 +925,11 @@ public class MattermostClient
   public ApiResponse<UserAccessTokenList> searchTokens(String term) {
     return doApiPost(getUserTokensRoute() + "/search", SearchTokensRequest.of(term),
         UserAccessTokenList.class);
+  }
+
+  @Override
+  public ApiResponse<Boolean> revokeAllActiveSessionForUser(String userId) {
+    return doApiPost(getUserSessionsRoute(userId) + "/revoke/all", null).checkStatusOk();
   }
 
   // Team Section
