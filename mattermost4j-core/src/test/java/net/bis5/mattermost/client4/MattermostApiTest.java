@@ -13,6 +13,7 @@
  */
 package net.bis5.mattermost.client4;
 
+import static net.bis5.mattermost.client4.Assertions.assertSameFile;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
@@ -31,15 +32,18 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.vdurmont.semver4j.Semver;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -50,10 +54,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import net.bis5.mattermost.client4.hook.IncomingWebhookClient;
 import net.bis5.mattermost.client4.model.AnalyticsCategory;
+import net.bis5.mattermost.client4.model.FileUploadResult;
 import net.bis5.mattermost.client4.model.UsersOrder.InChannel;
 import net.bis5.mattermost.client4.model.UsersOrder.InTeam;
 import net.bis5.mattermost.model.AnalyticsRow;
@@ -80,6 +88,7 @@ import net.bis5.mattermost.model.CommandResponseType;
 import net.bis5.mattermost.model.ContentType;
 import net.bis5.mattermost.model.Emoji;
 import net.bis5.mattermost.model.EmojiList;
+import net.bis5.mattermost.model.FileInfo;
 import net.bis5.mattermost.model.IncomingWebhook;
 import net.bis5.mattermost.model.IncomingWebhookList;
 import net.bis5.mattermost.model.IncomingWebhookRequest;
@@ -119,7 +128,6 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -144,7 +152,7 @@ public class MattermostApiTest {
   private static TestHelper th;
 
   private static final String EMOJI_GLOBE = "/noto-emoji_u1f310.png";
-  private static final String EMOJI_CONSTRUCTION = "noto-emoji_u1f6a7.png";
+  private static final String EMOJI_CONSTRUCTION = "/noto-emoji_u1f6a7.png";
 
   private static String getApplicationUrl() {
     return getEnv("MATTERMOST_URL", "http://localhost:8065");
@@ -2151,10 +2159,7 @@ public class MattermostApiTest {
       Path downloadedFile = emojiImage.readEntity();
 
       // file contents equals?
-      String originalHash = DigestUtils.sha1Hex(Files.readAllBytes(originalImage));
-      String downloadedHash = DigestUtils.sha1Hex(Files.readAllBytes(downloadedFile));
-
-      assertEquals(originalHash, downloadedHash);
+      assertSameFile(originalImage, downloadedFile);
     }
   }
 
@@ -2982,6 +2987,130 @@ public class MattermostApiTest {
 
       assertTrue(uploadResponse.readEntity());
     }
+  }
+
+  // Files
+  @Nested
+  class FilesApiTest {
+
+    @Test
+    public void uploadNoFileThrowsException() {
+      String channelId = th.basicChannel().getId();
+      assertThrows(IllegalArgumentException.class, () -> client.uploadFile(channelId));
+    }
+
+    @Test
+    public void uplaodFile() throws URISyntaxException, IOException {
+      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      String channelId = th.basicChannel().getId();
+
+      FileUploadResult uploadResult =
+          assertNoError(client.uploadFile(channelId, filePath)).readEntity();
+
+      assertEquals(1, uploadResult.getFileInfos().length);
+      assertEquals(filePath.getFileName().toString(), uploadResult.getFileInfos()[0].getName());
+    }
+
+    @Test
+    public void uploadMultipleFile() throws URISyntaxException, IOException {
+      Path file1 = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path file2 = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      String channelId = th.basicChannel().getId();
+
+      FileUploadResult uploadResult =
+          assertNoError(client.uploadFile(channelId, file1, file2)).readEntity();
+
+      assertEquals(2, uploadResult.getFileInfos().length);
+      boolean foundFile1 = false;
+      boolean foundFile2 = false;
+      for (FileInfo fileInfo : uploadResult.getFileInfos()) {
+        foundFile1 = foundFile1 || fileInfo.getName().equals(file1.getFileName().toString());
+        foundFile2 = foundFile2 || fileInfo.getName().equals(file2.getFileName().toString());
+      }
+      assertTrue(foundFile1);
+      assertTrue(foundFile2);
+    }
+
+    @Test
+    public void getFile() throws URISyntaxException, IOException {
+      Path filePath = Paths.get(getClass().getResource("/LICENSE.txt").toURI());
+      String channelId = th.basicChannel().getId();
+      FileUploadResult uploadResult =
+          assertNoError(client.uploadFile(channelId, filePath)).readEntity();
+      FileInfo fileInfo = uploadResult.getFileInfos()[0];
+      String fileId = fileInfo.getId();
+
+      Path receivedFile = assertNoError(client.getFile(fileId)).readEntity();
+
+      assertSameFile(filePath, receivedFile);
+    }
+
+    @Test
+    public void getFileThumbnail() throws URISyntaxException, IOException {
+      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      String channelId = th.basicChannel().getId();
+      FileUploadResult uploadResult =
+          assertNoError(client.uploadFile(channelId, filePath)).readEntity();
+      FileInfo fileInfo = uploadResult.getFileInfos()[0];
+      String fileId = fileInfo.getId();
+
+      Path thumbnail = assertNoError(client.getFileThumbnail(fileId)).readEntity();
+
+      assertTrue(thumbnail.toFile().exists());
+    }
+
+    @Test
+    public void getFilePreview() throws URISyntaxException, IOException {
+      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      String channelId = th.basicChannel().getId();
+      FileUploadResult uploadResult =
+          assertNoError(client.uploadFile(channelId, filePath)).readEntity();
+      FileInfo fileInfo = uploadResult.getFileInfos()[0];
+      String fileId = fileInfo.getId();
+
+      Path preview = assertNoError(client.getFilePreview(fileId)).readEntity();
+
+      assertTrue(preview.toFile().exists());
+    }
+
+    @Test
+    public void getPublicFileLink() throws URISyntaxException, IOException {
+      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      String channelId = th.basicChannel().getId();
+      FileUploadResult uploadResult =
+          assertNoError(client.uploadFile(channelId, filePath)).readEntity();
+      FileInfo fileInfo = uploadResult.getFileInfos()[0];
+      String fileId = fileInfo.getId();
+
+      Post post = new Post(channelId, "file attached post");
+      post.setFileIds(Collections.singletonList(fileId));
+      post = assertNoError(client.createPost(post)).readEntity();
+
+      String publicLink = assertNoError(client.getPublicFileLink(fileId)).readEntity();
+
+      Client jaxrsClient = ClientBuilder.newClient();
+      WebTarget target = jaxrsClient.target(publicLink);
+      Response response = target.request().get();
+      InputStream downloadFile = response.readEntity(InputStream.class);
+      Path tempFile = Files.createTempFile(null, null);
+      Files.copy(downloadFile, tempFile, StandardCopyOption.REPLACE_EXISTING);
+
+      assertSameFile(filePath, tempFile);
+    }
+
+    @Test
+    public void getFileMetadata() throws URISyntaxException, IOException {
+      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      String channelId = th.basicChannel().getId();
+      FileUploadResult uploadResult =
+          assertNoError(client.uploadFile(channelId, filePath)).readEntity();
+      FileInfo fileInfo = uploadResult.getFileInfos()[0];
+      String fileId = fileInfo.getId();
+
+      FileInfo metadata = assertNoError(client.getFileMetadata(fileId)).readEntity();
+      assertEquals(filePath.getFileName().toString(), metadata.getName());
+    }
+
   }
 
 }
