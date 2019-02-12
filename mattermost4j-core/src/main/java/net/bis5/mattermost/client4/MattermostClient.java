@@ -470,6 +470,10 @@ public class MattermostClient
     return getEmojisRoute() + String.format("/%s", StringUtils.stripToEmpty(emojiId));
   }
 
+  public String getEmojiByNameRoute(String emojiName) {
+    return getEmojisRoute() + String.format("/name/%s", StringUtils.stripToEmpty(emojiName));
+  }
+
   public String getReactionsRoute() {
     return "/reactions";
   }
@@ -1887,6 +1891,10 @@ public class MattermostClient
     }
   }
 
+  @Override
+  public ApiResponse<Emoji> getEmojiByName(String emojiName) {
+    return doApiGet(getEmojiByNameRoute(emojiName), null, Emoji.class);
+  }
 
   // Reaction Section
 

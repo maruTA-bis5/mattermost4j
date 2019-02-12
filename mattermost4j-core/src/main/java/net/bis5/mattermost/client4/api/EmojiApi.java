@@ -64,4 +64,9 @@ public interface EmojiApi {
    */
   ApiResponse<Path> getEmojiImage(String emojiId) throws IOException;
 
+  /**
+   * get a custom emoji by name.
+   */
+  ApiResponse<Emoji> getEmojiByName(String emojiName);
+
 }

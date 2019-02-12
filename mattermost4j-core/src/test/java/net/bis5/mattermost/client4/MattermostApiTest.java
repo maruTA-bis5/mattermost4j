@@ -2196,6 +2196,26 @@ public class MattermostApiTest {
       // file contents equals?
       assertSameFile(originalImage, downloadedFile);
     }
+
+    @Test
+    public void getCustomEmojiByName() throws URISyntaxException {
+      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Emoji emoji = new Emoji();
+      emoji.setName("custom" + th.newId());
+      emoji.setCreatorId(th.basicUser().getId());
+      ApiResponse<Emoji> resp1 = client.createEmoji(emoji, image);
+      if (isNotSupportVersion("5.4.0", resp1)) {
+        // CreateEmoji call fail between 4.8 and 5.3
+        return;
+      }
+      emoji = assertNoError(resp1).readEntity();
+      String emojiName = emoji.getName();
+
+      ApiResponse<Emoji> response = assertNoError(client.getEmojiByName(emojiName));
+      Emoji responseEmoji = response.readEntity();
+
+      assertEquals(emoji.getId(), responseEmoji.getId());
+    }
   }
 
   // Webhooks
