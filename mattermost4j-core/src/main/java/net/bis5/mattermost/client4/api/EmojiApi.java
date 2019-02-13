@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.Pager;
+import net.bis5.mattermost.client4.model.SearchEmojiRequest;
 import net.bis5.mattermost.model.Emoji;
 import net.bis5.mattermost.model.EmojiList;
 
@@ -68,5 +69,10 @@ public interface EmojiApi {
    * get a custom emoji by name.
    */
   ApiResponse<Emoji> getEmojiByName(String emojiName);
+
+  /**
+   * search custom emoji based on request.
+   */
+  ApiResponse<EmojiList> searchEmoji(SearchEmojiRequest searchRequest);
 
 }

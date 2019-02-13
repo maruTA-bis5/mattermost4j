@@ -71,6 +71,7 @@ import net.bis5.mattermost.client4.model.PublicFileLink;
 import net.bis5.mattermost.client4.model.ResetPasswordRequest;
 import net.bis5.mattermost.client4.model.RevokeSessionRequest;
 import net.bis5.mattermost.client4.model.RevokeTokenRequest;
+import net.bis5.mattermost.client4.model.SearchEmojiRequest;
 import net.bis5.mattermost.client4.model.SearchPostsRequest;
 import net.bis5.mattermost.client4.model.SearchTokensRequest;
 import net.bis5.mattermost.client4.model.SendPasswordResetEmailRequest;
@@ -1894,6 +1895,11 @@ public class MattermostClient
   @Override
   public ApiResponse<Emoji> getEmojiByName(String emojiName) {
     return doApiGet(getEmojiByNameRoute(emojiName), null, Emoji.class);
+  }
+
+  @Override
+  public ApiResponse<EmojiList> searchEmoji(SearchEmojiRequest searchRequest) {
+    return doApiPost(getEmojisRoute() + "/search", searchRequest, EmojiList.class);
   }
 
   // Reaction Section

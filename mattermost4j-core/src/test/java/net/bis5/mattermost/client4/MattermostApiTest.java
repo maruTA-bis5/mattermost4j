@@ -63,6 +63,7 @@ import javax.ws.rs.core.Response.Status;
 import net.bis5.mattermost.client4.hook.IncomingWebhookClient;
 import net.bis5.mattermost.client4.model.AnalyticsCategory;
 import net.bis5.mattermost.client4.model.FileUploadResult;
+import net.bis5.mattermost.client4.model.SearchEmojiRequest;
 import net.bis5.mattermost.client4.model.UsersOrder.InChannel;
 import net.bis5.mattermost.client4.model.UsersOrder.InTeam;
 import net.bis5.mattermost.model.AnalyticsRow;
@@ -2215,6 +2216,32 @@ public class MattermostApiTest {
       Emoji responseEmoji = response.readEntity();
 
       assertEquals(emoji.getId(), responseEmoji.getId());
+    }
+
+    @Test
+    public void searchEmoji() throws URISyntaxException {
+      Path emojiGlobe = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Emoji emoji = new Emoji();
+      emoji.setName("customGlobe" + th.newId());
+      emoji.setCreatorId(th.basicUser().getId());
+      ApiResponse<Emoji> createEmojiResponse = client.createEmoji(emoji, emojiGlobe);
+      if (isNotSupportVersion("5.4.0", createEmojiResponse)) {
+        // CreateEmoji call fail between 4.8 and 5.3
+        return;
+      }
+      emoji = assertNoError(createEmojiResponse).readEntity();
+
+      SearchEmojiRequest criteria = SearchEmojiRequest.builder().term("Globe").build();
+
+      ApiResponse<EmojiList> searchResponse = assertNoError(client.searchEmoji(criteria));
+      EmojiList searchResult = searchResponse.readEntity();
+      assertEquals(1, searchResult.size());
+      assertEquals(emoji.getId(), searchResult.get(0).getId());
+
+      criteria = SearchEmojiRequest.builder().term("Globe").prefixOnly(true).build();
+      searchResponse = assertNoError(client.searchEmoji(criteria));
+      searchResult = searchResponse.readEntity();
+      assertTrue(searchResult.isEmpty());
     }
   }
 
