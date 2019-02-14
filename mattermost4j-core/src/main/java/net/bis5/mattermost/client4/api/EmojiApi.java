@@ -75,4 +75,9 @@ public interface EmojiApi {
    */
   ApiResponse<EmojiList> searchEmoji(SearchEmojiRequest searchRequest);
 
+  /**
+   * get a list of custom emoji that name starts with or matching provided name.
+   */
+  ApiResponse<EmojiList> autocompleteEmoji(String name);
+
 }

@@ -2243,6 +2243,28 @@ public class MattermostApiTest {
       searchResult = searchResponse.readEntity();
       assertTrue(searchResult.isEmpty());
     }
+
+    @Test
+    public void autocompleteEmoji() throws URISyntaxException {
+      Path emojiGlobe = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Emoji emoji = new Emoji();
+      emoji.setName("customAutocompleteGlobe" + th.newId());
+      emoji.setCreatorId(th.basicUser().getId());
+      ApiResponse<Emoji> createEmojiResponse = client.createEmoji(emoji, emojiGlobe);
+      if (isNotSupportVersion("5.4.0", createEmojiResponse)) {
+        // CreateEmoji call fail between 4.8 and 5.3
+        return;
+      }
+      emoji = assertNoError(createEmojiResponse).readEntity();
+
+      String name = "customAuto";
+      ApiResponse<EmojiList> autocompleteResponse = assertNoError(client.autocompleteEmoji(name));
+      EmojiList autocompleteList = autocompleteResponse.readEntity();
+
+      assertEquals(1, autocompleteList.size());
+      assertEquals(emoji.getId(), autocompleteList.get(0).getId());
+    }
+
   }
 
   // Webhooks

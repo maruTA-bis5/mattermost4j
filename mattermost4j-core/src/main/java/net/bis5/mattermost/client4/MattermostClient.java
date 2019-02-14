@@ -1902,6 +1902,12 @@ public class MattermostClient
     return doApiPost(getEmojisRoute() + "/search", searchRequest, EmojiList.class);
   }
 
+  @Override
+  public ApiResponse<EmojiList> autocompleteEmoji(String name) {
+    QueryBuilder query = new QueryBuilder().set("name", name);
+    return doApiGet(getEmojisRoute() + "/autocomplete" + query.toString(), null, EmojiList.class);
+  }
+
   // Reaction Section
 
   @Override
