@@ -71,6 +71,7 @@ import net.bis5.mattermost.client4.model.PublicFileLink;
 import net.bis5.mattermost.client4.model.ResetPasswordRequest;
 import net.bis5.mattermost.client4.model.RevokeSessionRequest;
 import net.bis5.mattermost.client4.model.RevokeTokenRequest;
+import net.bis5.mattermost.client4.model.SearchEmojiRequest;
 import net.bis5.mattermost.client4.model.SearchPostsRequest;
 import net.bis5.mattermost.client4.model.SearchTokensRequest;
 import net.bis5.mattermost.client4.model.SendPasswordResetEmailRequest;
@@ -282,6 +283,10 @@ public class MattermostClient
     return getUsersRoute() + String.format("/email/%s", StringUtils.stripToEmpty(email));
   }
 
+  public String getUserSessionsRoute(String userId) {
+    return getUserRoute(userId) + "/sessions";
+  }
+
   public String getUserTokensRoute(String userId) {
     return getUserRoute(userId) + "/tokens";
   }
@@ -464,6 +469,10 @@ public class MattermostClient
 
   public String getEmojiRoute(String emojiId) {
     return getEmojisRoute() + String.format("/%s", StringUtils.stripToEmpty(emojiId));
+  }
+
+  public String getEmojiByNameRoute(String emojiName) {
+    return getEmojisRoute() + String.format("/name/%s", StringUtils.stripToEmpty(emojiName));
   }
 
   public String getReactionsRoute() {
@@ -820,13 +829,13 @@ public class MattermostClient
 
   @Override
   public ApiResponse<SessionList> getSessions(String userId, String etag) {
-    return doApiGet(getUserRoute(userId) + "/sessions", etag, SessionList.class);
+    return doApiGet(getUserSessionsRoute(userId), etag, SessionList.class);
   }
 
   @Override
   public ApiResponse<Boolean> revokeSession(String userId, String sessionId) {
     RevokeSessionRequest request = RevokeSessionRequest.builder().sessionId(sessionId).build();
-    return doApiPost(getUserRoute(userId) + "/sessions/revoke", request).checkStatusOk();
+    return doApiPost(getUserSessionsRoute(userId) + "/revoke", request).checkStatusOk();
   }
 
   @Override
@@ -921,6 +930,11 @@ public class MattermostClient
   public ApiResponse<UserAccessTokenList> searchTokens(String term) {
     return doApiPost(getUserTokensRoute() + "/search", SearchTokensRequest.of(term),
         UserAccessTokenList.class);
+  }
+
+  @Override
+  public ApiResponse<Boolean> revokeAllActiveSessionForUser(String userId) {
+    return doApiPost(getUserSessionsRoute(userId) + "/revoke/all", null).checkStatusOk();
   }
 
   // Team Section
@@ -1333,6 +1347,11 @@ public class MattermostClient
     SearchPostsRequest request =
         SearchPostsRequest.builder().terms(terms).isOrSearch(isOrSearch).build();
     return doApiPost(getTeamRoute(teamId) + "/posts/search", request, PostSearchResults.class);
+  }
+
+  @Override
+  public ApiResponse<FileInfo[]> getFileInfoForPost(String postId) {
+    return doApiGet(getPostRoute(postId) + "/files/info", null, FileInfo[].class);
   }
 
   // File Section
@@ -1873,6 +1892,21 @@ public class MattermostClient
     }
   }
 
+  @Override
+  public ApiResponse<Emoji> getEmojiByName(String emojiName) {
+    return doApiGet(getEmojiByNameRoute(emojiName), null, Emoji.class);
+  }
+
+  @Override
+  public ApiResponse<EmojiList> searchEmoji(SearchEmojiRequest searchRequest) {
+    return doApiPost(getEmojisRoute() + "/search", searchRequest, EmojiList.class);
+  }
+
+  @Override
+  public ApiResponse<EmojiList> autocompleteEmoji(String name) {
+    QueryBuilder query = new QueryBuilder().set("name", name);
+    return doApiGet(getEmojisRoute() + "/autocomplete" + query.toString(), null, EmojiList.class);
+  }
 
   // Reaction Section
 

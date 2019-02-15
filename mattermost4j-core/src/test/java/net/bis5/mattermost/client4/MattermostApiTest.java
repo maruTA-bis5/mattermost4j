@@ -26,6 +26,7 @@ import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.text.IsEmptyString.isEmptyOrNullString;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -62,6 +63,7 @@ import javax.ws.rs.core.Response.Status;
 import net.bis5.mattermost.client4.hook.IncomingWebhookClient;
 import net.bis5.mattermost.client4.model.AnalyticsCategory;
 import net.bis5.mattermost.client4.model.FileUploadResult;
+import net.bis5.mattermost.client4.model.SearchEmojiRequest;
 import net.bis5.mattermost.client4.model.UsersOrder.InChannel;
 import net.bis5.mattermost.client4.model.UsersOrder.InTeam;
 import net.bis5.mattermost.model.AnalyticsRow;
@@ -1410,6 +1412,22 @@ public class MattermostApiTest {
           containsInAnyOrder(user2TokenA.getId(), user2TokenB.getId()));
     }
 
+    @Test
+    public void revokeAllActiveSessionForUser() {
+      User targetUser = th.basicUser2();
+      try (MattermostClient theUserClient = createNewClient()) {
+        theUserClient.login(targetUser.getUsername(), targetUser.getPassword());
+        assertNoError(theUserClient.getUser("me"));
+
+        th.logout().loginSystemAdmin();
+        ApiResponse<Boolean> revokeResult =
+            assertNoError(client.revokeAllActiveSessionForUser(targetUser.getId()));
+        assertTrue(revokeResult.readEntity());
+
+        assertStatus(theUserClient.getUser("me"), Status.UNAUTHORIZED);
+      }
+    }
+
   }
 
   // Teams
@@ -1832,8 +1850,26 @@ public class MattermostApiTest {
 
 
     @Test
-    @Disabled // TODO
-    public void getFileInfoForPost() {}
+    public void getFileInfoForPost() throws IOException, URISyntaxException {
+      Path file1 = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path file2 = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      String channelId = th.basicChannel().getId();
+      FileUploadResult uploadResult =
+          assertNoError(client.uploadFile(channelId, file1, file2)).readEntity();
+      FileInfo fileInfo1 = uploadResult.getFileInfos()[0];
+      FileInfo fileInfo2 = uploadResult.getFileInfos()[1];
+
+      Post post = new Post(channelId, "file attached");
+      post.setFileIds(Arrays.asList(fileInfo1.getId(), fileInfo2.getId()));
+      post = assertNoError(client.createPost(post)).readEntity();
+      String postId = post.getId();
+
+      FileInfo[] fileInfosForPost = assertNoError(client.getFileInfoForPost(postId)).readEntity();
+      assertEquals(2, fileInfosForPost.length);
+      Set<String> fileIds = new HashSet<>(Arrays.asList(fileInfo1.getId(), fileInfo2.getId()));
+      assertAll(() -> fileIds.contains(fileInfosForPost[0].getId()),
+          () -> fileIds.contains(fileInfosForPost[1].getId()));
+    }
 
     @Test
     public void getPostsForChannel() {
@@ -2161,6 +2197,74 @@ public class MattermostApiTest {
       // file contents equals?
       assertSameFile(originalImage, downloadedFile);
     }
+
+    @Test
+    public void getCustomEmojiByName() throws URISyntaxException {
+      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Emoji emoji = new Emoji();
+      emoji.setName("custom" + th.newId());
+      emoji.setCreatorId(th.basicUser().getId());
+      ApiResponse<Emoji> resp1 = client.createEmoji(emoji, image);
+      if (isNotSupportVersion("5.4.0", resp1)) {
+        // CreateEmoji call fail between 4.8 and 5.3
+        return;
+      }
+      emoji = assertNoError(resp1).readEntity();
+      String emojiName = emoji.getName();
+
+      ApiResponse<Emoji> response = assertNoError(client.getEmojiByName(emojiName));
+      Emoji responseEmoji = response.readEntity();
+
+      assertEquals(emoji.getId(), responseEmoji.getId());
+    }
+
+    @Test
+    public void searchEmoji() throws URISyntaxException {
+      Path emojiGlobe = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Emoji emoji = new Emoji();
+      emoji.setName("customGlobe" + th.newId());
+      emoji.setCreatorId(th.basicUser().getId());
+      ApiResponse<Emoji> createEmojiResponse = client.createEmoji(emoji, emojiGlobe);
+      if (isNotSupportVersion("5.4.0", createEmojiResponse)) {
+        // CreateEmoji call fail between 4.8 and 5.3
+        return;
+      }
+      emoji = assertNoError(createEmojiResponse).readEntity();
+
+      SearchEmojiRequest criteria = SearchEmojiRequest.builder().term("Globe").build();
+
+      ApiResponse<EmojiList> searchResponse = assertNoError(client.searchEmoji(criteria));
+      EmojiList searchResult = searchResponse.readEntity();
+      assertEquals(1, searchResult.size());
+      assertEquals(emoji.getId(), searchResult.get(0).getId());
+
+      criteria = SearchEmojiRequest.builder().term("Globe").prefixOnly(true).build();
+      searchResponse = assertNoError(client.searchEmoji(criteria));
+      searchResult = searchResponse.readEntity();
+      assertTrue(searchResult.isEmpty());
+    }
+
+    @Test
+    public void autocompleteEmoji() throws URISyntaxException {
+      Path emojiGlobe = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Emoji emoji = new Emoji();
+      emoji.setName("customAutocompleteGlobe" + th.newId());
+      emoji.setCreatorId(th.basicUser().getId());
+      ApiResponse<Emoji> createEmojiResponse = client.createEmoji(emoji, emojiGlobe);
+      if (isNotSupportVersion("5.4.0", createEmojiResponse)) {
+        // CreateEmoji call fail between 4.8 and 5.3
+        return;
+      }
+      emoji = assertNoError(createEmojiResponse).readEntity();
+
+      String name = "customAuto";
+      ApiResponse<EmojiList> autocompleteResponse = assertNoError(client.autocompleteEmoji(name));
+      EmojiList autocompleteList = autocompleteResponse.readEntity();
+
+      assertEquals(1, autocompleteList.size());
+      assertEquals(emoji.getId(), autocompleteList.get(0).getId());
+    }
+
   }
 
   // Webhooks
