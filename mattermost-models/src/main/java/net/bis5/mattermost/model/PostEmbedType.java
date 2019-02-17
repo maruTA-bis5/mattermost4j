@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Takayuki Maruyama
+ * Copyright (c) 2019 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -12,10 +12,9 @@
  * the License.
  */
 
-package net.bis5.mattermost.model.config.consts;
+package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -24,43 +23,34 @@ import java.io.IOException;
 import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.bis5.mattermost.model.HasCode;
-import net.bis5.mattermost.model.config.consts.ImageProxyType.ImageProxyTypeDeserializer;
+import net.bis5.mattermost.model.PostEmbedType.PostEmbedTypeDeserializer;
 import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 
 /**
- * The type of image proxy server.
+ * Post embed type.
  * 
- * @author Takayuki Maruyama
+ * @since Mattermost Server 5.8
  */
-@JsonSerialize(using = HasCodeSerializer.class)
-@JsonDeserialize(using = ImageProxyTypeDeserializer.class)
 @Getter
 @RequiredArgsConstructor
-public enum ImageProxyType implements HasCode<ImageProxyType> {
+@JsonSerialize(using = HasCodeSerializer.class)
+@JsonDeserialize(using = PostEmbedTypeDeserializer.class)
+public enum PostEmbedType implements HasCode<PostEmbedType> {
+  IMAGE("image"), MESSAGE_ATTACHMENT("message_attachment"), OPENGRAPH("opengraph");
 
-  ACMOS_CAMO("acmos/camo"),
-  /**
-   * Image proxy provided by Mattermost Server.
-   * 
-   * @since Mattermost Server 5.8
-   */
-  LOCAL("local");
   private final String code;
 
-  public static ImageProxyType of(String code) {
-    return Arrays.stream(values()).filter(e -> e.getCode().equals(code)).findFirst().orElse(null);
+  public static PostEmbedType of(String type) {
+    return Arrays.stream(values()).filter(t -> t.getCode().equals(type)).findFirst().orElse(null);
   }
 
-  public static class ImageProxyTypeDeserializer extends JsonDeserializer<ImageProxyType> {
+  public static class PostEmbedTypeDeserializer extends JsonDeserializer<PostEmbedType> {
 
     @Override
-    public ImageProxyType deserialize(JsonParser p, DeserializationContext ctxt)
-        throws IOException, JsonProcessingException {
-      String jsonValue = p.getText();
-      return of(jsonValue);
+    public PostEmbedType deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+      String code = p.getText();
+      return PostEmbedType.of(code);
     }
 
   }
-
 }

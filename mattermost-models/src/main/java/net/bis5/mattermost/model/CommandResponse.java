@@ -47,5 +47,7 @@ public class CommandResponse {
   private String triggerId;
   /* @since Mattermost Server 5.6 */
   private List<CommandResponse> extraResponses;
+  /* @since Mattermost Server 5.8 */
+  private String channelId;
 
 }
