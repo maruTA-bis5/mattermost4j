@@ -176,6 +176,7 @@ public class TestHelper {
     Team team = new Team();
     team.setDisplayName("dn_" + id);
     team.setName(generateTestTeamName());
+    team.setDescription("desc_" + id);
     team.setType(TeamType.OPEN);
     team.setAllowOpenInvite(true);
 

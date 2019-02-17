@@ -131,6 +131,7 @@ import net.bis5.mattermost.model.StatusList;
 import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.TeamExists;
+import net.bis5.mattermost.model.TeamInviteInfo;
 import net.bis5.mattermost.model.TeamList;
 import net.bis5.mattermost.model.TeamMember;
 import net.bis5.mattermost.model.TeamMemberList;
@@ -330,6 +331,10 @@ public class MattermostClient
 
   public String getTeamImportRoute(String teamId) {
     return getTeamRoute(teamId) + "/import";
+  }
+
+  public String getTeamInviteRoute(String inviteId) {
+    return String.format("/teams/invite/%s", inviteId);
   }
 
   public String getChannelsRoute() {
@@ -1093,6 +1098,11 @@ public class MattermostClient
   @Override
   public ApiResponse<Boolean> inviteUsersToTeam(String teamId, Collection<String> userEmails) {
     return doApiPost(getTeamRoute(teamId) + "/invite/email", userEmails).checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<TeamInviteInfo> getInviteInfo(String inviteId) {
+    return doApiGet(getTeamInviteRoute(inviteId), null, TeamInviteInfo.class);
   }
 
   // Channel Section
