@@ -20,6 +20,7 @@ import net.bis5.mattermost.client4.Pager;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.TeamExists;
+import net.bis5.mattermost.model.TeamInviteInfo;
 import net.bis5.mattermost.model.TeamList;
 import net.bis5.mattermost.model.TeamMember;
 import net.bis5.mattermost.model.TeamMemberList;
@@ -286,5 +287,10 @@ public interface TeamApi {
    * invite users by email to the team.
    */
   ApiResponse<Boolean> inviteUsersToTeam(String teamId, Collection<String> userEmails);
+
+  /**
+   * get team info by invite id.
+   */
+  ApiResponse<TeamInviteInfo> getInviteInfo(String inviteId);
 
 }

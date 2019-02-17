@@ -113,6 +113,7 @@ import net.bis5.mattermost.model.StatusType;
 import net.bis5.mattermost.model.SwitchRequest;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.TeamExists;
+import net.bis5.mattermost.model.TeamInviteInfo;
 import net.bis5.mattermost.model.TeamList;
 import net.bis5.mattermost.model.TeamMember;
 import net.bis5.mattermost.model.TeamMemberList;
@@ -1747,6 +1748,21 @@ public class MattermostApiTest {
 
       assertThat(channels.stream().findAny().get().getTeamId(), is(th.basicTeam().getId()));
     }
+
+    @Test
+    public void getInviteInfo() {
+      Team team = th.basicTeam();
+      String inviteId = team.getInviteId();
+
+      ApiResponse<TeamInviteInfo> response = assertNoError(client.getInviteInfo(inviteId));
+
+      TeamInviteInfo inviteInfo = response.readEntity();
+      assertEquals(team.getId(), inviteInfo.getId());
+      assertEquals(team.getName(), inviteInfo.getName());
+      assertEquals(team.getDisplayName(), inviteInfo.getDisplayName());
+      assertEquals(team.getDescription(), inviteInfo.getDescription());
+    }
+
   }
 
   // Posts
