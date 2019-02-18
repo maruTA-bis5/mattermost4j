@@ -1682,6 +1682,38 @@ public class MattermostApiTest {
     }
 
     @Test
+    public void setTeamIcon() throws URISyntaxException {
+      th.logout().loginTeamAdmin();
+      Path iconPath = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      String teamId = th.basicTeam().getId();
+
+      ApiResponse<Boolean> response = assertNoError(client.setTeamIcon(teamId, iconPath));
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void getTeamIcon() throws URISyntaxException, IOException {
+      th.logout().loginTeamAdmin();
+      Path iconPath = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      String teamId = th.basicTeam().getId();
+      assertNoError(client.setTeamIcon(teamId, iconPath));
+
+      ApiResponse<Path> response = assertNoError(client.getTeamIcon(teamId));
+      assertTrue(response.readEntity().toFile().exists());
+    }
+
+    @Test
+    public void removeTeamIcon() throws URISyntaxException {
+      th.logout().loginTeamAdmin();
+      Path iconPath = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      String teamId = th.basicTeam().getId();
+      assertNoError(client.setTeamIcon(teamId, iconPath));
+
+      ApiResponse<Boolean> response = assertNoError(client.removeTeamIcon(teamId));
+      assertTrue(response.readEntity());
+    }
+
+    @Test
     public void updateTeamMemberRoles() {
       th.loginTeamAdmin();
 
