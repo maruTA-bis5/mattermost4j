@@ -14,6 +14,8 @@
 
 package net.bis5.mattermost.client4.api;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.Pager;
@@ -270,6 +272,21 @@ public interface TeamApi {
    * returns a team stats based on the team id string. Must be authenticated.
    */
   ApiResponse<TeamStats> getTeamStats(String teamId, String etag);
+
+  /**
+   * Get the team icon image.
+   */
+  ApiResponse<Path> getTeamIcon(String teamId) throws IOException;
+
+  /**
+   * Set the team icon.
+   */
+  ApiResponse<Boolean> setTeamIcon(String teamId, Path iconFilePath);
+
+  /**
+   * Remove the team icon.
+   */
+  ApiResponse<Boolean> removeTeamIcon(String teamId);
 
   /**
    * will return a TeamUnread object that contains the amount of unread messages and mentions the

@@ -329,6 +329,10 @@ public class MattermostClient
     return getTeamRoute(teamId) + "/stats";
   }
 
+  public String getTeamIconRoute(String teamId) {
+    return getTeamRoute(teamId) + "/image";
+  }
+
   public String getTeamImportRoute(String teamId) {
     return getTeamRoute(teamId) + "/import";
   }
@@ -1080,6 +1084,27 @@ public class MattermostClient
   @Override
   public ApiResponse<TeamStats> getTeamStats(String teamId, String etag) {
     return doApiGet(getTeamStatsRoute(teamId), etag, TeamStats.class);
+  }
+
+  @Override
+  public ApiResponse<Path> getTeamIcon(String teamId) throws IOException {
+    return doApiGetFile(getTeamIconRoute(teamId), null);
+  }
+
+  @Override
+  public ApiResponse<Boolean> setTeamIcon(String teamId, Path iconFilePath) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("image", iconFilePath.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getTeamIconRoute(teamId), multiPart).checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<Boolean> removeTeamIcon(String teamId) {
+    return doApiDelete(getTeamIconRoute(teamId)).checkStatusOk();
   }
 
   @Override
