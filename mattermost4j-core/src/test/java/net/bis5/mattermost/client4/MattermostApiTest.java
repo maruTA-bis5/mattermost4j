@@ -787,6 +787,20 @@ public class MattermostApiTest {
 
       assertThat(channelIds, containsInAnyOrder(deleted1.getId(), deleted2.getId()));
     }
+
+    @Test
+    public void convertChannelToPrivate() {
+      Channel publicChannel = th.createPublicChannel();
+      String channelId = publicChannel.getId();
+
+      th.logout().loginTeamAdmin();
+      Channel privateChannel =
+          assertNoError(client.convertChannelToPrivate(channelId)).readEntity();
+
+      assertEquals(channelId, privateChannel.getId());
+      assertEquals(ChannelType.Private, privateChannel.getType());
+    }
+
   }
 
   // Users

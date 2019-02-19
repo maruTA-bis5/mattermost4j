@@ -290,4 +290,9 @@ public interface ChannelApi {
 
   ApiResponse<ChannelList> getDeletedChannels(String teamId, Pager pager);
 
+  /**
+   * convert channel from public to private.
+   */
+  ApiResponse<Channel> convertChannelToPrivate(String channelId);
+
 }

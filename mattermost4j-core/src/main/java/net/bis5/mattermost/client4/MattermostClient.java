@@ -1283,6 +1283,11 @@ public class MattermostClient
         ChannelList.class);
   }
 
+  @Override
+  public ApiResponse<Channel> convertChannelToPrivate(String channelId) {
+    return doApiPost(getChannelRoute(channelId) + "/convert", null, Channel.class);
+  }
+
   // Post Section
 
   @Override
