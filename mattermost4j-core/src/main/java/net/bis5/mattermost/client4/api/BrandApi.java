@@ -35,4 +35,9 @@ public interface BrandApi {
    */
   ApiResponse<Boolean> uploadBrandImage(Path dataFIle);
 
+  /**
+   * delete the brand image for the system.
+   */
+  ApiResponse<Boolean> deleteBrandImage();
+
 }

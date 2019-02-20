@@ -3153,6 +3153,20 @@ public class MattermostApiTest {
 
       assertTrue(uploadResponse.readEntity());
     }
+
+    @Test
+    public void deleteBrandImage() throws URISyntaxException {
+      th.logout().loginSystemAdmin();
+      Path brandImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
+      if (isNotSupportVersion("5.6.0", uploadResponse)) {
+        return;
+      }
+
+      ApiResponse<Boolean> deleteResponse = assertNoError(client.deleteBrandImage());
+
+      assertTrue(deleteResponse.readEntity());
+    }
   }
 
   // Files

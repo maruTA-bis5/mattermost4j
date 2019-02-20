@@ -1744,6 +1744,11 @@ public class MattermostClient
     return doApiPostMultiPart(getBrandImageRoute(), multiPart).checkStatusOk();
   }
 
+  @Override
+  public ApiResponse<Boolean> deleteBrandImage() {
+    return doApiDelete(getBrandImageRoute()).checkStatusOk();
+  }
+
   // Logs Section
 
   @Override
