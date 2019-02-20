@@ -37,6 +37,8 @@ public interface BrandApi {
 
   /**
    * delete the brand image for the system.
+   * 
+   * @since Mattermost Server 5.6
    */
   ApiResponse<Boolean> deleteBrandImage();
 
