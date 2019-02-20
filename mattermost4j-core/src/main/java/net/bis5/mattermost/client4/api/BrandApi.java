@@ -35,4 +35,11 @@ public interface BrandApi {
    */
   ApiResponse<Boolean> uploadBrandImage(Path dataFIle);
 
+  /**
+   * delete the brand image for the system.
+   * 
+   * @since Mattermost Server 5.6
+   */
+  ApiResponse<Boolean> deleteBrandImage();
+
 }
