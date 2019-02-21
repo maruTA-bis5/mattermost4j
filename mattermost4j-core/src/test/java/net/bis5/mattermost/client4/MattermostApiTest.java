@@ -1151,6 +1151,21 @@ public class MattermostApiTest {
     }
 
     @Test
+    public void deleteUserProfileImage() throws URISyntaxException {
+      Path image = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      ApiResponse<Boolean> uploadResult =
+          assertNoError(client.setProfileImage(th.basicUser().getId(), image));
+      if (isNotSupportVersion("5.6.0", uploadResult)) {
+        return;
+      }
+      assertTrue(uploadResult.readEntity());
+
+      ApiResponse<Boolean> deleteResult =
+          assertNoError(client.deleteProfileImage(th.basicUser().getId()));
+      assertTrue(deleteResult.readEntity());
+    }
+
+    @Test
     public void getUserByName() {
       String username = th.basicUser().getUsername();
 
