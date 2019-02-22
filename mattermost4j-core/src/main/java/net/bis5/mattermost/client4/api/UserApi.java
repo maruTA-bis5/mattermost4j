@@ -493,4 +493,9 @@ public interface UserApi {
 
   ApiResponse<Boolean> revokeAllActiveSessionForUser(String userId);
 
+  /**
+   * delete user profile image.
+   */
+  ApiResponse<Boolean> deleteProfileImage(String userId);
+
 }

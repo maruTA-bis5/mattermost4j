@@ -452,6 +452,10 @@ public class MattermostClient
     return getUsersRoute() + "/status";
   }
 
+  public String getUserProfileImageRoute(String userId) {
+    return getUserRoute(userId) + "/image";
+  }
+
   public String getSamlRoute() {
     return "/saml";
   }
@@ -697,7 +701,7 @@ public class MattermostClient
   @Override
   public ApiResponse<byte[]> getProfileImage(String userId, String etag) {
     // XXX byte[]で返すの微妙・・・というかreadEntityでこけない?
-    return doApiGet(getUserRoute(userId) + "/image", etag, byte[].class);
+    return doApiGet(getUserProfileImageRoute(userId), etag, byte[].class);
   }
 
   private GenericType<Map<String, String>> stringMapType() {
@@ -893,7 +897,7 @@ public class MattermostClient
     FileDataBodyPart body = new FileDataBodyPart("image", imageFilePath.toFile());
     multiPart.bodyPart(body);
 
-    return doApiPostMultiPart(getUserRoute(userId) + "/image", multiPart).checkStatusOk();
+    return doApiPostMultiPart(getUserProfileImageRoute(userId), multiPart).checkStatusOk();
   }
 
   @Override
@@ -944,6 +948,11 @@ public class MattermostClient
   @Override
   public ApiResponse<Boolean> revokeAllActiveSessionForUser(String userId) {
     return doApiPost(getUserSessionsRoute(userId) + "/revoke/all", null).checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<Boolean> deleteProfileImage(String userId) {
+    return doApiDelete(getUserProfileImageRoute(userId)).checkStatusOk();
   }
 
   // Team Section
