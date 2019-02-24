@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.bis5.mattermost4j</groupId>
+		<artifactId>mattermost4j-parent</artifactId>
+		<version>0.12.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>mattermost4j-websocket</artifactId>
+	<name>Mattermost4j WebSocket Client</name>
+	<dependencies>
+		<dependency>
+			<groupId>net.bis5.mattermost4j</groupId>
+			<artifactId>mattermost4j-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.websocket</groupId>
+			<artifactId>jakarta.websocket-api</artifactId>
+			<version>1.1.1</version>
+			<scope>provided</scope><!-- tyrus-standalone-client bundled this -->
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.tyrus.bundles</groupId>
+			<artifactId>tyrus-standalone-client</artifactId>
+			<version>1.15</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>27.1-jre</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.code.findbugs</groupId>
+					<artifactId>jsr305</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+</project>
