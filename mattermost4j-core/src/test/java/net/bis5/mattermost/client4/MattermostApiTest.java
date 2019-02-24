@@ -45,7 +45,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1964,7 +1964,7 @@ public class MattermostApiTest {
     @Test
     public void getPostsForChannel_Since() {
       String channelId = th.basicChannel().getId();
-      OffsetDateTime since = OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
+      ZonedDateTime since = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
 
       ApiResponse<PostList> response =
           assertNoError(client.getPostsSince(channelId, since.toEpochSecond()));
