@@ -15,7 +15,7 @@
 package net.bis5.mattermost.client4.api;
 
 import java.sql.Date;
-import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.Pager;
 import net.bis5.mattermost.model.FileInfo;
@@ -158,8 +158,8 @@ public interface PostApi {
   /**
    * gets posts created after a specified time as Unix time in milliseconds.
    */
-  default ApiResponse<PostList> getPostsSince(String channelId, OffsetDateTime since) {
-    return getPostsSince(channelId, since.toEpochSecond());
+  default ApiResponse<PostList> getPostsSince(String channelId, ZonedDateTime since) {
+    return getPostsSince(channelId, since.toInstant().toEpochMilli());
   }
 
   /**
