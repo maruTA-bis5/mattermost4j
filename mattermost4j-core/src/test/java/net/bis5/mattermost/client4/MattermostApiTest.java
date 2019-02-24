@@ -3739,4 +3739,23 @@ public class MattermostApiTest {
     }
   }
 
+  @Nested
+  class LdapApiTest {
+    @Test
+    public void syncLdap() {
+      th.logout().loginSystemAdmin();
+
+      // Enterprise Edition required
+      assertStatus(client.syncLdap(), Status.NOT_IMPLEMENTED);
+    }
+
+    @Test
+    public void testLdap() {
+      th.logout().loginSystemAdmin();
+
+      // Enterprise Edition required
+      assertStatus(client.testLdap(), Status.NOT_IMPLEMENTED);
+    }
+  }
+
 }
