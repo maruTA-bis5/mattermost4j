@@ -1712,8 +1712,8 @@ public class MattermostClient
   // Cluster Section
 
   @Override
-  public ApiResponse<List<ClusterInfo>> getClusterStatus() {
-    return doApiGet(getClusterRoute() + "/status", null, listType());
+  public ApiResponse<ClusterInfo[]> getClusterStatus() {
+    return doApiGet(getClusterRoute() + "/status", null, ClusterInfo[].class);
   }
 
   // LDAP Section
