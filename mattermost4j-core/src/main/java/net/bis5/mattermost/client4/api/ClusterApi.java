@@ -14,7 +14,6 @@
 
 package net.bis5.mattermost.client4.api;
 
-import java.util.List;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.model.ClusterInfo;
 
@@ -25,6 +24,6 @@ import net.bis5.mattermost.model.ClusterInfo;
  */
 public interface ClusterApi {
 
-  ApiResponse<List<ClusterInfo>> getClusterStatus();
+  ApiResponse<ClusterInfo[]> getClusterStatus();
 
 }

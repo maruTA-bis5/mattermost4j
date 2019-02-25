@@ -45,8 +45,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -82,6 +82,7 @@ import net.bis5.mattermost.model.ChannelType;
 import net.bis5.mattermost.model.ChannelUnread;
 import net.bis5.mattermost.model.ChannelView;
 import net.bis5.mattermost.model.ChannelViewResponse;
+import net.bis5.mattermost.model.ClusterInfo;
 import net.bis5.mattermost.model.Command;
 import net.bis5.mattermost.model.CommandList;
 import net.bis5.mattermost.model.CommandMethod;
@@ -3306,6 +3307,18 @@ public class MattermostApiTest {
       assertEquals(filePath.getFileName().toString(), metadata.getName());
     }
 
+  }
+
+  @Nested
+  class ClusterApiTest {
+    @Test
+    public void getClusterStatus() {
+      th.logout().loginSystemAdmin();
+
+      // In Team Edition, return empty list.
+      ClusterInfo[] result = assertNoError(client.getClusterStatus()).readEntity();
+      assertEquals(0, result.length);
+    }
   }
 
 }
