@@ -44,6 +44,7 @@ import net.bis5.mattermost.client4.api.ChannelApi;
 import net.bis5.mattermost.client4.api.ClusterApi;
 import net.bis5.mattermost.client4.api.CommandsApi;
 import net.bis5.mattermost.client4.api.ComplianceApi;
+import net.bis5.mattermost.client4.api.ElasticsearchApi;
 import net.bis5.mattermost.client4.api.EmojiApi;
 import net.bis5.mattermost.client4.api.FilesApi;
 import net.bis5.mattermost.client4.api.GeneralApi;
@@ -166,10 +167,10 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
  * @author Maruyama Takayuki
  * @since 2017/06/10
  */
-public class MattermostClient
-    implements AutoCloseable, AuditsApi, AuthenticationApi, BrandApi, ChannelApi, ClusterApi,
-    CommandsApi, ComplianceApi, EmojiApi, FilesApi, GeneralApi, LdapApi, LogsApi, OAuthApi, PostApi,
-    PreferencesApi, ReactionApi, SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
+public class MattermostClient implements AutoCloseable, AuditsApi, AuthenticationApi, BrandApi,
+    ChannelApi, ClusterApi, CommandsApi, ComplianceApi, ElasticsearchApi, EmojiApi, FilesApi,
+    GeneralApi, LdapApi, LogsApi, OAuthApi, PostApi, PreferencesApi, ReactionApi, SamlApi,
+    StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
 
   protected static final String API_URL_SUFFIX = "/api/v4";
   private final String url;
@@ -498,6 +499,10 @@ public class MattermostClient
 
   public String getOAuthAppRoute(String appId) {
     return String.format("/oauth/apps/%s", StringUtils.stripToEmpty(appId));
+  }
+
+  public String getElasticsearchRoute() {
+    return "/elasticsearch";
   }
 
   protected <T> ApiResponse<T> doApiGet(String url, String etag, Class<T> responseType) {
@@ -1979,4 +1984,20 @@ public class MattermostClient
     return doApiDelete(getUserRoute(reaction.getUserId()) + getPostRoute(reaction.getPostId())
         + String.format("/reactions/%s", reaction.getEmojiName())).checkStatusOk();
   }
+
+  // Elasticsearch Section
+
+  @Override
+  public ApiResponse<Boolean> testElasticsearchConfiguration() {
+    return doApiPost(getElasticsearchRoute() + "/test", null).checkStatusOk();
+  }
+
+  /**
+   * @see net.bis5.mattermost.client4.api.ElasticsearchApi#purgeElasticsearchIndexes()
+   */
+  @Override
+  public ApiResponse<Boolean> purgeElasticsearchIndexes() {
+    return doApiPost(getElasticsearchRoute() + "/purge_indexes", null).checkStatusOk();
+  }
+
 }
