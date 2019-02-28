@@ -3321,4 +3321,23 @@ public class MattermostApiTest {
     }
   }
 
+  @Nested
+  class ElasticsearchApiTest {
+    @Test
+    public void testElasticsearchConfig() {
+      th.logout().loginSystemAdmin();
+
+      // Enterprise Edition required
+      assertStatus(client.testElasticsearchConfiguration(), Status.NOT_IMPLEMENTED);
+    }
+
+    @Test
+    public void purgeElasticsearchIndexes() {
+      th.logout().loginSystemAdmin();
+
+      // Enterprise Edition required
+      assertStatus(client.purgeElasticsearchIndexes(), Status.NOT_IMPLEMENTED);
+    }
+  }
+
 }
