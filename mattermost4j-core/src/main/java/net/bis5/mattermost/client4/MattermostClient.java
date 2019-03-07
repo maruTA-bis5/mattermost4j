@@ -51,6 +51,7 @@ import net.bis5.mattermost.client4.api.GeneralApi;
 import net.bis5.mattermost.client4.api.LdapApi;
 import net.bis5.mattermost.client4.api.LogsApi;
 import net.bis5.mattermost.client4.api.OAuthApi;
+import net.bis5.mattermost.client4.api.PluginApi;
 import net.bis5.mattermost.client4.api.PostApi;
 import net.bis5.mattermost.client4.api.PreferencesApi;
 import net.bis5.mattermost.client4.api.ReactionApi;
@@ -115,6 +116,8 @@ import net.bis5.mattermost.model.IncomingWebhookList;
 import net.bis5.mattermost.model.OAuthApp;
 import net.bis5.mattermost.model.OutgoingWebhook;
 import net.bis5.mattermost.model.OutgoingWebhookList;
+import net.bis5.mattermost.model.PluginManifest;
+import net.bis5.mattermost.model.Plugins;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
@@ -148,6 +151,7 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
+import net.bis5.mattermost.model.WebappPlugin;
 import net.bis5.mattermost.model.WebrtcInfoResponse;
 import net.bis5.mattermost.model.license.MfaSecret;
 import org.apache.commons.lang3.StringUtils;
@@ -169,8 +173,8 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
  */
 public class MattermostClient implements AutoCloseable, AuditsApi, AuthenticationApi, BrandApi,
     ChannelApi, ClusterApi, CommandsApi, ComplianceApi, ElasticsearchApi, EmojiApi, FilesApi,
-    GeneralApi, LdapApi, LogsApi, OAuthApi, PostApi, PreferencesApi, ReactionApi, SamlApi,
-    StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
+    GeneralApi, LdapApi, LogsApi, OAuthApi, PluginApi, PostApi, PreferencesApi, ReactionApi,
+    SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
 
   protected static final String API_URL_SUFFIX = "/api/v4";
   private final String url;
@@ -503,6 +507,14 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 
   public String getElasticsearchRoute() {
     return "/elasticsearch";
+  }
+
+  public String getPluginsRoute() {
+    return "/plugins";
+  }
+
+  public String getPluginRoute(String pluginId) {
+    return String.format("/plugins/%s", StringUtils.stripToEmpty(pluginId));
   }
 
   protected <T> ApiResponse<T> doApiGet(String url, String etag, Class<T> responseType) {
@@ -1992,12 +2004,49 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
     return doApiPost(getElasticsearchRoute() + "/test", null).checkStatusOk();
   }
 
-  /**
-   * @see net.bis5.mattermost.client4.api.ElasticsearchApi#purgeElasticsearchIndexes()
-   */
   @Override
   public ApiResponse<Boolean> purgeElasticsearchIndexes() {
     return doApiPost(getElasticsearchRoute() + "/purge_indexes", null).checkStatusOk();
+  }
+
+  // Plugin Section
+
+  @Override
+  public ApiResponse<PluginManifest> uploadPlugin(Path plugin, boolean force) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("plugin", plugin.toFile());
+    multiPart.bodyPart(body);
+
+    multiPart.field("force", force, MediaType.APPLICATION_JSON_TYPE);
+
+    return doApiPostMultiPart(getPluginsRoute(), multiPart, PluginManifest.class);
+  }
+
+  @Override
+  public ApiResponse<Plugins> getPlugins() {
+    return doApiGet(getPluginsRoute(), null, Plugins.class);
+  }
+
+  @Override
+  public ApiResponse<Boolean> removePlugin(String pluginId) {
+    return doApiDelete(getPluginRoute(pluginId)).checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<Boolean> enablePlugin(String pluginId) {
+    return doApiPost(getPluginRoute(pluginId) + "/enable", null).checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<Boolean> disablePlugin(String pluginId) {
+    return doApiPost(getPluginRoute(pluginId) + "/disable", null).checkStatusOk();
+  }
+
+  @Override
+  public ApiResponse<WebappPlugin[]> getWebappPlugins() {
+    return doApiGet(getPluginsRoute() + "/webapp", null, WebappPlugin[].class);
   }
 
 }

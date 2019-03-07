@@ -22,7 +22,7 @@ import lombok.Data;
 @Data
 public class Plugins {
 
-  private PluginInfo[] active;
-  private PluginInfo[] inactive;
+  private PluginManifest[] active;
+  private PluginManifest[] inactive;
 
 }

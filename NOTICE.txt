@@ -13,6 +13,12 @@ License: Common Development and Distribution License (CDDL) v1.0 (https://glassf
 This product includes Noto Emoji image for testing: https://github.com/googlei18n/noto-emoji
 License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 
+This product includes Mattermost Simple Lock plugin for testing: https://github.com/maruTA-bis5/mattermost-simple-lock-plugin
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+This product includes Mattermost Draw Plugin for testing: https://github.com/jespino/mattermost-plugin-draw
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
 =============================
  Apache Commons Lang Notice
 =============================

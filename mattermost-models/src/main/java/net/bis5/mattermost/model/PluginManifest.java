@@ -18,10 +18,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * A plugin info.
+ * A plugin manifest.
  */
 @Data
-public class PluginInfo {
+public class PluginManifest {
 
   private String id;
   private String name;
@@ -29,9 +29,13 @@ public class PluginInfo {
   private String version;
   private String minServerVersion;
   private PluginServer server;
+  private PluginServer backend;
   private PluginWebapp webapp;
   private PluginSettingsSchema settingsSchema;
 
+  /**
+   * Server side plugin executables.
+   */
   @Data
   public static class PluginServer {
     private PluginExecutables executables;
