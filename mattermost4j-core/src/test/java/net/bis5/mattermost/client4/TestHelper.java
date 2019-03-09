@@ -75,7 +75,6 @@ public class TestHelper {
     config.getServiceSettings().setEnableUserAccessTokens(true);
     config.getFileSettings().setEnablePublicLink(true);
     config.getTeamSettings().setEnableOpenServer(true);
-    config.getPluginSettings().setEnableUploads(true);
     config = checkNoError(client.updateConfig(config)).readEntity();
     client.logout();
     return this;
