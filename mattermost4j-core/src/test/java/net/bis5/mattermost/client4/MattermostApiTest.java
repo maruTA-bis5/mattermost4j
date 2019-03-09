@@ -3419,13 +3419,15 @@ public class MattermostApiTest {
       assertTrue(
           blockedUploadResult.readError().getMessage().contains("A plugin with the same ID"));
 
-      // force upload
-      ApiResponse<PluginManifest> forceUploadResult =
-          assertNoError(client.uploadPlugin(simpleLockPluginArchivePath, true));
-      forceUploadResult.readEntity();
+      if (!isNotSupportVersion("5.8.0", blockedUploadResult)) {
+        // force upload
+        ApiResponse<PluginManifest> forceUploadResult =
+            assertNoError(client.uploadPlugin(simpleLockPluginArchivePath, true));
+        forceUploadResult.readEntity();
+      }
 
       // cleanup
-      client.removePlugin(forceUploadResult.readEntity().getId());
+      client.removePlugin(uploadResult.readEntity().getId());
     }
 
     @Test
@@ -3512,6 +3514,9 @@ public class MattermostApiTest {
       assertEquals(1, webapps.length);
       WebappPlugin drawWebapp = webapps[0];
       assertEquals(pluginId, drawWebapp.getId());
+
+      // cleanup
+      client.removePlugin(pluginId);
     }
 
   }
