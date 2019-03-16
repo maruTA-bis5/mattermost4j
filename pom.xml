@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.bis5.mattermost4j</groupId>
 	<artifactId>mattermost4j-parent</artifactId>
-	<version>0.9.1-SNAPSHOT</version>
+	<version>0.10.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Mattermost4J Parent POM</name>
 	<url>https://github.com/maruTA-bis5/mattermost4j</url>
@@ -208,7 +208,7 @@
 						<dependency>
 							<groupId>com.puppycrawl.tools</groupId>
 							<artifactId>checkstyle</artifactId>
-							<version>8.16</version>
+							<version>8.18</version>
 						</dependency>
 					</dependencies>
 				</plugin>

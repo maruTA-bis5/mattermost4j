@@ -45,6 +45,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -52,6 +53,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -97,6 +99,8 @@ import net.bis5.mattermost.model.IncomingWebhookList;
 import net.bis5.mattermost.model.IncomingWebhookRequest;
 import net.bis5.mattermost.model.OutgoingWebhook;
 import net.bis5.mattermost.model.OutgoingWebhookList;
+import net.bis5.mattermost.model.PluginManifest;
+import net.bis5.mattermost.model.Plugins;
 import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
@@ -132,9 +136,12 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
+import net.bis5.mattermost.model.WebappPlugin;
+import org.apache.commons.io.IOUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -3338,6 +3345,180 @@ public class MattermostApiTest {
       // Enterprise Edition required
       assertStatus(client.purgeElasticsearchIndexes(), Status.NOT_IMPLEMENTED);
     }
+  }
+
+  private static Path simpleLockPluginArchivePath;
+  private static Path drawPluginArchivePath;
+
+  @BeforeAll
+  public static void setupPluginArchivePath() throws IOException {
+    InputStream resource = MattermostApiTest.class //
+        .getResourceAsStream("/net.bis5.mattermost.simplelock-0.0.1.tar.gz");
+    simpleLockPluginArchivePath = Files.createTempFile(null, null);
+    IOUtils.copy(resource,
+        Files.newOutputStream(simpleLockPluginArchivePath, StandardOpenOption.TRUNCATE_EXISTING));
+
+    resource = MattermostApiTest.class //
+        .getResourceAsStream("/com.mattermost.draw-plugin-0.0.1.tar.gz");
+    drawPluginArchivePath = Files.createTempFile(null, null);
+    IOUtils.copy(resource,
+        Files.newOutputStream(drawPluginArchivePath, StandardOpenOption.TRUNCATE_EXISTING));
+  }
+
+  @AfterAll
+  public static void deletePluginArchive() {
+    if (simpleLockPluginArchivePath != null) {
+      simpleLockPluginArchivePath.toFile().delete();
+    }
+    if (drawPluginArchivePath != null) {
+      drawPluginArchivePath.toFile().delete();
+    }
+  }
+
+  @Nested
+  class PluginApiTest {
+    @Test
+    public void getPlugins() {
+      th.logout().loginSystemAdmin();
+
+      ApiResponse<Plugins> response = assertNoError(client.getPlugins());
+      // 5.2.0 is server plugin release candidate version
+      if (isNotSupportVersion("5.2.0", response)) {
+        return;
+      }
+      Plugins plugins = response.readEntity();
+
+      assertAll(() -> {
+        Optional<PluginManifest> zoomPlugin = Arrays.asList(plugins.getInactive()).stream()
+            .filter(p -> p.getId().equals("zoom")).findFirst();
+        assertTrue(zoomPlugin.isPresent(), "zoom");
+      }, () -> {
+        Optional<PluginManifest> jiraPlugin = Arrays.asList(plugins.getInactive()).stream()
+            .filter(p -> p.getId().equals("jira")).findFirst();
+        assertTrue(jiraPlugin.isPresent(), "jira");
+      });
+    }
+
+    @Test
+    public void uploadPlugin() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Plugins> response = client.getPlugins();
+      // 5.2.0 is server plugin release candidate version
+      if (isNotSupportVersion("5.2.0", response)) {
+        return;
+      }
+
+      ApiResponse<PluginManifest> uploadResult =
+          assertNoError(client.uploadPlugin(simpleLockPluginArchivePath));
+      uploadResult.readEntity();
+
+      // same plugin id is already uploaded
+      ApiResponse<PluginManifest> blockedUploadResult =
+          client.uploadPlugin(simpleLockPluginArchivePath);
+      assertStatus(blockedUploadResult, Status.BAD_REQUEST);
+      assertTrue(
+          blockedUploadResult.readError().getMessage().contains("A plugin with the same ID"));
+
+      if (!isNotSupportVersion("5.8.0", blockedUploadResult)) {
+        // force upload
+        ApiResponse<PluginManifest> forceUploadResult =
+            assertNoError(client.uploadPlugin(simpleLockPluginArchivePath, true));
+        forceUploadResult.readEntity();
+      }
+
+      // cleanup
+      client.removePlugin(uploadResult.readEntity().getId());
+    }
+
+    @Test
+    public void removePlugin() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Plugins> response = client.getPlugins();
+      // 5.2.0 is server plugin release candidate version
+      if (isNotSupportVersion("5.2.0", response)) {
+        return;
+      }
+      ApiResponse<PluginManifest> uploadResult =
+          assertNoError(client.uploadPlugin(simpleLockPluginArchivePath));
+      PluginManifest plugin = uploadResult.readEntity();
+      String pluginId = plugin.getId();
+
+      ApiResponse<Boolean> removeResult = assertNoError(client.removePlugin(pluginId));
+
+      assertTrue(removeResult.readEntity());
+
+      // cleanup
+      client.removePlugin(pluginId);
+    }
+
+    @Test
+    public void enablePlugin() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Plugins> response = client.getPlugins();
+      // 5.2.0 is server plugin release candidate version
+      if (isNotSupportVersion("5.2.0", response)) {
+        return;
+      }
+      ApiResponse<PluginManifest> uploadResult =
+          assertNoError(client.uploadPlugin(simpleLockPluginArchivePath));
+      PluginManifest plugin = uploadResult.readEntity();
+      String pluginId = plugin.getId();
+
+      ApiResponse<Boolean> enableResult = assertNoError(client.enablePlugin(pluginId));
+
+      assertTrue(enableResult.readEntity());
+
+      // cleanup
+      client.removePlugin(pluginId);
+    }
+
+    @Test
+    public void disablePlugin() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Plugins> response = client.getPlugins();
+      // 5.2.0 is server plugin release candidate version
+      if (isNotSupportVersion("5.2.0", response)) {
+        return;
+      }
+      ApiResponse<PluginManifest> uploadResult =
+          assertNoError(client.uploadPlugin(simpleLockPluginArchivePath));
+      PluginManifest plugin = uploadResult.readEntity();
+      String pluginId = plugin.getId();
+      assertNoError(client.enablePlugin(pluginId));
+
+      ApiResponse<Boolean> disableResult = assertNoError(client.disablePlugin(pluginId));
+
+      assertTrue(disableResult.readEntity());
+
+      // cleanup
+      client.removePlugin(pluginId);
+    }
+
+    @Test
+    public void getWebappPlugins() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Plugins> response = client.getPlugins();
+      // 5.2.0 is server plugin release candidate version
+      if (isNotSupportVersion("5.2.0", response)) {
+        return;
+      }
+      ApiResponse<PluginManifest> uploadResult =
+          assertNoError(client.uploadPlugin(drawPluginArchivePath));
+      PluginManifest plugin = uploadResult.readEntity();
+      String pluginId = plugin.getId();
+      assertNoError(client.enablePlugin(pluginId));
+
+      ApiResponse<WebappPlugin[]> webappResponse = assertNoError(client.getWebappPlugins());
+      WebappPlugin[] webapps = webappResponse.readEntity();
+
+      assertEquals(1, webapps.length);
+      WebappPlugin drawWebapp = webapps[0];
+      assertEquals(pluginId, drawWebapp.getId());
+
+      // cleanup
+      client.removePlugin(pluginId);
+    }
+
   }
 
 }
