@@ -222,6 +222,8 @@ public class ServiceSettings {
   private boolean experimentalLdapGroupSync;
   /* @since Mattermost Server 5.8 */
   private boolean experimentalStrictCsrfEnforcement;
+  /* @since Mattermost Server 5.9 */
+  private boolean disableLegacyMfa;
 
   /**
    * This method should not use.
