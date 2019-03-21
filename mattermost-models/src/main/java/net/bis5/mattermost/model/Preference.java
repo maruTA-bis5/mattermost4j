@@ -37,7 +37,7 @@ public class Preference {
   private String value;
 
   @RequiredArgsConstructor
-  public static enum Name {
+  public enum Name {
     CollapseSetting("collapse_previews"), DisplayNameFormat("name_format"), LastChannel(
         "channel"), LastTeam(
             "team"), EmailInterval("email_interval"), ChannelDisplayMode("channel_display_mode");

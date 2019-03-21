@@ -40,7 +40,7 @@ public class ApiStatus {
 
   @JsonSerialize(using = HasCodeSerializer.class)
   @JsonDeserialize(using = ChannelTypeDeserializer.class)
-  public static enum Status implements HasCode<Status> {
+  public enum Status implements HasCode<Status> {
     OK, FAIL;
 
     @Override
