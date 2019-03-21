@@ -595,15 +595,13 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   protected ApiResponse<Path> doApiGetFile(String url, String etag) throws IOException {
     ApiResponse<InputStream> fileResponse = doApiGet(url, etag, InputStream.class);
     if (fileResponse.hasError()) {
-      ApiResponse<Path> errorResponse = ApiResponse.of(fileResponse.getRawResponse(), Path.class);
-      return errorResponse;
+      return ApiResponse.of(fileResponse.getRawResponse(), Path.class);
     }
 
     String suffix = detectSuffix(fileResponse.getRawResponse());
     Path imageFile = Files.createTempFile(null, suffix);
     Files.copy(fileResponse.readEntity(), imageFile, StandardCopyOption.REPLACE_EXISTING);
-    ApiResponse<Path> response = ApiResponse.of(fileResponse.getRawResponse(), imageFile);
-    return response;
+    return ApiResponse.of(fileResponse.getRawResponse(), imageFile);
   }
 
   protected static final String HEADER_ETAG_CLIENT = "If-None-Match";
