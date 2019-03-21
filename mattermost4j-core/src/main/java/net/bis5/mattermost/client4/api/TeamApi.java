@@ -192,7 +192,7 @@ public interface TeamApi {
   /**
    * returns the team member for a user.
    */
-  default ApiResponse<TeamMemberList> getTeamMembersforUser(String userId) {
+  default ApiResponse<TeamMemberList> getTeamMembersForUser(String userId) {
     return getTeamMembersForUser(userId, null);
   }
 
@@ -264,7 +264,7 @@ public interface TeamApi {
   /**
    * returns a team stats based on the team id string. Must be authenticated.
    */
-  default ApiResponse<TeamStats> getteamStats(String teamId) {
+  default ApiResponse<TeamStats> getTeamStats(String teamId) {
     return getTeamStats(teamId, null);
   }
 
