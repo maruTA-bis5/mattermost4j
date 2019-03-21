@@ -80,21 +80,16 @@ public abstract class ApiResponse<T> {
 
 
   protected ApiResponse<Boolean> checkPlainStatusOk(Response response) {
-    String status = response.readEntity(String.class);
-    if (StringUtils.equalsIgnoreCase(status, STATUS_OK)) {
-      return ApiResponse.of(response, true);
-    } else {
-      return ApiResponse.of(response, false);
-    }
+    String statusCode = response.readEntity(String.class);
+    boolean success = StringUtils.equalsIgnoreCase(statusCode, STATUS_OK);
+    return ApiResponse.of(response, success);
   }
 
 
   protected ApiResponse<Boolean> checkJsonStatusOk(Response response) {
     Map<String, String> m = response.readEntity(new GenericType<Map<String, String>>() {});
-    if (m != null && m.getOrDefault(STATUS, "").equalsIgnoreCase(STATUS_OK)) {
-      return ApiResponse.of(response, true);
-    }
-    return ApiResponse.of(response, false);
+    boolean success = m != null && m.getOrDefault(STATUS, "").equalsIgnoreCase(STATUS_OK);
+    return ApiResponse.of(response, success);
   }
 
 
