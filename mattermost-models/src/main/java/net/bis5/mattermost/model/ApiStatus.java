@@ -16,7 +16,6 @@ package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -64,8 +63,7 @@ public class ApiStatus {
   public static class ChannelTypeDeserializer extends JsonDeserializer<Status> {
 
     @Override
-    public Status deserialize(JsonParser p, DeserializationContext ctxt)
-        throws IOException, JsonProcessingException {
+    public Status deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
       return Status.of(p.getText());
     }
   }
