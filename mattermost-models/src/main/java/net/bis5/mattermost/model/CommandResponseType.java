@@ -15,7 +15,6 @@
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -61,7 +60,7 @@ public enum CommandResponseType implements HasCode<CommandResponseType> {
 
     @Override
     public CommandResponseType deserialize(JsonParser p, DeserializationContext ctxt)
-        throws IOException, JsonProcessingException {
+        throws IOException {
       String code = p.getText();
       return CommandResponseType.of(code);
     }

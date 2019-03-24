@@ -15,7 +15,6 @@
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -49,8 +48,7 @@ public enum PushType implements HasCode<PushType> {
   static class PushTypeDeserializer extends JsonDeserializer<PushType> {
 
     @Override
-    public PushType deserialize(JsonParser p, DeserializationContext ctxt)
-        throws IOException, JsonProcessingException {
+    public PushType deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
       String jsonValue = p.getText();
       return of(jsonValue);
     }

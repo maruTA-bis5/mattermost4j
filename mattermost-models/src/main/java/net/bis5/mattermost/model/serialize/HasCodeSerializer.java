@@ -15,7 +15,6 @@
 package net.bis5.mattermost.model.serialize;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
@@ -30,7 +29,7 @@ public class HasCodeSerializer<T extends Enum<T> & HasCode<T>> extends JsonSeria
 
   @Override
   public void serialize(T value, JsonGenerator gen, SerializerProvider serializers)
-      throws IOException, JsonProcessingException {
+      throws IOException {
     if (value != null) {
       gen.writeString(value.getCode());
     }
