@@ -42,7 +42,8 @@ jobs:
               mkdir ~/work
               wget https://releases.mattermost.com/${MATTERMOST_VERSION}/mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz -O ~/work/mattermost.tar.gz
               tar -C ~ -xvf ~/work/mattermost.tar.gz
-              cat ~/mattermost/config/default.json | sed -e 's/dockerhost/localhost/' -e 's/\("EnableUploads": \)false/\1true/' | tee ~/mattermost/config/config.json
+              [ -e ~/mattermost/config/default.json ] && cp ~/mattermost/config/default.json ~/mattermost/config/config.json
+              sed -e 's/dockerhost/localhost/' -e 's/\("EnableUploads": \)false/\1true/' -i ~/mattermost/config/config.json
       - run: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
       - run:
           name: mattermost
@@ -78,7 +79,8 @@ jobs:
               mkdir ~/work
               wget https://releases.mattermost.com/${MATTERMOST_VERSION}/mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz -O ~/work/mattermost.tar.gz
               tar -C ~ -xvf ~/work/mattermost.tar.gz
-              cat ~/mattermost/config/default.json | sed -e 's/dockerhost/localhost/' -e 's/\("EnableUploads": \)false/\1true/' | tee ~/mattermost/config/config.json
+              [ -e ~/mattermost/config/default.json ] && cp ~/mattermost/config/default.json ~/mattermost/config/config.json
+              sed -e 's/dockerhost/localhost/' -e 's/\("EnableUploads": \)false/\1true/' -i ~/mattermost/config/config.json
       - run: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
       - run:
           name: mattermost
