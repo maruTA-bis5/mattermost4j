@@ -61,6 +61,8 @@ public class EmailSettings {
   private String loginButtonTextColor;
   /* @since Mattermost Server 5.0 */
   private boolean enablePreviewModeBanner;
+  /* @since Mattermost Server 5.10 */
+  private String replyToAddress;
 
   /**
    * Should not use this.
