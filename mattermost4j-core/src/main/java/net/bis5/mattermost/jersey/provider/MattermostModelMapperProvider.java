@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
+import net.bis5.mattermost.model.Config;
 import net.bis5.mattermost.model.serialize.MattermostPropertyNamingStrategy;
 
 /**
@@ -31,6 +32,7 @@ import net.bis5.mattermost.model.serialize.MattermostPropertyNamingStrategy;
 public class MattermostModelMapperProvider implements ContextResolver<ObjectMapper> {
 
   final ObjectMapper defaultObjectMapper;
+  final ObjectMapper configObjectMapper;
   private final boolean ignoreUnknownProperties;
 
   public MattermostModelMapperProvider() {
@@ -40,6 +42,7 @@ public class MattermostModelMapperProvider implements ContextResolver<ObjectMapp
   public MattermostModelMapperProvider(boolean ignoreUnknownProperties) {
     this.ignoreUnknownProperties = ignoreUnknownProperties;
     defaultObjectMapper = createDefaultObjectMapper();
+    configObjectMapper = createConfigObjectMapper();
   }
 
 
@@ -50,8 +53,18 @@ public class MattermostModelMapperProvider implements ContextResolver<ObjectMapp
         .setPropertyNamingStrategy(new MattermostPropertyNamingStrategy());
   }
 
+  protected ObjectMapper createConfigObjectMapper() {
+    return new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, !ignoreUnknownProperties)
+        .setSerializationInclusion(Include.ALWAYS)
+        .setPropertyNamingStrategy(new MattermostPropertyNamingStrategy());
+  }
+
   @Override
   public ObjectMapper getContext(Class<?> type) {
+    if (type == Config.class || type.getName().startsWith("net.bis5.mattermost.model.config")) {
+      return configObjectMapper;
+    }
     return defaultObjectMapper;
   }
 
