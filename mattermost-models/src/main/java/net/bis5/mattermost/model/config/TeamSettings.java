@@ -17,6 +17,7 @@ package net.bis5.mattermost.model.config;
 import java.util.List;
 import lombok.Data;
 import net.bis5.mattermost.model.config.consts.Permissions;
+import net.bis5.mattermost.model.config.consts.RestrictDirectMessage;
 import net.bis5.mattermost.model.config.consts.TeammateNameDisplay;
 
 /**
@@ -38,7 +39,7 @@ public class TeamSettings {
   private boolean enableCustomBrand;
   private String customBrandText;
   private String customDescriptionText;
-  private Permissions restrictDirectMessage;
+  private RestrictDirectMessage restrictDirectMessage;
   private Permissions restrictTeamInvite;
   private Permissions restrictPublicChannelManagement;
   private Permissions restrictPrivateChannelManagement;
