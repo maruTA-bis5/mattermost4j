@@ -55,4 +55,7 @@ public class Team {
   private long lastTeamIconUpdate;
   /* @since Mattermost Server XXX what ver? */
   private String schemeId;
+  /* @since Mattermost Server 5.10 */
+  private boolean groupConstrained;
+
 }

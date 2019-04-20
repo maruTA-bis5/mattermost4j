@@ -72,5 +72,7 @@ public class Channel {
   private String schemeId;
   /* @since Mattermost Server XXX what ver? */
   private Map<String, Object> props;
+  /* @since Mattermost Server 5.10 */
+  private boolean groupConstrained;
 
 }
