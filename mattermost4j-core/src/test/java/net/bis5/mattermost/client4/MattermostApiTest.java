@@ -197,7 +197,7 @@ public class MattermostApiTest {
   @BeforeEach
   public void setup() {
     client = createNewClient();
-    th.changeClient(client).initBasic();
+    th.changeClient(client).initBasic().useSmtp(INBUCKET_HOST, INBUCKET_PORT);
   }
 
   @AfterEach
