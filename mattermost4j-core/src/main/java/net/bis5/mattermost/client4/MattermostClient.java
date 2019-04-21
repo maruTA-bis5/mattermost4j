@@ -65,6 +65,7 @@ import net.bis5.mattermost.client4.model.AddChannelMemberRequest;
 import net.bis5.mattermost.client4.model.AnalyticsCategory;
 import net.bis5.mattermost.client4.model.AttachDeviceIdRequest;
 import net.bis5.mattermost.client4.model.CheckUserMfaRequest;
+import net.bis5.mattermost.client4.model.CreateEphemeralPostRequest;
 import net.bis5.mattermost.client4.model.DeauthorizeOAuthAppRequest;
 import net.bis5.mattermost.client4.model.DisableEnableTokenRequest;
 import net.bis5.mattermost.client4.model.FileUploadResult;
@@ -1317,6 +1318,15 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   @Override
   public ApiResponse<Post> createPost(Post post) {
     return doApiPost(getPostsRoute(), post, Post.class);
+  }
+
+  @Override
+  public ApiResponse<Post> createEphemeralPost(String sendToUserId, Post post) {
+    CreateEphemeralPostRequest payload = CreateEphemeralPostRequest.builder() //
+        .userId(sendToUserId) //
+        .post(post) //
+        .build();
+    return doApiPost(getPostsRoute() + "/ephemeral", payload, Post.class);
   }
 
   @Override
