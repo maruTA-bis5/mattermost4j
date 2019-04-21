@@ -157,6 +157,9 @@
 							<goal>prepare-agent</goal>
 							<goal>prepare-agent-integration</goal>
 						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco.exec</destFile>
+						</configuration>
 					</execution>
 					<execution>
 						<id>report</id>
