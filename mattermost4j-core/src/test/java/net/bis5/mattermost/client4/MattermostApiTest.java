@@ -90,6 +90,7 @@ import net.bis5.mattermost.model.CommandList;
 import net.bis5.mattermost.model.CommandMethod;
 import net.bis5.mattermost.model.CommandResponse;
 import net.bis5.mattermost.model.CommandResponseType;
+import net.bis5.mattermost.model.Config;
 import net.bis5.mattermost.model.ContentType;
 import net.bis5.mattermost.model.Emoji;
 import net.bis5.mattermost.model.EmojiList;
@@ -197,7 +198,7 @@ public class MattermostApiTest {
   @BeforeEach
   public void setup() {
     client = createNewClient();
-    th.changeClient(client).initBasic();
+    th.changeClient(client).initBasic().useSmtp(INBUCKET_HOST, INBUCKET_PORT);
   }
 
   @AfterEach
@@ -253,6 +254,10 @@ public class MattermostApiTest {
     Semver serverVersion = new Semver(response.getRawResponse().getHeaderString("X-Version-Id"));
     Semver requirement = new Semver(minimumRequirement);
     return serverVersion.compareTo(requirement) < 0;
+  }
+
+  private boolean isSupportVersion(String minimumRequirement, ApiResponse<?> response) {
+    return !isNotSupportVersion(minimumRequirement, response);
   }
 
   // Channels
@@ -1208,9 +1213,50 @@ public class MattermostApiTest {
 
     @Test
     public void checkMfa() {
-      boolean mfaRequired = client.checkUserMfa(th.basicUser().getId());
+      th.logout().loginSystemAdmin();
+      ApiResponse<Config> configResponse = client.getConfig();
+      Config config = configResponse.readEntity();
+      if (isSupportVersion("5.9.0", configResponse)) {
+        config.getServiceSettings().setDisableLegacyMfa(false);
+        assertNoError(client.updateConfig(config));
+      }
+      try {
+        th.logout().loginBasic();
 
-      assertThat(mfaRequired, is(false));
+        boolean mfaRequired = client.checkUserMfa(th.basicUser().getId());
+
+        assertThat(mfaRequired, is(false));
+      } finally {
+        if (isSupportVersion("5.9.0", configResponse)) {
+          th.logout().loginSystemAdmin();
+          config = client.getConfig().readEntity();
+          config.getServiceSettings().setDisableLegacyMfa(true);
+          assertNoError(client.updateConfig(config));
+        }
+      }
+    }
+
+    @Test
+    public void checkMfaThrowsExceptionDisableLegacyMfa() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Config> configResponse = client.getConfig();
+      if (isNotSupportVersion("5.9.0", configResponse)) {
+        return;
+      }
+      Config config = configResponse.readEntity();
+      config.getServiceSettings().setDisableLegacyMfa(true);
+      assertNoError(client.updateConfig(config));
+
+      try {
+        assertThrows(RuntimeException.class, () -> {
+          client.checkUserMfa(th.basicUser().getId());
+        });
+      } finally {
+        th.logout().loginSystemAdmin();
+        config = client.getConfig().readEntity();
+        config.getServiceSettings().setDisableLegacyMfa(false);
+        assertNoError(client.updateConfig(config));
+      }
     }
 
     @Test

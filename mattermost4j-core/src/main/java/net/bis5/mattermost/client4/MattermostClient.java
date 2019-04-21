@@ -223,7 +223,7 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
         .property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
     if (clientLogLevel != null) {
       builder.register(new LoggingFeature(Logger.getLogger(getClass().getName()), clientLogLevel,
-          Verbosity.PAYLOAD_ANY, 1000));
+          Verbosity.PAYLOAD_ANY, 100000));
     }
     return builder.build();
   }

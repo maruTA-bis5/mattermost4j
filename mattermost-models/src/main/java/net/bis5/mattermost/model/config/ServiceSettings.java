@@ -101,6 +101,10 @@ public class ServiceSettings {
   private boolean enableTutorial = true;
   /* @since Mattermost Server 4.7 */
   private ImageProxyType imageProxyType;
+  /* @since Mattermost Server 5.10 */
+  private int minimumHashtagLength = 3;
+  /* @since Mattermost Server 5.10 */
+  private boolean disableBotsWhenOwnerIsDeactivated = true;
 
   /**
    * Set the image proxy type.

@@ -32,6 +32,8 @@ public class HasCodeSerializer<T extends Enum<T> & HasCode<T>> extends JsonSeria
       throws IOException {
     if (value != null) {
       gen.writeString(value.getCode());
+    } else {
+      gen.writeString("");
     }
   }
 

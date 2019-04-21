@@ -47,4 +47,15 @@ public class ElasticsearchSettings {
   private int requestTimeoutSeconds = 30;
   /* @since Mattermost Server 4.4 (Enterprise Edition) */
   private int bulkIndexingTimeWindowSeconds = 3600;
+  /* @since Mattermost Server 5.10 */
+  private boolean enableAutocomplete;
+  /* @since Mattermost Server 5.10 */
+  private int channelIndexReplicas = 1;
+  /* @since Mattermost Server 5.10 */
+  private int channelIndexShards = 1;
+  /* @since Mattermost Server 5.10 */
+  private int userIndexReplicas = 1;
+  /* @since Mattermost Server 5.10 */
+  private int userIndexShards = 1;
+
 }
