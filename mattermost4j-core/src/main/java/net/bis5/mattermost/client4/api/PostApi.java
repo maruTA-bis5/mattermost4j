@@ -37,6 +37,11 @@ public interface PostApi {
   ApiResponse<Post> createPost(Post post);
 
   /**
+   * creates an ephemeral post send to {@code targetUserId}.
+   */
+  ApiResponse<Post> createEphemeralPost(String targetUserId, Post post);
+
+  /**
    * updates a post based on the provided post object.
    */
   default ApiResponse<Post> updatePost(Post post) {

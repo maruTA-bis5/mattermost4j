@@ -106,6 +106,7 @@ import net.bis5.mattermost.model.Post;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
 import net.bis5.mattermost.model.PostSearchResults;
+import net.bis5.mattermost.model.PostType;
 import net.bis5.mattermost.model.Preference;
 import net.bis5.mattermost.model.PreferenceCategory;
 import net.bis5.mattermost.model.Preferences;
@@ -1894,6 +1895,24 @@ public class MattermostApiTest {
 
       assertThat(postedPost.getMessage(), is(post.getMessage()));
       assertThat(postedPost.getChannelId(), is(post.getChannelId()));
+    }
+
+    @Test
+    public void createEphemeralPost() {
+      // create_post_ephemeral permission currently only given to system admin
+      th.logout().loginSystemAdmin();
+
+      Post post = new Post();
+      post.setChannelId(th.basicChannel().getId());
+      post.setMessage("Hello World!");
+
+      ApiResponse<Post> response =
+          assertNoError(client.createEphemeralPost(th.basicUser().getId(), post));
+      Post postedPost = response.readEntity();
+
+      assertThat(postedPost.getMessage(), is(post.getMessage()));
+      assertThat(postedPost.getChannelId(), is(post.getChannelId()));
+      assertThat(postedPost.getType(), is(PostType.EPHEMERAL));
     }
 
     @Test
