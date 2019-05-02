@@ -16,16 +16,16 @@ jobs:
   lint:
     working_directory: ~/repo
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:8u212-jdk-stretch
     environment:
       MAVEN_OPTS: -Xmx3200m
     steps:
       - checkout
-      - run: mvn verify -DskipTests=true --show-version -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false
+      - run: mvn verify -DskipTests=true --show-version
   test-mattermost-base: &test-mattermost-base
     working_directory: ~/repo
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:8u212-jdk-stretch
       - image: mysql:5.7
         environment:
           MYSQL_ROOT_PASSWORD: mostest
@@ -51,7 +51,7 @@ jobs:
           background: true
       - checkout
       - run: for i in 1 2 3 4 5 6 7 8 9 10; do curl -I "${MATTERMOST_URL:-http://localhost:8065}" || sleep 10 && continue; break; done
-      - run: mvn verify --show-version -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false
+      - run: mvn verify --show-version
   test-mattermost-esr:
     <<: *test-mattermost-base
     environment:
@@ -88,4 +88,4 @@ jobs:
           background: true
       - checkout
       - run: dockerize -wait tcp://127.0.0.1:8065 -timeout 120s
-      - run: mvn clean verify sonar:sonar --show-version -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false -s .circleci/settings-sonar.xml
+      - run: mvn clean verify sonar:sonar --show-version -s .circleci/settings-sonar.xml
