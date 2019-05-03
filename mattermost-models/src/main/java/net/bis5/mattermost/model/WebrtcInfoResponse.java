@@ -21,8 +21,11 @@ import lombok.Data;
  * WebRTC service info.
  * 
  * @author Takayuki Maruyama
+ * @deprecated WebRTC feature removed in Mattermost Server 5.6. This class will be removed at July
+ *             2019.
  */
 @Data
+@Deprecated
 public class WebrtcInfoResponse {
 
   @JsonProperty("token")
