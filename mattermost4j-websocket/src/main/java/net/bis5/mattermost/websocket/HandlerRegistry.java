@@ -47,8 +47,18 @@ public class HandlerRegistry {
     handlers.forEach(h -> h.handleEvent(payload));
   }
 
+  public HandlerRegistration addOnCloseHandler(Consumer<Session> handler) {
+    closeHandler.add(handler);
+    return new HandlerRegistration(() -> closeHandler.remove(handler));
+  }
+
   public void fireOnClose(Session session) {
     closeHandler.forEach(h -> h.accept(session));
+  }
+
+  public HandlerRegistration addOnErrorHandler(Consumer<Throwable> handler) {
+    errorHandler.add(handler);
+    return new HandlerRegistration(() -> errorHandler.remove(handler));
   }
 
   public void fireOnError(Throwable throwable) {
