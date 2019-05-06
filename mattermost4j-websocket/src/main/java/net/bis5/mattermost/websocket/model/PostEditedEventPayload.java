@@ -17,42 +17,33 @@ package net.bis5.mattermost.websocket.model;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.bis5.mattermost.model.ChannelType;
 import net.bis5.mattermost.model.Post;
-import net.bis5.mattermost.websocket.model.PostedEventPayload.PostedEventData;
+import net.bis5.mattermost.websocket.model.PostEditedEventPayload.PostEditedEventData;
 
 /**
  * TODO 型の説明
  * 
  * @author Takayuki Maruyama
  */
-public class PostedEventPayload extends EventPayload<PostedEventData> {
+public class PostEditedEventPayload extends EventPayload<PostEditedEventData> {
 
   @Data
-  public static class PostedEventData {
-    private String channelDisplayName;
-    private String channelName;
-    private ChannelType channelType;
-    private String[] mentions;
+  public static class PostEditedEventData {
     private Post post;
-    private String senderName;
-    private String teamId;
   }
 
   @RequiredArgsConstructor
   @Getter
-  public static enum PostedEventDataKey implements KeyMarker {
+  public static enum PostEditedEventDataKey implements KeyMarker {
     // CHECKSTYLE: OFF
-    channelDisplayName(String.class), channelName(String.class), channelType(
-        ChannelType.class), mentions(
-            String[].class), post(Post.class), senderName(String.class), teamId(String.class);
+    post(Post.class);
     // CHECKSTYLE: ON
     final Class<?> valueClass;
   }
 
   @Override
   public Class<? extends Enum<? extends KeyMarker>> getMarkerEnum() {
-    return PostedEventDataKey.class;
+    return PostEditedEventDataKey.class;
   }
 
 }

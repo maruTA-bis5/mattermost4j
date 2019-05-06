@@ -27,6 +27,7 @@ import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 import net.bis5.mattermost.websocket.WebSocketEvent.WebSocketEventDeserializer;
 import net.bis5.mattermost.websocket.model.EventPayload;
 import net.bis5.mattermost.websocket.model.EventPayload.GenericEventPayload;
+import net.bis5.mattermost.websocket.model.PostEditedEventPayload;
 import net.bis5.mattermost.websocket.model.PostedEventPayload;
 
 /**
@@ -62,7 +63,7 @@ public enum WebSocketEvent implements HasCode<WebSocketEvent> {
   PLUGIN_ENABLED, //
   PLUGIN_STATUSES_CHANGED, //
   POST_DELETED, //
-  POST_EDITED, //
+  POST_EDITED(PostEditedEventPayload.class), //
   POSTED(PostedEventPayload.class), //
   PREFERENCE_CHANGED, //
   PREFERENCES_CHANGED, //
