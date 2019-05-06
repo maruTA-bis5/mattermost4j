@@ -19,12 +19,20 @@
 			<groupId>jakarta.websocket</groupId>
 			<artifactId>jakarta.websocket-api</artifactId>
 			<version>1.1.1</version>
-			<scope>provided</scope><!-- tyrus-standalone-client bundled this -->
+			<scope>provided</scope><!-- undertow bundled this -->
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.tyrus.bundles</groupId>
-			<artifactId>tyrus-standalone-client</artifactId>
-			<version>1.15</version>
+			<groupId>io.undertow</groupId>
+			<artifactId>undertow-websockets-jsr</artifactId>
+			<version>2.0.20.Final</version>
+			<exclusions>
+				<!-- Jersey depends javax.annotation-api-1.2.
+					Add exclusion to avoid modulepath related error for Java 9+ -->
+				<exclusion>
+					<groupId>org.jboss.spec.javax.annotation</groupId>
+					<artifactId>jboss-annotations-api_1.2_spec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
