@@ -9,6 +9,19 @@
 	</parent>
 	<artifactId>mattermost4j-websocket</artifactId>
 	<name>Mattermost4j WebSocket Client</name>
+	<properties>
+		<websocket-client-product>undertow</websocket-client-product>
+		<websocket-client-version>${undertow.version}</websocket-client-version>
+		<undertow.version>2.0.20.Final</undertow.version>
+	</properties>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>net.bis5.mattermost4j</groupId>
@@ -24,7 +37,7 @@
 		<dependency>
 			<groupId>io.undertow</groupId>
 			<artifactId>undertow-websockets-jsr</artifactId>
-			<version>2.0.20.Final</version>
+			<version>${undertow.version}</version>
 			<exclusions>
 				<!-- Jersey depends javax.annotation-api-1.2.
 					Add exclusion to avoid modulepath related error for Java 9+ -->

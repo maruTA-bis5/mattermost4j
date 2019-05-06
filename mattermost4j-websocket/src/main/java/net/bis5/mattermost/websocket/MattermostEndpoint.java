@@ -41,7 +41,7 @@ import net.bis5.mattermost.websocket.model.EventPayload.KeyMarker;
  * 
  * @author Takayuki Maruyama
  */
-@ClientEndpoint
+@ClientEndpoint(configurator = MattermostWsConfigurator.class)
 @RequiredArgsConstructor
 public class MattermostEndpoint {
 
