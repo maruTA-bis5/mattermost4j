@@ -21,12 +21,12 @@ import net.bis5.mattermost.websocket.model.PostUpdatedEventData.PostUpdatedEvent
  * 
  * @author Takayuki Maruyama
  */
-public class PostEditedEventPayload extends EventPayload<PostUpdatedEventData> {
-
+public class PostDeletedEventPayload extends EventPayload<PostUpdatedEventData> {
 
   @Override
   public Class<? extends Enum<? extends KeyMarker>> getMarkerEnum() {
     return PostUpdatedEventDataKey.class;
   }
+
 
 }

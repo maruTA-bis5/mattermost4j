@@ -14,19 +14,22 @@
 
 package net.bis5.mattermost.websocket.model;
 
-import net.bis5.mattermost.websocket.model.PostUpdatedEventData.PostUpdatedEventDataKey;
+import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import net.bis5.mattermost.model.Post;
+import net.bis5.mattermost.websocket.model.EventPayload.KeyMarker;
 
-/**
- * TODO 型の説明
- * 
- * @author Takayuki Maruyama
- */
-public class PostEditedEventPayload extends EventPayload<PostUpdatedEventData> {
+@Data
+public class PostUpdatedEventData {
+  private Post post;
 
-
-  @Override
-  public Class<? extends Enum<? extends KeyMarker>> getMarkerEnum() {
-    return PostUpdatedEventDataKey.class;
+  @RequiredArgsConstructor
+  @Getter
+  public static enum PostUpdatedEventDataKey implements KeyMarker {
+    // CHECKSTYLE: OFF
+    post(Post.class);
+    // CHECKSTYLE: ON
+    final Class<?> valueClass;
   }
-
 }
