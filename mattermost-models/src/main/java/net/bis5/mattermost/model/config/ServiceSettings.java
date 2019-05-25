@@ -109,7 +109,7 @@ public class ServiceSettings {
   /**
    * Set the image proxy type.
    * 
-   * @Deprecated Changed to {@link ImageProxySettings#setImageProxyType(ImageProxyType)} for
+   * @deprecated Changed to {@link ImageProxySettings#setImageProxyType(ImageProxyType)} for
    *             Mattermost Server 5.8+
    * @since Mattermost Server 4.7
    */
@@ -121,7 +121,7 @@ public class ServiceSettings {
   /**
    * Get the image proxy type.
    * 
-   * @Deprecated Changed to {@link ImageProxySettings#getImageProxyType()} for Mattermost Server
+   * @deprecated Changed to {@link ImageProxySettings#getImageProxyType()} for Mattermost Server
    *             5.8+
    * @since Mattermost Server 4.7
    */
