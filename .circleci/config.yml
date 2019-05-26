@@ -10,7 +10,8 @@ workflows:
       - test-mattermost-latest
       - test-mattermost-previous
       - test-mattermost-previous2
- 
+      - test-mattermost-latest-java11
+
 version: 2
 jobs:
   lint:
@@ -89,3 +90,9 @@ jobs:
       - checkout
       - run: dockerize -wait tcp://127.0.0.1:8065 -timeout 120s
       - run: mvn clean verify sonar:sonar --show-version -s .circleci/settings-sonar.xml
+  test-mattermost-latest-java11:
+    <<: *test-mattermost-base
+    docker:
+      - image: circleci/openjdk:11.0.3-jdk-stretch
+    environment:
+      MATTERMOST_VERSION: 5.11.0
