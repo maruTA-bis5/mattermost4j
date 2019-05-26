@@ -94,5 +94,12 @@ jobs:
     <<: *test-mattermost-base
     docker:
       - image: circleci/openjdk:11.0.3-jdk-stretch
+      - image: mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: mostest
+          MYSQL_USER: mmuser
+          MYSQL_PASSWORD: mostest
+          MYSQL_DATABASE: mattermost_test
+      - image: jhillyerd/inbucket:release-2.0.0
     environment:
       MATTERMOST_VERSION: 5.11.0
