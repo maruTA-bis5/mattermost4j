@@ -52,13 +52,13 @@ client.postByIncomingWebhook(payload);
 <dependency>
 	<groupId>net.bis5.mattermost4j</groupId>
 	<artifactId>mattermost4j-core</artifactId>
-	<version>0.12.0</version>
+	<version>0.13.0</version>
 </dependency>
 ```
 
 ### Gradle:
 ```
-compile 'net.bis5.mattermost4j:mattermost4j-core:0.12.0'
+compile 'net.bis5.mattermost4j:mattermost4j-core:0.13.0'
 ```
 
 ## Contribution
