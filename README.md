@@ -5,6 +5,7 @@ mattermost4j
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.bis5.mattermost4j/mattermost4j-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.bis5.mattermost4j/mattermost4j-core)
 [![Javadocs](http://javadoc.io/badge/net.bis5.mattermost4j/mattermost4j-core.svg)](http://javadoc.io/doc/net.bis5.mattermost4j/mattermost4j-core)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=net.bis5.mattermost4j%3Amattermost4j-parent&metric=coverage)](https://sonarcloud.io/dashboard?id=net.bis5.mattermost4j%3Amattermost4j-parent)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=maruTA-bis5/mattermost4j)](https://dependabot.com)
 
 Mattermost API v4 client for Java.
 
