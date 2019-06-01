@@ -60,7 +60,16 @@ public enum PostType implements HasCode<PostType> {
   DISPLAYNAME_CHANGE("system_displayname_change"), //
   PURPOSE_CHANGE("system_purpose_change"), //
   CHANNEL_DELETED("system_channel_deleted"), //
-  EPHEMERAL("system_ephemeral");
+  EPHEMERAL("system_ephemeral"), //
+  JOIN_TEAM("system_join_team"), //
+  LEAVE_TEAM("system_leave_team"), //
+  AUTO_RESPONDER("system_auto_responder"), //
+  MOVE_CHANNEL("system_move_channel"), //
+  ADD_TO_TEAM("system_add_to_team"), //
+  REMOVE_FROM_TEAM("system_remove_from_team"), //
+  CONVERT_CHANNEL("system_convert_channel"), //
+  CHANGE_CHANNEL_PRIVACY("system_change_chan_privacy"), //
+  ;
   private final String code;
 
   private PostType(String code) {

@@ -21,7 +21,10 @@ import net.bis5.mattermost.model.WebrtcInfoResponse;
  * WebRTC API.
  * 
  * @author Takayuki Maruyama
+ * @deprecated WebRTC feature removed in Mattermost Server 5.6. This interface will be removed at
+ *             July 2019.
  */
+@Deprecated
 public interface WebrtcApi {
 
   /**

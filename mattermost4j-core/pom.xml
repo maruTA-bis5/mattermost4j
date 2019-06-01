@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.bis5.mattermost4j</groupId>
 		<artifactId>mattermost4j-parent</artifactId>
-		<version>0.12.1-SNAPSHOT</version>
+		<version>0.13.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>mattermost4j-core</artifactId>
 	<name>Mattermost APIv4 Client for Java</name>
@@ -21,22 +21,27 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>2.23.2</version>
+			<version>2.28</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>2.28</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
-			<version>2.23.2</version>
+			<version>2.28</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-multipart</artifactId>
-			<version>2.23.2</version>
+			<version>2.28</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.5</version>
+			<version>3.9</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vdurmont</groupId>
@@ -47,7 +52,7 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.11</version>
+			<version>1.12</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -60,13 +65,13 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>3.0.4</version>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>3.1.11</version>
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.1</version>
+				<version>2.22.2</version>
 				<configuration>
 					<excludes>
 						<exclude>**/*MattermostApiTest*</exclude>
@@ -75,7 +80,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.22.1</version>
+				<version>2.22.2</version>
 				<configuration>
 					<includes>
 						<include>**/MattermostApiTest.java</include>
