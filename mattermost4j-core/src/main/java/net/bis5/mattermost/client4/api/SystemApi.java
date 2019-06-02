@@ -22,11 +22,11 @@ import net.bis5.mattermost.model.AnalyticsRows;
 import net.bis5.mattermost.model.Config;
 
 /**
- * General API.
+ * System API.
  * 
  * @author Takayuki Maruyama
  */
-public interface GeneralApi {
+public interface SystemApi {
 
   /**
    * will ping the server and to see if it is up and running.
