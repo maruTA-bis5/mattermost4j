@@ -47,7 +47,7 @@ import net.bis5.mattermost.client4.api.ComplianceApi;
 import net.bis5.mattermost.client4.api.ElasticsearchApi;
 import net.bis5.mattermost.client4.api.EmojiApi;
 import net.bis5.mattermost.client4.api.FilesApi;
-import net.bis5.mattermost.client4.api.GeneralApi;
+import net.bis5.mattermost.client4.api.SystemApi;
 import net.bis5.mattermost.client4.api.LdapApi;
 import net.bis5.mattermost.client4.api.LogsApi;
 import net.bis5.mattermost.client4.api.OAuthApi;
@@ -174,7 +174,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
  */
 public class MattermostClient implements AutoCloseable, AuditsApi, AuthenticationApi, BrandApi,
     ChannelApi, ClusterApi, CommandsApi, ComplianceApi, ElasticsearchApi, EmojiApi, FilesApi,
-    GeneralApi, LdapApi, LogsApi, OAuthApi, PluginApi, PostApi, PreferencesApi, ReactionApi,
+    SystemApi, LdapApi, LogsApi, OAuthApi, PluginApi, PostApi, PreferencesApi, ReactionApi,
     SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
 
   protected static final String API_URL_SUFFIX = "/api/v4";
