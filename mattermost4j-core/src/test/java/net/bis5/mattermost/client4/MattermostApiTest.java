@@ -113,6 +113,7 @@ import net.bis5.mattermost.model.Preferences;
 import net.bis5.mattermost.model.Reaction;
 import net.bis5.mattermost.model.ReactionList;
 import net.bis5.mattermost.model.Role;
+import net.bis5.mattermost.model.SamlCertificateStatus;
 import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SessionList;
 import net.bis5.mattermost.model.StatusList;
@@ -3584,6 +3585,111 @@ public class MattermostApiTest {
       client.removePlugin(pluginId);
     }
 
+  }
+
+  @Nested
+  class SamlApiTest {
+    // Note: Team Edition does not support SAML
+
+    @Test
+    public void getSamlMetadata() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      ApiResponse<Path> response = client.getSamlMetadata();
+
+      assertStatus(response, Status.NOT_IMPLEMENTED);
+    }
+
+    @Test
+    public void uploadSamlIdpCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+
+      ApiResponse<Boolean> response = client.uploadSamlIdpCertificate(file, fileName);
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void uploadSamlPublicCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+
+      ApiResponse<Boolean> response = client.uploadSamlPublicCertificate(file, fileName);
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void uploadSamlPrivateCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".key");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+
+      ApiResponse<Boolean> response = client.uploadSamlPrivateCertificate(file, fileName);
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void deleteSamlIdpCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlIdpCertificate(file, fileName));
+
+      ApiResponse<Boolean> response = client.deleteSamlIdpCertificate();
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void deleteSamlPublicCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlPublicCertificate(file, fileName));
+
+      ApiResponse<Boolean> response = client.deleteSamlPublicCertificate();
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void deleteSamlPrivateCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".key");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlPrivateCertificate(file, fileName));
+
+      ApiResponse<Boolean> response = client.deleteSamlPrivateCertificate();
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void getSamlCertificateStatus() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".key");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlPrivateCertificate(file, fileName));
+
+      ApiResponse<SamlCertificateStatus> response = client.getSamlCertificateStatus();
+
+      SamlCertificateStatus status = response.readEntity();
+      assertAll(() -> assertFalse(status.isIdpCertificateFile()),
+          () -> assertFalse(status.isPublicCertificateFile()),
+          () -> assertTrue(status.isPrivateKeyFile()));
+    }
   }
 
 }
