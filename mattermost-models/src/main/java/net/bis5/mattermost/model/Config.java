@@ -35,6 +35,7 @@ import net.bis5.mattermost.model.config.LogSettings;
 import net.bis5.mattermost.model.config.MessageExportSettings;
 import net.bis5.mattermost.model.config.MetricsSettings;
 import net.bis5.mattermost.model.config.NativeAppSettings;
+import net.bis5.mattermost.model.config.NotificationLogSettings;
 import net.bis5.mattermost.model.config.PasswordSettings;
 import net.bis5.mattermost.model.config.PluginSettings;
 import net.bis5.mattermost.model.config.PrivacySettings;
@@ -109,6 +110,8 @@ public class Config {
   private ExtensionSettings extensionSettings;
   /* @since Mattermost Server 5.8 */
   private ImageProxySettings imageProxySettings;
+  /* @since Mattermost Server 5.12 */
+  private NotificationLogSettings notificationLogSettings;
 
   /**
    * Should not use this.
