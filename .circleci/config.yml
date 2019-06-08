@@ -65,6 +65,15 @@ jobs:
       - checkout
       - run: for i in 1 2 3 4 5 6 7 8 9 10; do curl -I "${MATTERMOST_URL:-http://localhost:8065}" || sleep 10 && continue; break; done
       - run: mvn verify --show-version
+      - run:
+          name: Prepare test results
+          command: |
+              mkdir -p ~/test-results/
+              find . -type f -regex ".*/target/failsafe-reports/.*xml" -o -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results
+
   test-mattermost-esr:
     <<: *test-mattermost-base
     environment:
@@ -106,3 +115,12 @@ jobs:
       - checkout
       - run: dockerize -wait tcp://127.0.0.1:8065 -timeout 120s
       - run: mvn clean verify sonar:sonar --show-version -s .circleci/settings-sonar.xml
+      - run:
+          name: Prepare test results
+          command: |
+              mkdir -p ~/test-results/
+              find . -type f -regex ".*/target/failsafe-reports/.*xml" -o -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results
+
