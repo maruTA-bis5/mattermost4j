@@ -47,7 +47,6 @@ import net.bis5.mattermost.client4.api.ComplianceApi;
 import net.bis5.mattermost.client4.api.ElasticsearchApi;
 import net.bis5.mattermost.client4.api.EmojiApi;
 import net.bis5.mattermost.client4.api.FilesApi;
-import net.bis5.mattermost.client4.api.SystemApi;
 import net.bis5.mattermost.client4.api.LdapApi;
 import net.bis5.mattermost.client4.api.LogsApi;
 import net.bis5.mattermost.client4.api.OAuthApi;
@@ -57,6 +56,7 @@ import net.bis5.mattermost.client4.api.PreferencesApi;
 import net.bis5.mattermost.client4.api.ReactionApi;
 import net.bis5.mattermost.client4.api.SamlApi;
 import net.bis5.mattermost.client4.api.StatusApi;
+import net.bis5.mattermost.client4.api.SystemApi;
 import net.bis5.mattermost.client4.api.TeamApi;
 import net.bis5.mattermost.client4.api.UserApi;
 import net.bis5.mattermost.client4.api.WebhookApi;
@@ -152,7 +152,6 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
-import net.bis5.mattermost.model.WebappPlugin;
 import net.bis5.mattermost.model.WebrtcInfoResponse;
 import net.bis5.mattermost.model.license.MfaSecret;
 import org.apache.commons.lang3.StringUtils;
@@ -174,8 +173,8 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
  */
 public class MattermostClient implements AutoCloseable, AuditsApi, AuthenticationApi, BrandApi,
     ChannelApi, ClusterApi, CommandsApi, ComplianceApi, ElasticsearchApi, EmojiApi, FilesApi,
-    SystemApi, LdapApi, LogsApi, OAuthApi, PluginApi, PostApi, PreferencesApi, ReactionApi,
-    SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
+    SystemApi, LdapApi, LogsApi, OAuthApi, PluginApi, PostApi, PreferencesApi, ReactionApi, SamlApi,
+    StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
 
   protected static final String API_URL_SUFFIX = "/api/v4";
   private final String url;
@@ -2053,8 +2052,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
-  public ApiResponse<WebappPlugin[]> getWebappPlugins() {
-    return doApiGet(getPluginsRoute() + "/webapp", null, WebappPlugin[].class);
+  public ApiResponse<PluginManifest[]> getWebappPlugins() {
+    return doApiGet(getPluginsRoute() + "/webapp", null, PluginManifest[].class);
   }
 
 }

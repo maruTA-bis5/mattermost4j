@@ -138,7 +138,6 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
-import net.bis5.mattermost.model.WebappPlugin;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -3573,11 +3572,12 @@ public class MattermostApiTest {
       String pluginId = plugin.getId();
       assertNoError(client.enablePlugin(pluginId));
 
-      ApiResponse<WebappPlugin[]> webappResponse = assertNoError(client.getWebappPlugins());
-      WebappPlugin[] webapps = webappResponse.readEntity();
+      ApiResponse<PluginManifest[]> webappResponse = assertNoError(client.getWebappPlugins());
+      PluginManifest[] webapps = webappResponse.readEntity();
 
-      assertEquals(1, webapps.length);
-      WebappPlugin drawWebapp = webapps[0];
+      PluginManifest drawWebapp = Arrays.stream(webapps) //
+          .filter(m -> m.getId().equals(pluginId)) //
+          .findFirst().get();
       assertEquals(pluginId, drawWebapp.getId());
 
       // cleanup
