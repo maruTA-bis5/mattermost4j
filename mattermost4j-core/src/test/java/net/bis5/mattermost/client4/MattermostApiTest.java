@@ -103,6 +103,7 @@ import net.bis5.mattermost.model.OutgoingWebhookList;
 import net.bis5.mattermost.model.PluginManifest;
 import net.bis5.mattermost.model.Plugins;
 import net.bis5.mattermost.model.Post;
+import net.bis5.mattermost.model.PostImage;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
 import net.bis5.mattermost.model.PostSearchResults;
@@ -1927,6 +1928,25 @@ public class MattermostApiTest {
       Post post = response.readEntity();
 
       assertThat(post.getId(), is(postId));
+    }
+
+    @Test
+    public void getPostHasEmbedImage() throws IOException, URISyntaxException {
+      String channelId = th.basicChannel().getId();
+      Post post = new Post();
+      post.setChannelId(channelId);
+      post.setMessage(
+          "logo file from: https://github.com/hmhealey/test-files/raw/master/logoVertical.png");
+
+      Post createdPost = assertNoError(client.createPost(post)).readEntity();
+      ApiResponse<Post> response = assertNoError(client.getPost(createdPost.getId()));
+      createdPost = response.readEntity();
+
+      PostImage image = createdPost.getMetadata().getImages().values().stream().findFirst().get();
+      assertNotEquals(0, image.getWidth());
+      assertNotEquals(0, image.getHeight());
+      assertEquals("png", image.getFormat());
+      assertEquals(0, image.getFrameCount()); // for gif: number of frames, other format: 0
     }
 
     @Test
