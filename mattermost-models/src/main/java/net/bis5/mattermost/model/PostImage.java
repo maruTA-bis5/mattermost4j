@@ -26,5 +26,9 @@ public class PostImage {
 
   private int width;
   private int height;
+  /* @since Mattermost Server 5.11 */
+  private String format;
+  /* @since Mattermost Server 5.11 */
+  private int frameCount;
 
 }
