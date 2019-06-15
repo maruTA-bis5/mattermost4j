@@ -3739,4 +3739,31 @@ public class MattermostApiTest {
     }
   }
 
+  @Nested
+  class LdapApiTest {
+    @Test
+    public void syncLdap() {
+      th.logout().loginSystemAdmin();
+
+      // Enterprise Edition required
+      // Note: Server >= 5.11 returns 200 OK
+      ApiResponse<Boolean> response = client.syncLdap();
+      if (isSupportVersion("5.12.0", response)) {
+        assertStatus(response, Status.NOT_IMPLEMENTED);
+      }
+    }
+
+    @Test
+    public void testLdap() {
+      th.logout().loginSystemAdmin();
+
+      // Enterprise Edition required
+      // Note: Server >= 5.11 returns 200 OK
+      ApiResponse<Boolean> response = client.testLdap();
+      if (isSupportVersion("5.12.0", response)) {
+        assertStatus(response, Status.NOT_IMPLEMENTED);
+      }
+    }
+  }
+
 }
