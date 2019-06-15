@@ -47,7 +47,6 @@ import net.bis5.mattermost.client4.api.ComplianceApi;
 import net.bis5.mattermost.client4.api.ElasticsearchApi;
 import net.bis5.mattermost.client4.api.EmojiApi;
 import net.bis5.mattermost.client4.api.FilesApi;
-import net.bis5.mattermost.client4.api.SystemApi;
 import net.bis5.mattermost.client4.api.LdapApi;
 import net.bis5.mattermost.client4.api.LogsApi;
 import net.bis5.mattermost.client4.api.OAuthApi;
@@ -57,6 +56,7 @@ import net.bis5.mattermost.client4.api.PreferencesApi;
 import net.bis5.mattermost.client4.api.ReactionApi;
 import net.bis5.mattermost.client4.api.SamlApi;
 import net.bis5.mattermost.client4.api.StatusApi;
+import net.bis5.mattermost.client4.api.SystemApi;
 import net.bis5.mattermost.client4.api.TeamApi;
 import net.bis5.mattermost.client4.api.UserApi;
 import net.bis5.mattermost.client4.api.WebhookApi;
@@ -174,8 +174,8 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
  */
 public class MattermostClient implements AutoCloseable, AuditsApi, AuthenticationApi, BrandApi,
     ChannelApi, ClusterApi, CommandsApi, ComplianceApi, ElasticsearchApi, EmojiApi, FilesApi,
-    SystemApi, LdapApi, LogsApi, OAuthApi, PluginApi, PostApi, PreferencesApi, ReactionApi,
-    SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
+    SystemApi, LdapApi, LogsApi, OAuthApi, PluginApi, PostApi, PreferencesApi, ReactionApi, SamlApi,
+    StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
 
   protected static final String API_URL_SUFFIX = "/api/v4";
   private final String url;
@@ -1669,27 +1669,41 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   // SAML section
 
   @Override
-  public ApiResponse<String> getSamlMetadata() {
-    return doApiGet(getSamlRoute() + "/metadata", null, String.class);
-  }
-
-  protected Object samlFileToMultipart(Path dataFile, String dataFileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Path> getSamlMetadata() throws IOException {
+    return doApiGetFile(getSamlRoute() + "/metadata", null);
   }
 
   @Override
-  public boolean uploadSamlIdpCertificate(Path dataFile, String fileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Boolean> uploadSamlIdpCertificate(Path dataFile, String fileName) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("certificate", dataFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getSamlRoute() + "/certificate/idp", multiPart).checkStatusOk();
   }
 
   @Override
-  public boolean uploadSamlPublicCertificate(Path dataFile, String fileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Boolean> uploadSamlPublicCertificate(Path dataFile, String fileName) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("certificate", dataFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getSamlRoute() + "/certificate/public", multiPart).checkStatusOk();
   }
 
   @Override
-  public boolean uploadSamlPrivateCertificate(Path dataFile, String fileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Boolean> uploadSamlPrivateCertificate(Path dataFile, String fileName) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("certificate", dataFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getSamlRoute() + "/certificate/private", multiPart).checkStatusOk();
   }
 
   @Override

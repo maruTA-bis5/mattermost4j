@@ -36,6 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.vdurmont.semver4j.Semver;
+import com.vdurmont.semver4j.Semver.SemverType;
+import com.vdurmont.semver4j.Semver.VersionDiff;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,6 +52,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +117,7 @@ import net.bis5.mattermost.model.Preferences;
 import net.bis5.mattermost.model.Reaction;
 import net.bis5.mattermost.model.ReactionList;
 import net.bis5.mattermost.model.Role;
+import net.bis5.mattermost.model.SamlCertificateStatus;
 import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SessionList;
 import net.bis5.mattermost.model.StatusList;
@@ -260,6 +264,13 @@ public class MattermostApiTest {
 
   private boolean isSupportVersion(String minimumRequirement, ApiResponse<?> response) {
     return !isNotSupportVersion(minimumRequirement, response);
+  }
+
+  private boolean isMajorMinorVersionMatches(String majorMinorVersion, ApiResponse<?> response) {
+    Semver serverVersion = new Semver(response.getRawResponse().getHeaderString("X-Version-Id"));
+    Semver majorMinorSemver = new Semver(majorMinorVersion, SemverType.LOOSE);
+    return !EnumSet.of(VersionDiff.MAJOR, VersionDiff.MINOR)
+        .contains(majorMinorSemver.diff(serverVersion));
   }
 
   private Path getResourcePath(String name) throws URISyntaxException {
@@ -3614,6 +3625,118 @@ public class MattermostApiTest {
       client.removePlugin(pluginId);
     }
 
+  }
+
+  @Nested
+  class SamlApiTest {
+    // Note: Team Edition does not support SAML
+
+    @Test
+    public void getSamlMetadata() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      ApiResponse<Path> response = client.getSamlMetadata();
+
+      assertStatus(response, Status.NOT_IMPLEMENTED);
+    }
+
+    @Test
+    public void uploadSamlIdpCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+
+      ApiResponse<Boolean> response = client.uploadSamlIdpCertificate(file, fileName);
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void uploadSamlPublicCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+
+      ApiResponse<Boolean> response = client.uploadSamlPublicCertificate(file, fileName);
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void uploadSamlPrivateCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".key");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+
+      ApiResponse<Boolean> response = client.uploadSamlPrivateCertificate(file, fileName);
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void deleteSamlIdpCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlIdpCertificate(file, fileName));
+
+      ApiResponse<Boolean> response = client.deleteSamlIdpCertificate();
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void deleteSamlPublicCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlPublicCertificate(file, fileName));
+
+      ApiResponse<Boolean> response = client.deleteSamlPublicCertificate();
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void deleteSamlPrivateCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".key");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlPrivateCertificate(file, fileName));
+
+      ApiResponse<Boolean> response = client.deleteSamlPrivateCertificate();
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void getSamlCertificateStatus() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".key");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlPrivateCertificate(file, fileName));
+
+      ApiResponse<SamlCertificateStatus> response = client.getSamlCertificateStatus();
+
+      // Note: 5.10/5.11 server returns true unless upload certificate
+
+      if (isMajorMinorVersionMatches("5.10", response)
+          || isMajorMinorVersionMatches("5.11", response)) {
+        return;
+      }
+
+      SamlCertificateStatus status = response.readEntity();
+      assertAll(() -> assertFalse(status.isIdpCertificateFile()),
+          () -> assertFalse(status.isPublicCertificateFile()),
+          () -> assertTrue(status.isPrivateKeyFile()));
+    }
   }
 
 }
