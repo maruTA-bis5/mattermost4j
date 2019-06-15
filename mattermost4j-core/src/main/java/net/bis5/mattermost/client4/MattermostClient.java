@@ -1668,27 +1668,41 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   // SAML section
 
   @Override
-  public ApiResponse<String> getSamlMetadata() {
-    return doApiGet(getSamlRoute() + "/metadata", null, String.class);
-  }
-
-  protected Object samlFileToMultipart(Path dataFile, String dataFileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Path> getSamlMetadata() throws IOException {
+    return doApiGetFile(getSamlRoute() + "/metadata", null);
   }
 
   @Override
-  public boolean uploadSamlIdpCertificate(Path dataFile, String fileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Boolean> uploadSamlIdpCertificate(Path dataFile, String fileName) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("certificate", dataFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getSamlRoute() + "/certificate/idp", multiPart).checkStatusOk();
   }
 
   @Override
-  public boolean uploadSamlPublicCertificate(Path dataFile, String fileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Boolean> uploadSamlPublicCertificate(Path dataFile, String fileName) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("certificate", dataFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getSamlRoute() + "/certificate/public", multiPart).checkStatusOk();
   }
 
   @Override
-  public boolean uploadSamlPrivateCertificate(Path dataFile, String fileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Boolean> uploadSamlPrivateCertificate(Path dataFile, String fileName) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("certificate", dataFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getSamlRoute() + "/certificate/private", multiPart).checkStatusOk();
   }
 
   @Override
