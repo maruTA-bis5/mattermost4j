@@ -103,6 +103,7 @@ import net.bis5.mattermost.model.OutgoingWebhookList;
 import net.bis5.mattermost.model.PluginManifest;
 import net.bis5.mattermost.model.Plugins;
 import net.bis5.mattermost.model.Post;
+import net.bis5.mattermost.model.PostImage;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
 import net.bis5.mattermost.model.PostSearchResults;
@@ -259,6 +260,10 @@ public class MattermostApiTest {
 
   private boolean isSupportVersion(String minimumRequirement, ApiResponse<?> response) {
     return !isNotSupportVersion(minimumRequirement, response);
+  }
+
+  private Path getResourcePath(String name) throws URISyntaxException {
+    return Paths.get(getClass().getResource(name).toURI());
   }
 
   // Channels
@@ -1155,7 +1160,7 @@ public class MattermostApiTest {
 
     @Test
     public void setUserProfileImage() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
 
       ApiResponse<Boolean> response =
           assertNoError(client.setProfileImage(th.basicUser().getId(), image));
@@ -1166,7 +1171,7 @@ public class MattermostApiTest {
 
     @Test
     public void deleteUserProfileImage() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path image = getResourcePath(EMOJI_CONSTRUCTION);
       ApiResponse<Boolean> uploadResult =
           assertNoError(client.setProfileImage(th.basicUser().getId(), image));
       if (isNotSupportVersion("5.6.0", uploadResult)) {
@@ -1768,7 +1773,7 @@ public class MattermostApiTest {
     @Test
     public void setTeamIcon() throws URISyntaxException {
       th.logout().loginTeamAdmin();
-      Path iconPath = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path iconPath = getResourcePath(EMOJI_CONSTRUCTION);
       String teamId = th.basicTeam().getId();
 
       ApiResponse<Boolean> response = assertNoError(client.setTeamIcon(teamId, iconPath));
@@ -1778,7 +1783,7 @@ public class MattermostApiTest {
     @Test
     public void getTeamIcon() throws URISyntaxException, IOException {
       th.logout().loginTeamAdmin();
-      Path iconPath = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path iconPath = getResourcePath(EMOJI_CONSTRUCTION);
       String teamId = th.basicTeam().getId();
       assertNoError(client.setTeamIcon(teamId, iconPath));
 
@@ -1789,7 +1794,7 @@ public class MattermostApiTest {
     @Test
     public void removeTeamIcon() throws URISyntaxException {
       th.logout().loginTeamAdmin();
-      Path iconPath = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path iconPath = getResourcePath(EMOJI_CONSTRUCTION);
       String teamId = th.basicTeam().getId();
       assertNoError(client.setTeamIcon(teamId, iconPath));
 
@@ -1926,6 +1931,31 @@ public class MattermostApiTest {
     }
 
     @Test
+    public void getPostHasEmbedImage() throws IOException, URISyntaxException {
+      String channelId = th.basicChannel().getId();
+      Post post = new Post();
+      post.setChannelId(channelId);
+      post.setMessage(
+          "logo file from: https://github.com/hmhealey/test-files/raw/master/logoVertical.png");
+
+      ApiResponse<Post> response = assertNoError(client.createPost(post));
+      if (isNotSupportVersion("5.8.0", response)) {
+        return;
+      }
+      Post createdPost = response.readEntity();
+      response = assertNoError(client.getPost(createdPost.getId()));
+      createdPost = response.readEntity();
+
+      PostImage image = createdPost.getMetadata().getImages().values().stream().findFirst().get();
+      assertNotEquals(0, image.getWidth());
+      assertNotEquals(0, image.getHeight());
+      if (isSupportVersion("5.11.0", response)) {
+        assertEquals("png", image.getFormat());
+        assertEquals(0, image.getFrameCount()); // for gif: number of frames, other format: 0
+      }
+    }
+
+    @Test
     public void deletePost() {
       String postId = th.createPost(th.basicChannel()).getId();
 
@@ -2001,8 +2031,8 @@ public class MattermostApiTest {
 
     @Test
     public void getFileInfoForPost() throws IOException, URISyntaxException {
-      Path file1 = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
-      Path file2 = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path file1 = getResourcePath(EMOJI_CONSTRUCTION);
+      Path file2 = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, file1, file2)).readEntity();
@@ -2240,7 +2270,7 @@ public class MattermostApiTest {
   class EmojiApiTest {
     @Test
     public void createCustomEmoji() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       String emojiName = "custom" + th.newId();
       emoji.setName(emojiName);
@@ -2259,7 +2289,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmojiList() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
       Emoji emoji1 = new Emoji();
       emoji1.setName("custom" + th.newId());
       emoji1.setCreatorId(th.basicUser().getId());
@@ -2283,7 +2313,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmoji() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2303,7 +2333,7 @@ public class MattermostApiTest {
 
     @Test
     public void deleteCustomEmoji() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2329,7 +2359,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmojiImage() throws URISyntaxException, IOException {
-      Path originalImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path originalImage = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2350,7 +2380,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmojiByName() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2370,7 +2400,7 @@ public class MattermostApiTest {
 
     @Test
     public void searchEmoji() throws URISyntaxException {
-      Path emojiGlobe = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path emojiGlobe = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("customGlobe" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2396,7 +2426,7 @@ public class MattermostApiTest {
 
     @Test
     public void autocompleteEmoji() throws URISyntaxException {
-      Path emojiGlobe = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path emojiGlobe = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("customAutocompleteGlobe" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -3216,7 +3246,7 @@ public class MattermostApiTest {
     @Test
     public void getBrandImageForNotEmpty() throws URISyntaxException, IOException {
       th.logout().loginSystemAdmin();
-      Path brandImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path brandImage = getResourcePath(EMOJI_GLOBE);
       ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
       if (isNotSupportVersion("5.0.0", uploadResponse)) {
         return;
@@ -3231,7 +3261,7 @@ public class MattermostApiTest {
     @Test
     public void uploadBrandImage() throws URISyntaxException {
       th.logout().loginSystemAdmin();
-      Path brandImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path brandImage = getResourcePath(EMOJI_GLOBE);
 
       ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
       if (isNotSupportVersion("5.0.0", uploadResponse)) {
@@ -3245,7 +3275,7 @@ public class MattermostApiTest {
     @Test
     public void deleteBrandImage() throws URISyntaxException {
       th.logout().loginSystemAdmin();
-      Path brandImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path brandImage = getResourcePath(EMOJI_GLOBE);
       ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
       if (isNotSupportVersion("5.6.0", uploadResponse)) {
         return;
@@ -3269,7 +3299,7 @@ public class MattermostApiTest {
 
     @Test
     public void uplaodFile() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path filePath = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
 
       FileUploadResult uploadResult =
@@ -3281,8 +3311,8 @@ public class MattermostApiTest {
 
     @Test
     public void uploadMultipleFile() throws URISyntaxException, IOException {
-      Path file1 = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
-      Path file2 = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path file1 = getResourcePath(EMOJI_GLOBE);
+      Path file2 = getResourcePath(EMOJI_CONSTRUCTION);
       String channelId = th.basicChannel().getId();
 
       FileUploadResult uploadResult =
@@ -3301,7 +3331,7 @@ public class MattermostApiTest {
 
     @Test
     public void getFile() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource("/LICENSE.txt").toURI());
+      Path filePath = getResourcePath("/LICENSE.txt");
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -3315,7 +3345,7 @@ public class MattermostApiTest {
 
     @Test
     public void getFileThumbnail() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path filePath = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -3329,7 +3359,7 @@ public class MattermostApiTest {
 
     @Test
     public void getFilePreview() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path filePath = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -3343,7 +3373,7 @@ public class MattermostApiTest {
 
     @Test
     public void getPublicFileLink() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path filePath = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -3368,7 +3398,7 @@ public class MattermostApiTest {
 
     @Test
     public void getFileMetadata() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path filePath = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, filePath)).readEntity();
