@@ -3746,7 +3746,11 @@ public class MattermostApiTest {
       th.logout().loginSystemAdmin();
 
       // Enterprise Edition required
-      assertStatus(client.syncLdap(), Status.NOT_IMPLEMENTED);
+      // Note: Server >= 5.11 returns 200 OK
+      ApiResponse<Boolean> response = client.syncLdap();
+      if (isSupportVersion("5.12.0", response)) {
+        assertStatus(response, Status.NOT_IMPLEMENTED);
+      }
     }
 
     @Test
@@ -3754,7 +3758,11 @@ public class MattermostApiTest {
       th.logout().loginSystemAdmin();
 
       // Enterprise Edition required
-      assertStatus(client.testLdap(), Status.NOT_IMPLEMENTED);
+      // Note: Server >= 5.11 returns 200 OK
+      ApiResponse<Boolean> response = client.testLdap();
+      if (isSupportVersion("5.12.0", response)) {
+        assertStatus(response, Status.NOT_IMPLEMENTED);
+      }
     }
   }
 
