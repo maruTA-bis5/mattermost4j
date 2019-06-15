@@ -1938,15 +1938,21 @@ public class MattermostApiTest {
       post.setMessage(
           "logo file from: https://github.com/hmhealey/test-files/raw/master/logoVertical.png");
 
-      Post createdPost = assertNoError(client.createPost(post)).readEntity();
-      ApiResponse<Post> response = assertNoError(client.getPost(createdPost.getId()));
+      ApiResponse<Post> response = assertNoError(client.createPost(post));
+      if (isNotSupportVersion("5.8.0", response)) {
+        return;
+      }
+      Post createdPost = response.readEntity();
+      response = assertNoError(client.getPost(createdPost.getId()));
       createdPost = response.readEntity();
 
       PostImage image = createdPost.getMetadata().getImages().values().stream().findFirst().get();
       assertNotEquals(0, image.getWidth());
       assertNotEquals(0, image.getHeight());
-      assertEquals("png", image.getFormat());
-      assertEquals(0, image.getFrameCount()); // for gif: number of frames, other format: 0
+      if (isSupportVersion("5.11.0", response)) {
+        assertEquals("png", image.getFormat());
+        assertEquals(0, image.getFrameCount()); // for gif: number of frames, other format: 0
+      }
     }
 
     @Test
