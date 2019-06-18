@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.vdurmont.semver4j.Semver;
 import com.vdurmont.semver4j.Semver.SemverType;
 import com.vdurmont.semver4j.Semver.VersionDiff;
+import fi.iki.elonen.NanoHTTPD;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -144,7 +145,9 @@ import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
 import net.bis5.mattermost.model.WebappPlugin;
+import net.bis5.opengraph.models.OpenGraph;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -188,6 +191,19 @@ public class MattermostApiTest {
   private static String getInbucketPort() {
     return getEnv("INBUCKET_PORT", "2500");
   }
+
+  private String dummyHttpServerHost() {
+    return getEnv("DUMMY_HTTP_SERVER_HOST", "localhost");
+  }
+
+  private int dummyHttpServerPort() {
+    return Integer.valueOf(getEnv("DUMMY_HTTP_SERVER_PORT", "8075"));
+  }
+
+  private boolean useLocalDummyServer() {
+    return Boolean.valueOf(getEnv("USE_LOCAL_DUMMY_SERVER", "true"));
+  }
+
 
   @BeforeAll
   public static void initHelper() {
@@ -3765,5 +3781,59 @@ public class MattermostApiTest {
       }
     }
   }
+
+  @Nested
+  class OpenGraphApiTest {
+
+    NanoHTTPD server;
+
+    @BeforeEach
+    public void setupServer() throws IOException {
+      if (!useLocalDummyServer()) {
+        return;
+      }
+      server = new NanoHTTPD("0.0.0.0", dummyHttpServerPort()) {
+        @Override
+        public Response serve(IHTTPSession session) {
+          List<String> contents =
+              Arrays.asList("<html><head>", "<meta property=\"og:type\" content=\"article\" />",
+                  "<meta property=\"og:title\" content=\"The Great WebSite\" />",
+                  "<meta property=\"og:url\" content=\"http://localhost:8888/\" />",
+                  "</head><body>Hello World!</body></html>");
+          return newFixedLengthResponse(
+              StringUtils.join(contents, StringUtils.CR + StringUtils.LF));
+        }
+      };
+      server.start();
+    }
+
+    @AfterEach
+    public void tearDownServer() {
+      if (!useLocalDummyServer()) {
+        return;
+      }
+      server.stop();
+    }
+
+    @Test
+    public void getMetadata() {
+      th.logout().loginSystemAdmin();
+      Config config = client.getConfig().readEntity();
+      config.getServiceSettings().setAllowedUntrustedInternalConnections(
+          config.getServiceSettings().getAllowedUntrustedInternalConnections() + " "
+              + dummyHttpServerHost());
+      assertNoError(client.updateConfig(config));
+      th.logout().loginBasic();
+
+      int port = dummyHttpServerPort();
+      String url = "http://" + dummyHttpServerHost() + (port != 0 ? ":" + port : "");
+
+      ApiResponse<OpenGraph> response = client.getOpenGraphMetadata(url);
+
+      OpenGraph og = response.readEntity();
+      assertNotNull(og);
+    }
+  }
+
 
 }
