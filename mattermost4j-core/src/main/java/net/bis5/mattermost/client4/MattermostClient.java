@@ -25,6 +25,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -50,6 +51,7 @@ import net.bis5.mattermost.client4.api.FilesApi;
 import net.bis5.mattermost.client4.api.LdapApi;
 import net.bis5.mattermost.client4.api.LogsApi;
 import net.bis5.mattermost.client4.api.OAuthApi;
+import net.bis5.mattermost.client4.api.OpenGraphApi;
 import net.bis5.mattermost.client4.api.PluginApi;
 import net.bis5.mattermost.client4.api.PostApi;
 import net.bis5.mattermost.client4.api.PreferencesApi;
@@ -155,6 +157,7 @@ import net.bis5.mattermost.model.UserSearch;
 import net.bis5.mattermost.model.WebappPlugin;
 import net.bis5.mattermost.model.WebrtcInfoResponse;
 import net.bis5.mattermost.model.license.MfaSecret;
+import net.bis5.opengraph.models.OpenGraph;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -174,8 +177,8 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
  */
 public class MattermostClient implements AutoCloseable, AuditsApi, AuthenticationApi, BrandApi,
     ChannelApi, ClusterApi, CommandsApi, ComplianceApi, ElasticsearchApi, EmojiApi, FilesApi,
-    SystemApi, LdapApi, LogsApi, OAuthApi, PluginApi, PostApi, PreferencesApi, ReactionApi, SamlApi,
-    StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
+    SystemApi, LdapApi, LogsApi, OAuthApi, OpenGraphApi, PluginApi, PostApi, PreferencesApi,
+    ReactionApi, SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
 
   protected static final String API_URL_SUFFIX = "/api/v4";
   private final String url;
@@ -516,6 +519,10 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 
   public String getPluginRoute(String pluginId) {
     return String.format("/plugins/%s", StringUtils.stripToEmpty(pluginId));
+  }
+
+  public String getOpenGraphRoute() {
+    return "/opengraph";
   }
 
   protected <T> ApiResponse<T> doApiGet(String url, String etag, Class<T> responseType) {
@@ -2069,6 +2076,13 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   @Override
   public ApiResponse<WebappPlugin[]> getWebappPlugins() {
     return doApiGet(getPluginsRoute() + "/webapp", null, WebappPlugin[].class);
+  }
+
+  // OpenGraph section
+
+  @Override
+  public ApiResponse<OpenGraph> getOpenGraphMetadata(String url) {
+    return doApiPost(getOpenGraphRoute(), Collections.singletonMap("url", url), OpenGraph.class);
   }
 
 }
