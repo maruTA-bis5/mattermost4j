@@ -1,15 +1,28 @@
 workflows:
   version: 2
-  lint:
+  build:
     jobs:
       - lint
-      - sonarqube
-  test-supported-versions:
-    jobs:
-      - test-mattermost-esr
-      - test-mattermost-latest
-      - test-mattermost-previous
-      - test-mattermost-previous2
+      - test-mattermost-esr:
+          requires:
+            - lint
+      - test-mattermost-latest:
+          requires:
+            - lint
+      - test-mattermost-esr-old:
+          requires:
+            - lint
+      - test-mattermost-previous:
+          requires:
+            - lint
+      - test-mattermost-previous2:
+          requires:
+            - lint
+      - sonarqube:
+          requires:
+            - lint
+            - test-mattermost-esr
+            - test-mattermost-latest
  
 version: 2
 jobs:
@@ -52,26 +65,39 @@ jobs:
       - checkout
       - run: for i in 1 2 3 4 5 6 7 8 9 10; do curl -I "${MATTERMOST_URL:-http://localhost:8065}" || sleep 10 && continue; break; done
       - run: mvn verify --show-version
+      - run:
+          name: Prepare test results
+          command: |
+              mkdir -p ~/test-results/
+              find . -type f -regex ".*/target/failsafe-reports/.*xml" -o -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results
+
   test-mattermost-esr:
+    <<: *test-mattermost-base
+    environment:
+      MATTERMOST_VERSION: 5.9.1
+  test-mattermost-esr-old:
     <<: *test-mattermost-base
     environment:
       MATTERMOST_VERSION: 4.10.9
   test-mattermost-latest:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.11.0
+      MATTERMOST_VERSION: 5.12.0
   test-mattermost-previous:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.10.1
+      MATTERMOST_VERSION: 5.11.0
   test-mattermost-previous2:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.9.1
+      MATTERMOST_VERSION: 5.10.1
   sonarqube: 
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.11.0
+      MATTERMOST_VERSION: 5.12.0
     steps:
       - run:
           name: setup-mattermost-server
@@ -89,3 +115,12 @@ jobs:
       - checkout
       - run: dockerize -wait tcp://127.0.0.1:8065 -timeout 120s
       - run: mvn clean verify sonar:sonar --show-version -s .circleci/settings-sonar.xml
+      - run:
+          name: Prepare test results
+          command: |
+              mkdir -p ~/test-results/
+              find . -type f -regex ".*/target/failsafe-reports/.*xml" -o -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results
+

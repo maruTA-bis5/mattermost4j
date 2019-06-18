@@ -154,7 +154,6 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
-import net.bis5.mattermost.model.WebappPlugin;
 import net.bis5.mattermost.model.WebrtcInfoResponse;
 import net.bis5.mattermost.model.license.MfaSecret;
 import net.bis5.opengraph.models.OpenGraph;
@@ -2074,8 +2073,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
-  public ApiResponse<WebappPlugin[]> getWebappPlugins() {
-    return doApiGet(getPluginsRoute() + "/webapp", null, WebappPlugin[].class);
+  public ApiResponse<PluginManifest[]> getWebappPlugins() {
+    return doApiGet(getPluginsRoute() + "/webapp", null, PluginManifest[].class);
   }
 
   // OpenGraph section

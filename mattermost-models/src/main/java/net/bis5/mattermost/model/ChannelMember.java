@@ -48,4 +48,7 @@ public class ChannelMember {
   private boolean schemeAdmin;
   /* @since Mattermost Server XXX what ver? */
   private String explicitRoles;
+  /* @since Mattermost Server 5.12 */
+  private boolean schemeGuest;
+
 }

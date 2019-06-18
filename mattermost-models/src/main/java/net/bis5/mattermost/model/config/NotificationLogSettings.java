@@ -12,18 +12,25 @@
  * the License.
  */
 
-package net.bis5.mattermost.model;
+package net.bis5.mattermost.model.config;
 
 import lombok.Data;
 
 /**
- * Webapp plugin info.
+ * Notification Log Settings.
+ * 
+ * @author Takayuki Maruyama
+ * @since Mattermost Server 5.12
  */
 @Data
-public class WebappPlugin {
+public class NotificationLogSettings {
 
-  private String id;
-  private String version;
-  private PluginWebapp webapp;
+  private boolean enableConsole = true;
+  private String consoleLevel = "DEBUG";
+  private boolean consoleJson = true;
+  private boolean enableFile = true;
+  private String fileLevel = "INFO";
+  private boolean fileJson = true;
+  private String fileLocation;
 
 }
