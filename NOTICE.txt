@@ -1,14 +1,17 @@
 Mattermost4j
 Copyright 2016-present, Maruyama Takayuki
 
-This product includes jackson-databind: https://github.com/FasterXML/jackson-databind
+This product depends jackson-databind: https://github.com/FasterXML/jackson-databind
 License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-This product includes Apache Commons Lang
+This product depends Apache Commons Lang
 License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-Jersey: https://jersey.java.net/
+This product depends Jersey: https://jersey.java.net/
 License: Common Development and Distribution License (CDDL) v1.0 (https://glassfish.dev.java.net/public/CDDLv1.0.html)
+
+This product depends Opengraph4J: https://github.com/maruTA-bis5/opengraph4j
+License: MIT (https://opensource.org/licenses/mit-license.php)
 
 This product includes Noto Emoji image for testing: https://github.com/googlei18n/noto-emoji
 License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
