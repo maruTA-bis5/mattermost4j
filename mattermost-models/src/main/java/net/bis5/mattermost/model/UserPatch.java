@@ -14,7 +14,6 @@
 
 package net.bis5.mattermost.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 import lombok.Data;
 
@@ -26,23 +25,15 @@ import lombok.Data;
 @Data
 public class UserPatch {
 
-  @JsonProperty("username")
   private String username;
-  @JsonProperty("nickname")
   private String nickname;
-  @JsonProperty("first_name")
   private String firstName;
-  @JsonProperty("last_name")
   private String lastName;
-  @JsonProperty("position")
   private String position;
-  @JsonProperty("email")
   private String email;
-  @JsonProperty("props")
   private Map<String, String> props;
-  @JsonProperty("notify_props")
   private Map<String, String> notifyProps;
-  @JsonProperty("locale")
   private String locale;
-
+  private String password;
+  private Map<String, String> timezone;
 }

@@ -1150,6 +1150,26 @@ public class MattermostApiTest {
     }
 
     @Test
+    public void patchEmailForCurrentUserWithPassword() {
+      th.logout().loginSystemAdmin();
+      UserPatch patch = new UserPatch();
+      patch.setEmail("newemail" + th.systemAdminUser().getId() + "@inbucket.local");
+      patch.setPassword(th.systemAdminUser().getPassword());
+      ApiResponse<User> response = assertNoError(client.patchUser("me", patch));
+      assertEquals(patch.getEmail(), response.readEntity().getEmail());
+    }
+
+    @Test
+    public void patchEmailForOtherUserWithoutPassword() {
+      th.logout().loginSystemAdmin();
+      UserPatch patch = new UserPatch();
+      patch.setEmail("newemail" + th.basicUser().getId() + "@inbucket.local");
+
+      ApiResponse<User> response = assertNoError(client.patchUser(th.basicUser().getId(), patch));
+      assertEquals(patch.getEmail(), response.readEntity().getEmail());
+    }
+
+    @Test
     public void updateUserRoles() {
       th.loginSystemAdmin();
 
