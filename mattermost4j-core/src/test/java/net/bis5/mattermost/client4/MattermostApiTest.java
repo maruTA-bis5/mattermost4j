@@ -1155,8 +1155,13 @@ public class MattermostApiTest {
       UserPatch patch = new UserPatch();
       patch.setEmail("newemail" + th.systemAdminUser().getId() + "@inbucket.local");
       patch.setPassword(th.systemAdminUser().getPassword());
-      ApiResponse<User> response = assertNoError(client.patchUser("me", patch));
-      assertEquals(patch.getEmail(), response.readEntity().getEmail());
+      try {
+        ApiResponse<User> response = assertNoError(client.patchUser("me", patch));
+        assertEquals(patch.getEmail(), response.readEntity().getEmail());
+      } finally {
+        patch.setEmail(th.systemAdminUser().getEmail());
+        client.patchUser("me", patch);
+      }
     }
 
     @Test
@@ -1165,8 +1170,13 @@ public class MattermostApiTest {
       UserPatch patch = new UserPatch();
       patch.setEmail("newemail" + th.basicUser().getId() + "@inbucket.local");
 
-      ApiResponse<User> response = assertNoError(client.patchUser(th.basicUser().getId(), patch));
-      assertEquals(patch.getEmail(), response.readEntity().getEmail());
+      try {
+        ApiResponse<User> response = assertNoError(client.patchUser(th.basicUser().getId(), patch));
+        assertEquals(patch.getEmail(), response.readEntity().getEmail());
+      } finally {
+        patch.setEmail(th.systemAdminUser().getEmail());
+        client.patchUser(th.basicUser().getId(), patch);
+      }
     }
 
     @Test
