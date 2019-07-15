@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.bis5.mattermost4j</groupId>
 		<artifactId>mattermost4j-parent</artifactId>
-		<version>0.15.0-SNAPSHOT</version>
+		<version>0.15.0</version>
 	</parent>
 	<artifactId>mattermost-models</artifactId>
 	<name>Mattermost Data Models</name>
