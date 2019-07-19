@@ -77,7 +77,7 @@ jobs:
   test-mattermost-esr:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.9.2
+      MATTERMOST_VERSION: 5.9.3
   test-mattermost-esr-old:
     <<: *test-mattermost-base
     environment:
@@ -85,11 +85,11 @@ jobs:
   test-mattermost-latest:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.13.0-rc1
+      MATTERMOST_VERSION: 5.13.1
   test-mattermost-previous:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.12.2
+      MATTERMOST_VERSION: 5.12.5
   test-mattermost-previous2:
     <<: *test-mattermost-base
     environment:
@@ -97,7 +97,7 @@ jobs:
   sonarqube: 
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.13.0-rc1
+      MATTERMOST_VERSION: 5.13.1
     steps:
       - run:
           name: setup-mattermost-server
