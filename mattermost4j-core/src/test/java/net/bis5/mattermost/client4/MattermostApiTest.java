@@ -1751,10 +1751,18 @@ public class MattermostApiTest {
     }
 
     @Test
-    @Disabled // API for 4.0+
     public void addUserToTeamFromInvite() {
+      th.logout().loginSystemAdmin();
+      User noTeamUser = th.createUser();
+      String inviteId = th.basicTeam().getInviteId();
 
-      assertStatus(client.addTeamMember("hash", "dataToHash", "inviteId"), Status.BAD_REQUEST);
+      th.logout().loginAs(noTeamUser);
+      ApiResponse<TeamMember> response =
+          assertNoError(client.addTeamMemberFromInvite(null, inviteId));
+
+      TeamMember teamMember = response.readEntity();
+      assertEquals(th.basicTeam().getId(), teamMember.getTeamId());
+      assertEquals(noTeamUser.getId(), teamMember.getUserId());
     }
 
     @Test

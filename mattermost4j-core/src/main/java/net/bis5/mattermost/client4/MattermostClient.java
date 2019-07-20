@@ -1099,6 +1099,7 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
+  @Deprecated
   public ApiResponse<TeamMember> addTeamMember(String hash, String dataToHash, String inviteId) {
     QueryBuilder query = new QueryBuilder();
     if (StringUtils.isNotEmpty(inviteId)) {
@@ -1108,6 +1109,19 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
       query.set("hash", hash).set("data", dataToHash);
     }
 
+    return doApiPost(getTeamsRoute() + "/members/invite" + query.toString(), null,
+        TeamMember.class);
+  }
+
+  @Override
+  public ApiResponse<TeamMember> addTeamMemberFromInvite(String token, String inviteId) {
+    QueryBuilder query = new QueryBuilder();
+    if (StringUtils.isNotEmpty(token)) {
+      query.set("token", token);
+    }
+    if (StringUtils.isNotEmpty(inviteId)) {
+      query.set("invite_id", inviteId);
+    }
     return doApiPost(getTeamsRoute() + "/members/invite" + query.toString(), null,
         TeamMember.class);
   }
