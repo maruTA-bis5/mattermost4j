@@ -234,8 +234,17 @@ public interface TeamApi {
    * adds user to a team and return a team member.
    * 
    * @since Mattermost 4.0
+   * @deprecated API Changed on Mattermost 4.10
    */
+  @Deprecated
   ApiResponse<TeamMember> addTeamMember(String hash, String dataToHash, String inviteId);
+
+  /**
+   * add user to team from invite.
+   * 
+   * @since Mattermost 4.10
+   */
+  ApiResponse<TeamMember> addTeamMemberFromInvite(String token, String inviteId);
 
   /**
    * adds a number of users to a team and returns the team members.
