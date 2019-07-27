@@ -9,9 +9,6 @@ workflows:
       - test-mattermost-latest:
           requires:
             - lint
-      - test-mattermost-esr-old:
-          requires:
-            - lint
       - test-mattermost-previous:
           requires:
             - lint
@@ -78,10 +75,6 @@ jobs:
     <<: *test-mattermost-base
     environment:
       MATTERMOST_VERSION: 5.9.3
-  test-mattermost-esr-old:
-    <<: *test-mattermost-base
-    environment:
-      MATTERMOST_VERSION: 4.10.10
   test-mattermost-latest:
     <<: *test-mattermost-base
     environment:
