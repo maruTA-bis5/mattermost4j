@@ -9,7 +9,7 @@ workflows:
       - test-mattermost-latest:
           requires:
             - lint
-      - test-mattermost-latest-java11
+      - test-mattermost-latest-java11:
           requires:
             - lint
       - test-mattermost-previous:
