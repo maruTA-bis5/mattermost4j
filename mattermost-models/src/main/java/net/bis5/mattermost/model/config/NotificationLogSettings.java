@@ -12,23 +12,25 @@
  * the License.
  */
 
-package net.bis5.mattermost.model;
+package net.bis5.mattermost.model.config;
 
 import lombok.Data;
 
 /**
- * Post image metadata.
+ * Notification Log Settings.
  * 
- * @since Mattermost Server 5.8
+ * @author Takayuki Maruyama
+ * @since Mattermost Server 5.12
  */
 @Data
-public class PostImage {
+public class NotificationLogSettings {
 
-  private int width;
-  private int height;
-  /* @since Mattermost Server 5.11 */
-  private String format;
-  /* @since Mattermost Server 5.11 */
-  private int frameCount;
+  private boolean enableConsole = true;
+  private String consoleLevel = "DEBUG";
+  private boolean consoleJson = true;
+  private boolean enableFile = true;
+  private String fileLevel = "INFO";
+  private boolean fileJson = true;
+  private String fileLocation;
 
 }

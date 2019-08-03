@@ -36,6 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.vdurmont.semver4j.Semver;
+import com.vdurmont.semver4j.Semver.SemverType;
+import com.vdurmont.semver4j.Semver.VersionDiff;
+import fi.iki.elonen.NanoHTTPD;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,6 +53,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +77,9 @@ import net.bis5.mattermost.model.AnalyticsRows;
 import net.bis5.mattermost.model.Audit;
 import net.bis5.mattermost.model.Audits;
 import net.bis5.mattermost.model.AuthService;
+import net.bis5.mattermost.model.Bot;
+import net.bis5.mattermost.model.BotPatch;
+import net.bis5.mattermost.model.Bots;
 import net.bis5.mattermost.model.Channel;
 import net.bis5.mattermost.model.ChannelList;
 import net.bis5.mattermost.model.ChannelMember;
@@ -103,6 +110,7 @@ import net.bis5.mattermost.model.OutgoingWebhookList;
 import net.bis5.mattermost.model.PluginManifest;
 import net.bis5.mattermost.model.Plugins;
 import net.bis5.mattermost.model.Post;
+import net.bis5.mattermost.model.PostImage;
 import net.bis5.mattermost.model.PostList;
 import net.bis5.mattermost.model.PostPatch;
 import net.bis5.mattermost.model.PostSearchResults;
@@ -113,6 +121,7 @@ import net.bis5.mattermost.model.Preferences;
 import net.bis5.mattermost.model.Reaction;
 import net.bis5.mattermost.model.ReactionList;
 import net.bis5.mattermost.model.Role;
+import net.bis5.mattermost.model.SamlCertificateStatus;
 import net.bis5.mattermost.model.Session;
 import net.bis5.mattermost.model.SessionList;
 import net.bis5.mattermost.model.StatusList;
@@ -138,8 +147,9 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
-import net.bis5.mattermost.model.WebappPlugin;
+import net.bis5.opengraph.models.OpenGraph;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -183,6 +193,19 @@ public class MattermostApiTest {
   private static String getInbucketPort() {
     return getEnv("INBUCKET_PORT", "2500");
   }
+
+  private String dummyHttpServerHost() {
+    return getEnv("DUMMY_HTTP_SERVER_HOST", "localhost");
+  }
+
+  private int dummyHttpServerPort() {
+    return Integer.valueOf(getEnv("DUMMY_HTTP_SERVER_PORT", "8075"));
+  }
+
+  private boolean useLocalDummyServer() {
+    return Boolean.valueOf(getEnv("USE_LOCAL_DUMMY_SERVER", "true"));
+  }
+
 
   @BeforeAll
   public static void initHelper() {
@@ -259,6 +282,17 @@ public class MattermostApiTest {
 
   private boolean isSupportVersion(String minimumRequirement, ApiResponse<?> response) {
     return !isNotSupportVersion(minimumRequirement, response);
+  }
+
+  private boolean isMajorMinorVersionMatches(String majorMinorVersion, ApiResponse<?> response) {
+    Semver serverVersion = new Semver(response.getRawResponse().getHeaderString("X-Version-Id"));
+    Semver majorMinorSemver = new Semver(majorMinorVersion, SemverType.LOOSE);
+    return !EnumSet.of(VersionDiff.MAJOR, VersionDiff.MINOR)
+        .contains(majorMinorSemver.diff(serverVersion));
+  }
+
+  private Path getResourcePath(String name) throws URISyntaxException {
+    return Paths.get(getClass().getResource(name).toURI());
   }
 
   // Channels
@@ -1119,6 +1153,36 @@ public class MattermostApiTest {
     }
 
     @Test
+    public void patchEmailForCurrentUserWithPassword() {
+      th.logout().loginSystemAdmin();
+      UserPatch patch = new UserPatch();
+      patch.setEmail("newemail" + th.systemAdminUser().getId() + "@inbucket.local");
+      patch.setPassword(th.systemAdminUser().getPassword());
+      try {
+        ApiResponse<User> response = assertNoError(client.patchUser("me", patch));
+        assertEquals(patch.getEmail(), response.readEntity().getEmail());
+      } finally {
+        patch.setEmail(th.systemAdminUser().getEmail());
+        client.patchUser("me", patch);
+      }
+    }
+
+    @Test
+    public void patchEmailForOtherUserWithoutPassword() {
+      th.logout().loginSystemAdmin();
+      UserPatch patch = new UserPatch();
+      patch.setEmail("newemail" + th.basicUser().getId() + "@inbucket.local");
+
+      try {
+        ApiResponse<User> response = assertNoError(client.patchUser(th.basicUser().getId(), patch));
+        assertEquals(patch.getEmail(), response.readEntity().getEmail());
+      } finally {
+        patch.setEmail(th.systemAdminUser().getEmail());
+        client.patchUser(th.basicUser().getId(), patch);
+      }
+    }
+
+    @Test
     public void updateUserRoles() {
       th.loginSystemAdmin();
 
@@ -1155,7 +1219,7 @@ public class MattermostApiTest {
 
     @Test
     public void setUserProfileImage() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
 
       ApiResponse<Boolean> response =
           assertNoError(client.setProfileImage(th.basicUser().getId(), image));
@@ -1166,7 +1230,7 @@ public class MattermostApiTest {
 
     @Test
     public void deleteUserProfileImage() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path image = getResourcePath(EMOJI_CONSTRUCTION);
       ApiResponse<Boolean> uploadResult =
           assertNoError(client.setProfileImage(th.basicUser().getId(), image));
       if (isNotSupportVersion("5.6.0", uploadResult)) {
@@ -1687,10 +1751,18 @@ public class MattermostApiTest {
     }
 
     @Test
-    @Disabled // API for 4.0+
     public void addUserToTeamFromInvite() {
+      th.logout().loginSystemAdmin();
+      User noTeamUser = th.createUser();
+      String inviteId = th.basicTeam().getInviteId();
 
-      assertStatus(client.addTeamMember("hash", "dataToHash", "inviteId"), Status.BAD_REQUEST);
+      th.logout().loginAs(noTeamUser);
+      ApiResponse<TeamMember> response =
+          assertNoError(client.addTeamMemberFromInvite(null, inviteId));
+
+      TeamMember teamMember = response.readEntity();
+      assertEquals(th.basicTeam().getId(), teamMember.getTeamId());
+      assertEquals(noTeamUser.getId(), teamMember.getUserId());
     }
 
     @Test
@@ -1768,7 +1840,7 @@ public class MattermostApiTest {
     @Test
     public void setTeamIcon() throws URISyntaxException {
       th.logout().loginTeamAdmin();
-      Path iconPath = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path iconPath = getResourcePath(EMOJI_CONSTRUCTION);
       String teamId = th.basicTeam().getId();
 
       ApiResponse<Boolean> response = assertNoError(client.setTeamIcon(teamId, iconPath));
@@ -1778,7 +1850,7 @@ public class MattermostApiTest {
     @Test
     public void getTeamIcon() throws URISyntaxException, IOException {
       th.logout().loginTeamAdmin();
-      Path iconPath = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path iconPath = getResourcePath(EMOJI_CONSTRUCTION);
       String teamId = th.basicTeam().getId();
       assertNoError(client.setTeamIcon(teamId, iconPath));
 
@@ -1789,7 +1861,7 @@ public class MattermostApiTest {
     @Test
     public void removeTeamIcon() throws URISyntaxException {
       th.logout().loginTeamAdmin();
-      Path iconPath = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path iconPath = getResourcePath(EMOJI_CONSTRUCTION);
       String teamId = th.basicTeam().getId();
       assertNoError(client.setTeamIcon(teamId, iconPath));
 
@@ -1926,6 +1998,31 @@ public class MattermostApiTest {
     }
 
     @Test
+    public void getPostHasEmbedImage() throws IOException, URISyntaxException {
+      String channelId = th.basicChannel().getId();
+      Post post = new Post();
+      post.setChannelId(channelId);
+      post.setMessage(
+          "logo file from: https://github.com/hmhealey/test-files/raw/master/logoVertical.png");
+
+      ApiResponse<Post> response = assertNoError(client.createPost(post));
+      if (isNotSupportVersion("5.8.0", response)) {
+        return;
+      }
+      Post createdPost = response.readEntity();
+      response = assertNoError(client.getPost(createdPost.getId()));
+      createdPost = response.readEntity();
+
+      PostImage image = createdPost.getMetadata().getImages().values().stream().findFirst().get();
+      assertNotEquals(0, image.getWidth());
+      assertNotEquals(0, image.getHeight());
+      if (isSupportVersion("5.11.0", response)) {
+        assertEquals("png", image.getFormat());
+        assertEquals(0, image.getFrameCount()); // for gif: number of frames, other format: 0
+      }
+    }
+
+    @Test
     public void deletePost() {
       String postId = th.createPost(th.basicChannel()).getId();
 
@@ -2001,8 +2098,8 @@ public class MattermostApiTest {
 
     @Test
     public void getFileInfoForPost() throws IOException, URISyntaxException {
-      Path file1 = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
-      Path file2 = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path file1 = getResourcePath(EMOJI_CONSTRUCTION);
+      Path file2 = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, file1, file2)).readEntity();
@@ -2240,7 +2337,7 @@ public class MattermostApiTest {
   class EmojiApiTest {
     @Test
     public void createCustomEmoji() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       String emojiName = "custom" + th.newId();
       emoji.setName(emojiName);
@@ -2259,7 +2356,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmojiList() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
       Emoji emoji1 = new Emoji();
       emoji1.setName("custom" + th.newId());
       emoji1.setCreatorId(th.basicUser().getId());
@@ -2283,7 +2380,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmoji() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2303,7 +2400,7 @@ public class MattermostApiTest {
 
     @Test
     public void deleteCustomEmoji() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2329,7 +2426,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmojiImage() throws URISyntaxException, IOException {
-      Path originalImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path originalImage = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2350,7 +2447,7 @@ public class MattermostApiTest {
 
     @Test
     public void getCustomEmojiByName() throws URISyntaxException {
-      Path image = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path image = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("custom" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2370,7 +2467,7 @@ public class MattermostApiTest {
 
     @Test
     public void searchEmoji() throws URISyntaxException {
-      Path emojiGlobe = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path emojiGlobe = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("customGlobe" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -2396,7 +2493,7 @@ public class MattermostApiTest {
 
     @Test
     public void autocompleteEmoji() throws URISyntaxException {
-      Path emojiGlobe = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path emojiGlobe = getResourcePath(EMOJI_GLOBE);
       Emoji emoji = new Emoji();
       emoji.setName("customAutocompleteGlobe" + th.newId());
       emoji.setCreatorId(th.basicUser().getId());
@@ -3216,7 +3313,7 @@ public class MattermostApiTest {
     @Test
     public void getBrandImageForNotEmpty() throws URISyntaxException, IOException {
       th.logout().loginSystemAdmin();
-      Path brandImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path brandImage = getResourcePath(EMOJI_GLOBE);
       ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
       if (isNotSupportVersion("5.0.0", uploadResponse)) {
         return;
@@ -3231,7 +3328,7 @@ public class MattermostApiTest {
     @Test
     public void uploadBrandImage() throws URISyntaxException {
       th.logout().loginSystemAdmin();
-      Path brandImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path brandImage = getResourcePath(EMOJI_GLOBE);
 
       ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
       if (isNotSupportVersion("5.0.0", uploadResponse)) {
@@ -3245,7 +3342,7 @@ public class MattermostApiTest {
     @Test
     public void deleteBrandImage() throws URISyntaxException {
       th.logout().loginSystemAdmin();
-      Path brandImage = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path brandImage = getResourcePath(EMOJI_GLOBE);
       ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
       if (isNotSupportVersion("5.6.0", uploadResponse)) {
         return;
@@ -3269,7 +3366,7 @@ public class MattermostApiTest {
 
     @Test
     public void uplaodFile() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path filePath = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
 
       FileUploadResult uploadResult =
@@ -3281,8 +3378,8 @@ public class MattermostApiTest {
 
     @Test
     public void uploadMultipleFile() throws URISyntaxException, IOException {
-      Path file1 = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
-      Path file2 = Paths.get(getClass().getResource(EMOJI_CONSTRUCTION).toURI());
+      Path file1 = getResourcePath(EMOJI_GLOBE);
+      Path file2 = getResourcePath(EMOJI_CONSTRUCTION);
       String channelId = th.basicChannel().getId();
 
       FileUploadResult uploadResult =
@@ -3301,7 +3398,7 @@ public class MattermostApiTest {
 
     @Test
     public void getFile() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource("/LICENSE.txt").toURI());
+      Path filePath = getResourcePath("/LICENSE.txt");
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -3315,7 +3412,7 @@ public class MattermostApiTest {
 
     @Test
     public void getFileThumbnail() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path filePath = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -3329,7 +3426,7 @@ public class MattermostApiTest {
 
     @Test
     public void getFilePreview() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path filePath = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -3343,7 +3440,7 @@ public class MattermostApiTest {
 
     @Test
     public void getPublicFileLink() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path filePath = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -3368,7 +3465,7 @@ public class MattermostApiTest {
 
     @Test
     public void getFileMetadata() throws URISyntaxException, IOException {
-      Path filePath = Paths.get(getClass().getResource(EMOJI_GLOBE).toURI());
+      Path filePath = getResourcePath(EMOJI_GLOBE);
       String channelId = th.basicChannel().getId();
       FileUploadResult uploadResult =
           assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -3573,11 +3670,12 @@ public class MattermostApiTest {
       String pluginId = plugin.getId();
       assertNoError(client.enablePlugin(pluginId));
 
-      ApiResponse<WebappPlugin[]> webappResponse = assertNoError(client.getWebappPlugins());
-      WebappPlugin[] webapps = webappResponse.readEntity();
+      ApiResponse<PluginManifest[]> webappResponse = assertNoError(client.getWebappPlugins());
+      PluginManifest[] webapps = webappResponse.readEntity();
 
-      assertEquals(1, webapps.length);
-      WebappPlugin drawWebapp = webapps[0];
+      PluginManifest drawWebapp = Arrays.stream(webapps) //
+          .filter(m -> m.getId().equals(pluginId)) //
+          .findFirst().get();
       assertEquals(pluginId, drawWebapp.getId());
 
       // cleanup
@@ -3586,4 +3684,377 @@ public class MattermostApiTest {
 
   }
 
+  @Nested
+  class SamlApiTest {
+    // Note: Team Edition does not support SAML
+
+    @Test
+    public void getSamlMetadata() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      ApiResponse<Path> response = client.getSamlMetadata();
+
+      assertStatus(response, Status.NOT_IMPLEMENTED);
+    }
+
+    @Test
+    public void uploadSamlIdpCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+
+      ApiResponse<Boolean> response = client.uploadSamlIdpCertificate(file, fileName);
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void uploadSamlPublicCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+
+      ApiResponse<Boolean> response = client.uploadSamlPublicCertificate(file, fileName);
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void uploadSamlPrivateCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".key");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+
+      ApiResponse<Boolean> response = client.uploadSamlPrivateCertificate(file, fileName);
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void deleteSamlIdpCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlIdpCertificate(file, fileName));
+
+      ApiResponse<Boolean> response = client.deleteSamlIdpCertificate();
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void deleteSamlPublicCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".crt");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlPublicCertificate(file, fileName));
+
+      ApiResponse<Boolean> response = client.deleteSamlPublicCertificate();
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void deleteSamlPrivateCertificate() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".key");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlPrivateCertificate(file, fileName));
+
+      ApiResponse<Boolean> response = client.deleteSamlPrivateCertificate();
+
+      assertTrue(response.readEntity());
+    }
+
+    @Test
+    public void getSamlCertificateStatus() throws IOException {
+      th.logout().loginSystemAdmin();
+
+      Path file = Files.createTempFile("", ".key");
+      String fileName = file.getName(file.getNameCount() - 1).toString();
+      assertNoError(client.uploadSamlPrivateCertificate(file, fileName));
+
+      ApiResponse<SamlCertificateStatus> response = client.getSamlCertificateStatus();
+
+      // Note: 5.10/5.11 server returns true unless upload certificate
+
+      if (isMajorMinorVersionMatches("5.10", response)
+          || isMajorMinorVersionMatches("5.11", response)) {
+        return;
+      }
+
+      SamlCertificateStatus status = response.readEntity();
+      assertAll(() -> assertFalse(status.isIdpCertificateFile()),
+          () -> assertFalse(status.isPublicCertificateFile()),
+          () -> assertTrue(status.isPrivateKeyFile()));
+    }
+  }
+
+  @Nested
+  class LdapApiTest {
+    @Test
+    public void syncLdap() {
+      th.logout().loginSystemAdmin();
+
+      // Enterprise Edition required
+      // Note: Server >= 5.11 returns 200 OK
+      ApiResponse<Boolean> response = client.syncLdap();
+      if (isSupportVersion("5.12.0", response)) {
+        assertStatus(response, Status.NOT_IMPLEMENTED);
+      }
+    }
+
+    @Test
+    public void testLdap() {
+      th.logout().loginSystemAdmin();
+
+      // Enterprise Edition required
+      // Note: Server >= 5.11 returns 200 OK
+      ApiResponse<Boolean> response = client.testLdap();
+      if (isSupportVersion("5.12.0", response)) {
+        assertStatus(response, Status.NOT_IMPLEMENTED);
+      }
+    }
+  }
+
+  @Nested
+  class OpenGraphApiTest {
+
+    NanoHTTPD server;
+
+    @BeforeEach
+    public void setupServer() throws IOException {
+      if (!useLocalDummyServer()) {
+        return;
+      }
+      server = new NanoHTTPD("0.0.0.0", dummyHttpServerPort()) {
+        @Override
+        public Response serve(IHTTPSession session) {
+          List<String> contents =
+              Arrays.asList("<html><head>", "<meta property=\"og:type\" content=\"article\" />",
+                  "<meta property=\"og:title\" content=\"The Great WebSite\" />",
+                  "<meta property=\"og:url\" content=\"http://localhost:8888/\" />",
+                  "</head><body>Hello World!</body></html>");
+          return newFixedLengthResponse(
+              StringUtils.join(contents, StringUtils.CR + StringUtils.LF));
+        }
+      };
+      server.start();
+    }
+
+    @AfterEach
+    public void tearDownServer() {
+      if (!useLocalDummyServer()) {
+        return;
+      }
+      server.stop();
+    }
+
+    @Test
+    public void getMetadata() {
+      th.logout().loginSystemAdmin();
+      Config config = client.getConfig().readEntity();
+      config.getServiceSettings().setAllowedUntrustedInternalConnections(
+          config.getServiceSettings().getAllowedUntrustedInternalConnections() + " "
+              + dummyHttpServerHost());
+      assertNoError(client.updateConfig(config));
+      th.logout().loginBasic();
+
+      int port = dummyHttpServerPort();
+      String url = "http://" + dummyHttpServerHost() + (port != 0 ? ":" + port : "");
+
+      ApiResponse<OpenGraph> response = client.getOpenGraphMetadata(url);
+
+      OpenGraph og = response.readEntity();
+      assertNotNull(og);
+    }
+  }
+
+  @Nested
+  class BotsApiTest {
+    @Test
+    public void createBot() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Config> configResponse = client.getConfig();
+      if (isNotSupportVersion("5.10.0", configResponse)) {
+        return;
+      }
+      Config config = configResponse.readEntity();
+      config.getServiceSettings().setEnableBotAccountCreation(true);
+      assertNoError(client.updateConfig(config));
+
+      BotPatch bot = new BotPatch();
+      bot.setUsername("bot_" + th.newId());
+      bot.setDisplayName("botsApiTestName");
+      bot.setDescription("Bot account for @" + bot.getUsername());
+
+      ApiResponse<Bot> response = assertNoError(client.createBot(bot));
+
+      Bot createdBot = response.readEntity();
+      assertEquals(th.systemAdminUser().getId(), createdBot.getOwnerId());
+      assertEquals(bot.getUsername(), createdBot.getUsername());
+      assertEquals(bot.getDisplayName(), createdBot.getDisplayName());
+      assertEquals(bot.getDescription(), createdBot.getDescription());
+    }
+
+    @Test
+    public void patchBot() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Config> configResponse = client.getConfig();
+      if (isNotSupportVersion("5.10.0", configResponse)) {
+        return;
+      }
+      Config config = configResponse.readEntity();
+      config.getServiceSettings().setEnableBotAccountCreation(true);
+      assertNoError(client.updateConfig(config));
+
+      BotPatch patch = new BotPatch();
+      patch.setUsername("bot_" + th.newId());
+      patch.setDisplayName("botsApiTestName");
+      patch.setDescription("Bot account for @" + patch.getUsername());
+      Bot originalBot = assertNoError(client.createBot(patch)).readEntity();
+
+      patch.setUsername("up_" + th.newId());
+      patch.setDisplayName("up_" + patch.getDisplayName());
+      patch.setDescription("up_" + patch.getDescription());
+
+      ApiResponse<Bot> response = assertNoError(client.patchBot(originalBot.getUserId(), patch));
+
+      Bot patchedBot = response.readEntity();
+      assertEquals(patch.getUsername(), patchedBot.getUsername());
+      assertEquals(patch.getDisplayName(), patchedBot.getDisplayName());
+      assertEquals(patch.getDescription(), patchedBot.getDescription());
+    }
+
+    @Test
+    public void getBot() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Config> configResponse = client.getConfig();
+      if (isNotSupportVersion("5.10.0", configResponse)) {
+        return;
+      }
+      Config config = configResponse.readEntity();
+      config.getServiceSettings().setEnableBotAccountCreation(true);
+      assertNoError(client.updateConfig(config));
+
+      BotPatch patch = new BotPatch();
+      patch.setUsername("bot_" + th.newId());
+      patch.setDisplayName("botsApiTestName");
+      patch.setDescription("Bot account for @" + patch.getUsername());
+      Bot originalBot = assertNoError(client.createBot(patch)).readEntity();
+
+      ApiResponse<Bot> response = assertNoError(client.getBot(originalBot.getUserId()));
+
+      Bot receiveddBot = response.readEntity();
+      assertEquals(originalBot.getUsername(), receiveddBot.getUsername());
+      assertEquals(originalBot.getDisplayName(), receiveddBot.getDisplayName());
+      assertEquals(originalBot.getDescription(), receiveddBot.getDescription());
+    }
+
+    @Test
+    public void getBots() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Config> configResponse = client.getConfig();
+      if (isNotSupportVersion("5.10.0", configResponse)) {
+        return;
+      }
+      Config config = configResponse.readEntity();
+      config.getServiceSettings().setEnableBotAccountCreation(true);
+      assertNoError(client.updateConfig(config));
+
+      BotPatch patch = new BotPatch();
+      patch.setUsername("bot1_" + th.newId());
+      patch.setDisplayName("botsApiTestName1");
+      patch.setDescription("Bot account for @" + patch.getUsername());
+      Bot originalBot1 = assertNoError(client.createBot(patch)).readEntity();
+
+      patch = new BotPatch();
+      patch.setUsername("bot2_" + th.newId());
+      patch.setDisplayName("botsApiTestName2");
+      patch.setDescription("Bot account for @" + patch.getUsername());
+      Bot originalBot2 = assertNoError(client.createBot(patch)).readEntity();
+
+      Bots bots = assertNoError(client.getBots()).readEntity();
+      Set<String> botUserIds = bots.stream() //
+          .map(Bot::getUserId) //
+          .collect(Collectors.toSet());
+      assertThat(botUserIds, hasItems(originalBot1.getUserId(), originalBot2.getUserId()));
+    }
+
+    @Test
+    public void disableBot() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Config> configResponse = client.getConfig();
+      if (isNotSupportVersion("5.10.0", configResponse)) {
+        return;
+      }
+      Config config = configResponse.readEntity();
+      config.getServiceSettings().setEnableBotAccountCreation(true);
+      assertNoError(client.updateConfig(config));
+
+      BotPatch patch = new BotPatch();
+      patch.setUsername("bot_" + th.newId());
+      patch.setDisplayName("botsApiTestName");
+      patch.setDescription("Bot account for @" + patch.getUsername());
+      Bot originalBot = assertNoError(client.createBot(patch)).readEntity();
+
+      ApiResponse<Bot> response = assertNoError(client.disableBot(originalBot.getUserId()));
+      assertTrue(response.readEntity().getDeleteAt() != 0L);
+    }
+
+    @Test
+    public void enableBot() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Config> configResponse = client.getConfig();
+      if (isNotSupportVersion("5.10.0", configResponse)) {
+        return;
+      }
+      Config config = configResponse.readEntity();
+      config.getServiceSettings().setEnableBotAccountCreation(true);
+      assertNoError(client.updateConfig(config));
+
+      BotPatch patch = new BotPatch();
+      patch.setUsername("bot_" + th.newId());
+      patch.setDisplayName("botsApiTestName");
+      patch.setDescription("Bot account for @" + patch.getUsername());
+      Bot originalBot = assertNoError(client.createBot(patch)).readEntity();
+      ApiResponse<Bot> response = assertNoError(client.disableBot(originalBot.getUserId()));
+      assertTrue(response.readEntity().getDeleteAt() != 0L);
+
+
+      response = assertNoError(client.enableBot(originalBot.getUserId()));
+      assertTrue(response.readEntity().getDeleteAt() == 0L);
+    }
+
+    @Test
+    public void assignBotToUser() {
+      th.logout().loginSystemAdmin();
+      ApiResponse<Config> configResponse = client.getConfig();
+      if (isNotSupportVersion("5.10.0", configResponse)) {
+        return;
+      }
+      Config config = configResponse.readEntity();
+      config.getServiceSettings().setEnableBotAccountCreation(true);
+      assertNoError(client.updateConfig(config));
+
+      BotPatch patch = new BotPatch();
+      patch.setUsername("bot_" + th.newId());
+      patch.setDisplayName("botsApiTestName");
+      patch.setDescription("Bot account for @" + patch.getUsername());
+      Bot originalBot = assertNoError(client.createBot(patch)).readEntity();
+      assertEquals(th.systemAdminUser().getId(), originalBot.getOwnerId());
+
+      User secondSysAdmin = th.createSystemAdminUser();
+
+      ApiResponse<Bot> response =
+          assertNoError(client.assignBotToUser(originalBot.getUserId(), secondSysAdmin.getId()));
+      assertEquals(secondSysAdmin.getId(), response.readEntity().getOwnerId());
+    }
+  }
 }

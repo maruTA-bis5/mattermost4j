@@ -25,6 +25,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -39,6 +40,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.bis5.mattermost.client4.api.AuditsApi;
 import net.bis5.mattermost.client4.api.AuthenticationApi;
+import net.bis5.mattermost.client4.api.BotsApi;
 import net.bis5.mattermost.client4.api.BrandApi;
 import net.bis5.mattermost.client4.api.ChannelApi;
 import net.bis5.mattermost.client4.api.ClusterApi;
@@ -47,16 +49,17 @@ import net.bis5.mattermost.client4.api.ComplianceApi;
 import net.bis5.mattermost.client4.api.ElasticsearchApi;
 import net.bis5.mattermost.client4.api.EmojiApi;
 import net.bis5.mattermost.client4.api.FilesApi;
-import net.bis5.mattermost.client4.api.GeneralApi;
 import net.bis5.mattermost.client4.api.LdapApi;
 import net.bis5.mattermost.client4.api.LogsApi;
 import net.bis5.mattermost.client4.api.OAuthApi;
+import net.bis5.mattermost.client4.api.OpenGraphApi;
 import net.bis5.mattermost.client4.api.PluginApi;
 import net.bis5.mattermost.client4.api.PostApi;
 import net.bis5.mattermost.client4.api.PreferencesApi;
 import net.bis5.mattermost.client4.api.ReactionApi;
 import net.bis5.mattermost.client4.api.SamlApi;
 import net.bis5.mattermost.client4.api.StatusApi;
+import net.bis5.mattermost.client4.api.SystemApi;
 import net.bis5.mattermost.client4.api.TeamApi;
 import net.bis5.mattermost.client4.api.UserApi;
 import net.bis5.mattermost.client4.api.WebhookApi;
@@ -69,6 +72,7 @@ import net.bis5.mattermost.client4.model.CreateEphemeralPostRequest;
 import net.bis5.mattermost.client4.model.DeauthorizeOAuthAppRequest;
 import net.bis5.mattermost.client4.model.DisableEnableTokenRequest;
 import net.bis5.mattermost.client4.model.FileUploadResult;
+import net.bis5.mattermost.client4.model.GetBotsOption;
 import net.bis5.mattermost.client4.model.LoginRequest;
 import net.bis5.mattermost.client4.model.PublicFileLink;
 import net.bis5.mattermost.client4.model.ResetPasswordRequest;
@@ -91,6 +95,9 @@ import net.bis5.mattermost.jersey.provider.MattermostModelMapperProvider;
 import net.bis5.mattermost.model.AnalyticsRows;
 import net.bis5.mattermost.model.Audits;
 import net.bis5.mattermost.model.AuthorizeRequest;
+import net.bis5.mattermost.model.Bot;
+import net.bis5.mattermost.model.BotPatch;
+import net.bis5.mattermost.model.Bots;
 import net.bis5.mattermost.model.Channel;
 import net.bis5.mattermost.model.ChannelList;
 import net.bis5.mattermost.model.ChannelMember;
@@ -152,9 +159,9 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
-import net.bis5.mattermost.model.WebappPlugin;
 import net.bis5.mattermost.model.WebrtcInfoResponse;
 import net.bis5.mattermost.model.license.MfaSecret;
+import net.bis5.opengraph.models.OpenGraph;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -172,10 +179,10 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
  * @author Maruyama Takayuki
  * @since 2017/06/10
  */
-public class MattermostClient implements AutoCloseable, AuditsApi, AuthenticationApi, BrandApi,
-    ChannelApi, ClusterApi, CommandsApi, ComplianceApi, ElasticsearchApi, EmojiApi, FilesApi,
-    GeneralApi, LdapApi, LogsApi, OAuthApi, PluginApi, PostApi, PreferencesApi, ReactionApi,
-    SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
+public class MattermostClient implements AutoCloseable, AuditsApi, AuthenticationApi, BotsApi,
+    BrandApi, ChannelApi, ClusterApi, CommandsApi, ComplianceApi, ElasticsearchApi, EmojiApi,
+    FilesApi, SystemApi, LdapApi, LogsApi, OAuthApi, OpenGraphApi, PluginApi, PostApi,
+    PreferencesApi, ReactionApi, SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
 
   protected static final String API_URL_SUFFIX = "/api/v4";
   private final String url;
@@ -516,6 +523,18 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 
   public String getPluginRoute(String pluginId) {
     return String.format("/plugins/%s", StringUtils.stripToEmpty(pluginId));
+  }
+
+  public String getOpenGraphRoute() {
+    return "/opengraph";
+  }
+
+  public String getBotsRoute() {
+    return "/bots";
+  }
+
+  public String getBotsRoute(String botUserId) {
+    return String.format("%s/%s", getBotsRoute(), StringUtils.stripToEmpty(botUserId));
   }
 
   protected <T> ApiResponse<T> doApiGet(String url, String etag, Class<T> responseType) {
@@ -1080,6 +1099,7 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
+  @Deprecated
   public ApiResponse<TeamMember> addTeamMember(String hash, String dataToHash, String inviteId) {
     QueryBuilder query = new QueryBuilder();
     if (StringUtils.isNotEmpty(inviteId)) {
@@ -1089,6 +1109,19 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
       query.set("hash", hash).set("data", dataToHash);
     }
 
+    return doApiPost(getTeamsRoute() + "/members/invite" + query.toString(), null,
+        TeamMember.class);
+  }
+
+  @Override
+  public ApiResponse<TeamMember> addTeamMemberFromInvite(String token, String inviteId) {
+    QueryBuilder query = new QueryBuilder();
+    if (StringUtils.isNotEmpty(token)) {
+      query.set("token", token);
+    }
+    if (StringUtils.isNotEmpty(inviteId)) {
+      query.set("invite_id", inviteId);
+    }
     return doApiPost(getTeamsRoute() + "/members/invite" + query.toString(), null,
         TeamMember.class);
   }
@@ -1669,27 +1702,41 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   // SAML section
 
   @Override
-  public ApiResponse<String> getSamlMetadata() {
-    return doApiGet(getSamlRoute() + "/metadata", null, String.class);
-  }
-
-  protected Object samlFileToMultipart(Path dataFile, String dataFileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Path> getSamlMetadata() throws IOException {
+    return doApiGetFile(getSamlRoute() + "/metadata", null);
   }
 
   @Override
-  public boolean uploadSamlIdpCertificate(Path dataFile, String fileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Boolean> uploadSamlIdpCertificate(Path dataFile, String fileName) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("certificate", dataFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getSamlRoute() + "/certificate/idp", multiPart).checkStatusOk();
   }
 
   @Override
-  public boolean uploadSamlPublicCertificate(Path dataFile, String fileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Boolean> uploadSamlPublicCertificate(Path dataFile, String fileName) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("certificate", dataFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getSamlRoute() + "/certificate/public", multiPart).checkStatusOk();
   }
 
   @Override
-  public boolean uploadSamlPrivateCertificate(Path dataFile, String fileName) {
-    throw new UnsupportedOperationException("not impl"); // FIXME
+  public ApiResponse<Boolean> uploadSamlPrivateCertificate(Path dataFile, String fileName) {
+    FormDataMultiPart multiPart = new FormDataMultiPart();
+    multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+    FileDataBodyPart body = new FileDataBodyPart("certificate", dataFile.toFile());
+    multiPart.bodyPart(body);
+
+    return doApiPostMultiPart(getSamlRoute() + "/certificate/private", multiPart).checkStatusOk();
   }
 
   @Override
@@ -2053,8 +2100,59 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
-  public ApiResponse<WebappPlugin[]> getWebappPlugins() {
-    return doApiGet(getPluginsRoute() + "/webapp", null, WebappPlugin[].class);
+  public ApiResponse<PluginManifest[]> getWebappPlugins() {
+    return doApiGet(getPluginsRoute() + "/webapp", null, PluginManifest[].class);
+  }
+
+  // OpenGraph section
+
+  @Override
+  public ApiResponse<OpenGraph> getOpenGraphMetadata(String url) {
+    return doApiPost(getOpenGraphRoute(), Collections.singletonMap("url", url), OpenGraph.class);
+  }
+
+  // Bots section
+
+  @Override
+  public ApiResponse<Bot> createBot(BotPatch bot) {
+    return doApiPost(getBotsRoute(), bot, Bot.class);
+  }
+
+  @Override
+  public ApiResponse<Bot> patchBot(String botUserId, BotPatch patch) {
+    return doApiPut(getBotsRoute(botUserId), patch, Bot.class);
+  }
+
+  @Override
+  public ApiResponse<Bot> getBot(String botUserId, boolean includeDeleted) {
+    String query = new QueryBuilder().set("include_deleted", includeDeleted).toString();
+    return doApiGet(getBotsRoute(botUserId) + query, null, Bot.class);
+  }
+
+  @Override
+  public ApiResponse<Bots> getBots(Pager pager, GetBotsOption option) {
+    String query = new QueryBuilder() //
+        .set(pager) //
+        .set("include_deleted", option.isIncludeDeleted()) //
+        .set("only_orphaned", option.isOnlyOrphaned()) //
+        .toString();
+    return doApiGet(getBotsRoute() + query, null, Bots.class);
+  }
+
+  @Override
+  public ApiResponse<Bot> disableBot(String botUserId) {
+    return doApiPost(getBotsRoute(botUserId) + "/disable", null, Bot.class);
+  }
+
+  @Override
+  public ApiResponse<Bot> enableBot(String botUserId) {
+    return doApiPost(getBotsRoute(botUserId) + "/enable", null, Bot.class);
+  }
+
+  @Override
+  public ApiResponse<Bot> assignBotToUser(String botUserId, String ownerUserId) {
+    return doApiPost(String.format("%s/assign/%s", getBotsRoute(botUserId), ownerUserId), null,
+        Bot.class);
   }
 
 }

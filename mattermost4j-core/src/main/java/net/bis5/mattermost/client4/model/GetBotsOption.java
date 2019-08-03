@@ -12,23 +12,25 @@
  * the License.
  */
 
-package net.bis5.mattermost.model;
+package net.bis5.mattermost.client4.model;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
 /**
- * Post image metadata.
+ * Options for get bots.
  * 
- * @since Mattermost Server 5.8
+ * @author Takayuki Maruyama
  */
-@Data
-public class PostImage {
+@Builder
+@Value
+public class GetBotsOption {
 
-  private int width;
-  private int height;
-  /* @since Mattermost Server 5.11 */
-  private String format;
-  /* @since Mattermost Server 5.11 */
-  private int frameCount;
+  private boolean includeDeleted;
+  private boolean onlyOrphaned;
+
+  public static GetBotsOption defaultInstance() {
+    return new GetBotsOption(false, false);
+  }
 
 }

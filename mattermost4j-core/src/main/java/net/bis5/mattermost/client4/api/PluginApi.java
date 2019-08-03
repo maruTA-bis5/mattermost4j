@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.model.PluginManifest;
 import net.bis5.mattermost.model.Plugins;
-import net.bis5.mattermost.model.WebappPlugin;
 
 /**
  * Plugin API.
@@ -39,5 +38,5 @@ public interface PluginApi {
 
   ApiResponse<Boolean> disablePlugin(String pluginId);
 
-  ApiResponse<WebappPlugin[]> getWebappPlugins();
+  ApiResponse<PluginManifest[]> getWebappPlugins();
 }

@@ -17,13 +17,21 @@ package net.bis5.mattermost.model;
 import lombok.Data;
 
 /**
- * Webapp plugin info.
+ * The bot account.
+ * 
+ * @author Takayuki Maruyama
+ * @since Mattermost Server 5.12
  */
 @Data
-public class WebappPlugin {
+public class Bot {
 
-  private String id;
-  private String version;
-  private PluginWebapp webapp;
+  private String userId;
+  private long createAt;
+  private long updateAt;
+  private long deleteAt;
+  private String username;
+  private String displayName;
+  private String description;
+  private String ownerId;
 
 }

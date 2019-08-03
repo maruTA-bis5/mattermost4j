@@ -73,5 +73,10 @@ public class User {
   private long lastActivityAt;
   /* @since Mattermost Server 4.9 */
   private Map<String, String> timezone;
+  /* @since Mattermost Server 5.12 */
+  @JsonProperty("is_bot")
+  private boolean isBot;
+  /* @since Mattermost Server 5.12 */
+  private String botDescription;
 
 }

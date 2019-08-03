@@ -56,6 +56,14 @@ public class QueryBuilder {
     return set(key, Boolean.toString(value));
   }
 
+  /**
+   * Set pager parameter.
+   */
+  public QueryBuilder set(Pager pager) {
+    set("page", pager.getPage());
+    set("per_page", pager.getPerPage());
+    return this;
+  }
 
   /**
    * Set string parameter.

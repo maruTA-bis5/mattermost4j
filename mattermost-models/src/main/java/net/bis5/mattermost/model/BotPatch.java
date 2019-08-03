@@ -17,18 +17,16 @@ package net.bis5.mattermost.model;
 import lombok.Data;
 
 /**
- * Post image metadata.
+ * Bot patch.
  * 
- * @since Mattermost Server 5.8
+ * @author Takayuki Maruyama
+ * @since Mattermost Server 5.10
  */
 @Data
-public class PostImage {
+public class BotPatch {
 
-  private int width;
-  private int height;
-  /* @since Mattermost Server 5.11 */
-  private String format;
-  /* @since Mattermost Server 5.11 */
-  private int frameCount;
+  private String username;
+  private String displayName;
+  private String description;
 
 }

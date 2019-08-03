@@ -228,6 +228,10 @@ public class ServiceSettings {
   private boolean experimentalStrictCsrfEnforcement;
   /* @since Mattermost Server 5.9 */
   private boolean disableLegacyMfa;
+  /* @since Mattermost Server 5.12 */
+  private List<String> trustedProxyIpHeader;
+  /* @since Mattermost Server 5.12 */
+  private boolean enableBotAccountCreation;
 
   /**
    * This method should not use.

@@ -12,23 +12,21 @@
  * the License.
  */
 
-package net.bis5.mattermost.model;
+package net.bis5.mattermost.client4.api;
 
-import lombok.Data;
+import net.bis5.mattermost.client4.ApiResponse;
+import net.bis5.opengraph.models.OpenGraph;
 
 /**
- * Post image metadata.
+ * OpenGraph API.
  * 
- * @since Mattermost Server 5.8
+ * @author Takayuki Maruyama
  */
-@Data
-public class PostImage {
+public interface OpenGraphApi {
 
-  private int width;
-  private int height;
-  /* @since Mattermost Server 5.11 */
-  private String format;
-  /* @since Mattermost Server 5.11 */
-  private int frameCount;
+  /**
+   * Retrieve the OpenGraph metadata for provided url.
+   */
+  ApiResponse<OpenGraph> getOpenGraphMetadata(String url);
 
 }

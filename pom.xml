@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.bis5.mattermost4j</groupId>
 	<artifactId>mattermost4j-parent</artifactId>
-	<version>0.12.1-SNAPSHOT</version>
+	<version>0.15.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Mattermost4J Parent POM</name>
 	<url>https://github.com/maruTA-bis5/mattermost4j</url>
@@ -52,6 +52,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<sonar.java.spotbugs.reportPaths>${project.build.directory}/spotbugsXml.xml</sonar.java.spotbugs.reportPaths>
 	</properties>
 
 	<profiles>
@@ -105,7 +106,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.1.0</version>
+				<version>3.1.1</version>
 				<configuration>
 					<show>protected</show>
 					<source>1.8</source>
@@ -187,6 +188,19 @@
 					<sourceDirectory>src/main/java</sourceDirectory>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>3.1.12.2</version>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>spotbugs</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -211,7 +225,7 @@
 						<dependency>
 							<groupId>com.puppycrawl.tools</groupId>
 							<artifactId>checkstyle</artifactId>
-							<version>8.20</version>
+							<version>8.23</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -228,13 +242,13 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
-			<version>5.4.2</version>
+			<version>5.5.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.4.2</version>
+			<version>5.5.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -246,7 +260,7 @@
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
-			<version>3.12.2</version>
+			<version>3.13.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -14,21 +14,16 @@
 
 package net.bis5.mattermost.model;
 
-import lombok.Data;
+import java.util.ArrayList;
 
 /**
- * Post image metadata.
+ * The list of {@link Bot}.
  * 
- * @since Mattermost Server 5.8
+ * @author Takayuki Maruyama
+ * @since Mattermost Server 5.10
  */
-@Data
-public class PostImage {
+public class Bots extends ArrayList<Bot> {
 
-  private int width;
-  private int height;
-  /* @since Mattermost Server 5.11 */
-  private String format;
-  /* @since Mattermost Server 5.11 */
-  private int frameCount;
+  private static final long serialVersionUID = 1L;
 
 }
