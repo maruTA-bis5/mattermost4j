@@ -61,6 +61,12 @@ public class TestHelper {
   private User basicUser;
   private User basicUser2;
 
+  /**
+   * The password compatible default (5.14+) requirements (min length:10, required: 1 uppercase, 1
+   * lowercase, 1 number and 1 symbol).
+   */
+  static final String DEFAULT_PASSWORD = "The_Passw0rd";
+
   public TestHelper setup() {
     initSystemAdmin();
     Config config = client.getConfig().readEntity();
@@ -142,12 +148,12 @@ public class TestHelper {
     user.setNickname("nn_" + id);
     user.setFirstName("f_" + id);
     user.setLastName("l_" + id);
-    user.setPassword("Password1");
+    user.setPassword(DEFAULT_PASSWORD);
     user.setRoles(Arrays.asList(Role.SYSTEM_ADMIN, Role.SYSTEM_USER).stream().map(Role::getRoleName)
         .collect(Collectors.joining(" ")));
 
     user = checkNoError(client.createUser(user)).readEntity();
-    user.setPassword("Password1");
+    user.setPassword(DEFAULT_PASSWORD);
     return user;
   }
 
@@ -160,10 +166,10 @@ public class TestHelper {
     user.setNickname("nn_" + id);
     user.setFirstName("f_" + id);
     user.setLastName("l_" + id);
-    user.setPassword("Password1");
+    user.setPassword(DEFAULT_PASSWORD);
 
     user = checkNoError(client.createUser(user)).readEntity();
-    user.setPassword("Password1");
+    user.setPassword(DEFAULT_PASSWORD);
     return user;
   }
 

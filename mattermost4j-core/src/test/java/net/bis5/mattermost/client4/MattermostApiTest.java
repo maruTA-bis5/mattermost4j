@@ -859,7 +859,7 @@ public class MattermostApiTest {
       User user = new User();
       user.setEmail(th.generateTestEmail());
       user.setUsername(th.generateTestUsername());
-      user.setPassword("PASSWD");
+      user.setPassword(TestHelper.DEFAULT_PASSWORD);
 
       ApiResponse<User> response = assertNoError(client.createUser(user));
       User created = response.readEntity();
@@ -1257,7 +1257,8 @@ public class MattermostApiTest {
     public void resetPassword() {
 
       // invalid token
-      assertStatus(client.resetPassword(th.newRandomString(64), "passwd"), Status.BAD_REQUEST);
+      assertStatus(client.resetPassword(th.newRandomString(64),
+          TestHelper.DEFAULT_PASSWORD.concat("_Modify")), Status.BAD_REQUEST);
     }
 
     @Test
