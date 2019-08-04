@@ -32,6 +32,11 @@ public class PostList {
   @JsonProperty("posts")
   private Map<String, Post> posts;
 
+  /* @since Mattermost Server 5.14 */
+  private String nextPostId;
+  /* @since Mattermost Server 5.14 */
+  private String prevPostId;
+
   public int size() {
     return posts == null ? 0 : posts.size();
   }
