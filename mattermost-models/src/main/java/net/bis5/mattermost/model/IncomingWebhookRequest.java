@@ -43,5 +43,7 @@ public class IncomingWebhookRequest {
   private List<SlackAttachment> attachments;
   @JsonProperty("type")
   private String type;
+  /* @since Mattermost Server 5.14 */
+  private String iconEmoji;
 
 }

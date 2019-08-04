@@ -80,6 +80,7 @@ public class TestHelper {
     config.getServiceSettings().setEnableEmailInvitations(true);
     config.getServiceSettings().setEnableUserAccessTokens(true);
     config.getServiceSettings().setEnableLinkPreviews(true);
+    config.getServiceSettings().setEnablePostIconOverride(true);
     config.getFileSettings().setEnablePublicLink(true);
     config.getTeamSettings().setEnableOpenServer(true);
     config = checkNoError(client.updateConfig(config)).readEntity();
