@@ -232,6 +232,9 @@ public class ServiceSettings {
   private List<String> trustedProxyIpHeader;
   /* @since Mattermost Server 5.12 */
   private boolean enableBotAccountCreation;
+  /* @since Mattermost Server 5.14 */
+  private boolean enableSvgs;
+
 
   /**
    * This method should not use.

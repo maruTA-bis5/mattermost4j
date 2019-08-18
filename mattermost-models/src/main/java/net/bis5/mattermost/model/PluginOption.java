@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-present, Takayuki Maruyama
+ * Copyright (c) 2019 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -14,30 +14,17 @@
 
 package net.bis5.mattermost.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.List;
-import java.util.Map;
 import lombok.Data;
 
 /**
- * List of {@link Post}.
+ * Predefined options that the user can choose from radio or dropdown for plugin setting.
  * 
  * @author Takayuki Maruyama
  */
 @Data
-public class PostList {
+public class PluginOption {
 
-  @JsonProperty("order")
-  private List<String> order;
-  @JsonProperty("posts")
-  private Map<String, Post> posts;
+  private String displayName;
+  private String value;
 
-  /* @since Mattermost Server 5.14 */
-  private String nextPostId;
-  /* @since Mattermost Server 5.14 */
-  private String prevPostId;
-
-  public int size() {
-    return posts == null ? 0 : posts.size();
-  }
 }

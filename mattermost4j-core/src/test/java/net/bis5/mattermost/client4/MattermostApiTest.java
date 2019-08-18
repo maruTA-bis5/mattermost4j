@@ -859,7 +859,7 @@ public class MattermostApiTest {
       User user = new User();
       user.setEmail(th.generateTestEmail());
       user.setUsername(th.generateTestUsername());
-      user.setPassword("PASSWD");
+      user.setPassword(TestHelper.DEFAULT_PASSWORD);
 
       ApiResponse<User> response = assertNoError(client.createUser(user));
       User created = response.readEntity();
@@ -1257,7 +1257,8 @@ public class MattermostApiTest {
     public void resetPassword() {
 
       // invalid token
-      assertStatus(client.resetPassword(th.newRandomString(64), "passwd"), Status.BAD_REQUEST);
+      assertStatus(client.resetPassword(th.newRandomString(64),
+          TestHelper.DEFAULT_PASSWORD.concat("_Modify")), Status.BAD_REQUEST);
     }
 
     @Test
@@ -3055,31 +3056,69 @@ public class MattermostApiTest {
     }
   }
 
-  @Test
-  public void testHook_IncomingWebhook_Post() {
-    th.logout().loginTeamAdmin();
-    IncomingWebhook webhook = new IncomingWebhook();
-    {
-      String channelId = th.basicChannel().getId();
-      String displayName = "webhook" + th.newId();
-      String description = "description" + th.newId();
-      webhook.setChannelId(channelId);
-      webhook.setDisplayName(displayName);
-      webhook.setDescription(description);
+  @Nested
+  class IncomingWebhookClientTest {
+    @Test
+    public void testHook_IncomingWebhook_Post() {
+      th.logout().loginTeamAdmin();
+      IncomingWebhook webhook = new IncomingWebhook();
+      {
+        String channelId = th.basicChannel().getId();
+        String displayName = "webhook" + th.newId();
+        String description = "description" + th.newId();
+        webhook.setChannelId(channelId);
+        webhook.setDisplayName(displayName);
+        webhook.setDescription(description);
+      }
+      ApiResponse<IncomingWebhook> createWebhookResponse =
+          assertNoError(client.createIncomingWebhook(webhook));
+      webhook = createWebhookResponse.readEntity();
+      String hookUrl = getApplicationUrl() + "/hooks/" + webhook.getId();
+
+      IncomingWebhookRequest payload = new IncomingWebhookRequest();
+      payload.setText("Hello Webhook World");
+      IncomingWebhookClient webhookClient = new IncomingWebhookClient(hookUrl, Level.WARNING);
+
+      ApiResponse<Boolean> response = webhookClient.postByIncomingWebhook(payload);
+
+      assertNoError(response);
+      assertFalse(response.hasError());
     }
-    ApiResponse<IncomingWebhook> createWebhookResponse =
-        assertNoError(client.createIncomingWebhook(webhook));
-    webhook = createWebhookResponse.readEntity();
-    String hookUrl = getApplicationUrl() + "/hooks/" + webhook.getId();
 
-    IncomingWebhookRequest payload = new IncomingWebhookRequest();
-    payload.setText("Hello Webhook World");
-    IncomingWebhookClient webhookClient = new IncomingWebhookClient(hookUrl, Level.WARNING);
+    @Test
+    public void testHook_IncomingWebhookWithIconEmoji() {
+      th.logout().loginTeamAdmin();
+      IncomingWebhook webhook = new IncomingWebhook();
+      {
+        String channelId = th.basicChannel().getId();
+        String displayName = "webhook" + th.newId();
+        String description = "description" + th.newId();
+        webhook.setChannelId(channelId);
+        webhook.setDisplayName(displayName);
+        webhook.setDescription(description);
+      }
+      ApiResponse<IncomingWebhook> createWebhookResponse =
+          assertNoError(client.createIncomingWebhook(webhook));
+      if (isNotSupportVersion("5.14.0", createWebhookResponse)) {
+        return;
+      }
+      webhook = createWebhookResponse.readEntity();
+      String hookUrl = getApplicationUrl() + "/hooks/" + webhook.getId();
 
-    ApiResponse<Boolean> response = webhookClient.postByIncomingWebhook(payload);
+      IncomingWebhookRequest payload = new IncomingWebhookRequest();
+      payload.setText("Webhook with icon_emoji" + th.newId());
+      payload.setIconEmoji("mattermost");
+      IncomingWebhookClient webhookClient = new IncomingWebhookClient(hookUrl, Level.WARNING);
 
-    assertNoError(response);
-    assertFalse(response.hasError());
+      ApiResponse<Boolean> response = webhookClient.postByIncomingWebhook(payload);
+      assertNoError(response);
+
+      PostList posts =
+          assertNoError(client.getPostsForChannel(th.basicChannel().getId())).readEntity();
+      Post webhookPost = posts.getPosts().values().stream()
+          .filter(p -> p.getMessage().equals(payload.getText())).findFirst().get();
+      assertThat(webhookPost.getProps().get("override_icon_url"), is(not(nullValue())));
+    }
   }
 
   // System

@@ -74,6 +74,8 @@ public class LdapSettings {
   private String groupDisplayNameAttribute;
   /* @since Mattermost Server 5.8 */
   private String groupIdAttribute;
+  /* @since Mattermost Server 5.14 */
+  private boolean trace;
 
   @Getter(onMethod = @__({@Deprecated}))
   @Setter(onMethod = @__({@Deprecated}))
