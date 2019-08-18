@@ -15,6 +15,7 @@
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -69,6 +70,8 @@ public class PluginManifest {
     private String placeholder;
     @JsonProperty("default")
     private String defaultValue;
+    /* @since Mattermost Server 5.14 */
+    private List<PluginOption> options;
   }
 
 }
