@@ -48,7 +48,6 @@ import net.bis5.mattermost.model.config.SupportSettings;
 import net.bis5.mattermost.model.config.TeamSettings;
 import net.bis5.mattermost.model.config.ThemeSettings;
 import net.bis5.mattermost.model.config.TimezoneSettings;
-import net.bis5.mattermost.model.config.WebrtcSettings;
 
 /**
  * Server Configurations.
@@ -79,7 +78,6 @@ public class Config {
   private ClusterSettings clusterSettings;
   private MetricsSettings metricsSettings;
   private AnalyticsSettings analyticsSettings;
-  private WebrtcSettings webrtcSettings;
   /* @since Mattermost Server 3.10 (E10) */
   private AnnouncementSettings announcementSettings;
   /* @since Mattermost Server 4.1 (Enterprise Edition) */
