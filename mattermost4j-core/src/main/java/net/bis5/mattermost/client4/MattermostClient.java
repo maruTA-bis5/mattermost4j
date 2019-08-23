@@ -63,7 +63,6 @@ import net.bis5.mattermost.client4.api.SystemApi;
 import net.bis5.mattermost.client4.api.TeamApi;
 import net.bis5.mattermost.client4.api.UserApi;
 import net.bis5.mattermost.client4.api.WebhookApi;
-import net.bis5.mattermost.client4.api.WebrtcApi;
 import net.bis5.mattermost.client4.model.AddChannelMemberRequest;
 import net.bis5.mattermost.client4.model.AnalyticsCategory;
 import net.bis5.mattermost.client4.model.AttachDeviceIdRequest;
@@ -159,7 +158,6 @@ import net.bis5.mattermost.model.UserAutocomplete;
 import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
-import net.bis5.mattermost.model.WebrtcInfoResponse;
 import net.bis5.mattermost.model.license.MfaSecret;
 import net.bis5.opengraph.models.OpenGraph;
 import org.apache.commons.lang3.StringUtils;
@@ -182,7 +180,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 public class MattermostClient implements AutoCloseable, AuditsApi, AuthenticationApi, BotsApi,
     BrandApi, ChannelApi, ClusterApi, CommandsApi, ComplianceApi, ElasticsearchApi, EmojiApi,
     FilesApi, SystemApi, LdapApi, LogsApi, OAuthApi, OpenGraphApi, PluginApi, PostApi,
-    PreferencesApi, ReactionApi, SamlApi, StatusApi, TeamApi, UserApi, WebhookApi, WebrtcApi {
+    PreferencesApi, ReactionApi, SamlApi, StatusApi, TeamApi, UserApi, WebhookApi {
 
   protected static final String API_URL_SUFFIX = "/api/v4";
   private final String url;
@@ -1950,13 +1948,6 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   @Override
   public ApiResponse<Status> updateUserStatus(String userId, Status userStatus) {
     return doApiPut(getUserStatusRoute(userId), userStatus, Status.class);
-  }
-
-  // Webrtc Section
-
-  @Override
-  public ApiResponse<WebrtcInfoResponse> getWebrtcToken() {
-    return doApiGet("/webrtc/token", null, WebrtcInfoResponse.class);
   }
 
   // Emoji Section
