@@ -14,7 +14,6 @@
 
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import lombok.Data;
 
@@ -24,7 +23,6 @@ import lombok.Data;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ClusterSettings {
 
   private boolean enable;
@@ -46,5 +44,18 @@ public class ClusterSettings {
   private int gossipPort;
   /* @since Mattermost Server 4.0 */
   private int streamingPort;
+
+  /* @since Mattermost Server 5.14.0 */
+  private String networkInterface;
+  /* @since Mattermost Server 5.14.0 */
+  private String bindAddress;
+  /* @since Mattermost Server 5.14.0 */
+  private String advertiseAddress;
+  /* @since Mattermost Server 5.0.0 */
+  private int maxIdleConns;
+  /* @since Mattermost Server 5.0.0 */
+  private int maxIdleConnsPerHost;
+  /* @since Mattermost Server 5.0.0 */
+  private int idleConnTimeoutMilliseconds;
 
 }

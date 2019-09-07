@@ -14,7 +14,6 @@
 
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 /**
@@ -23,7 +22,6 @@ import lombok.Data;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ComplianceSettings {
 
   private boolean enable;

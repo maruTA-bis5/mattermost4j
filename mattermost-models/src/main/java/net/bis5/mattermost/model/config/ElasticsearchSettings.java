@@ -14,7 +14,6 @@
 
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 /**
@@ -24,7 +23,6 @@ import lombok.Data;
  * @since Mattermost Server 4.1 (Enterprise Edition)
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ElasticsearchSettings {
 
   private String connectionUrl;
@@ -57,5 +55,9 @@ public class ElasticsearchSettings {
   private int userIndexReplicas = 1;
   /* @since Mattermost Server 5.10 */
   private int userIndexShards = 1;
+  /* @since Mattermost Server 5.13.0 */
+  private boolean skipTlsVerification;
+  /* @since Mattermost Server 5.14.0 */
+  private String trace;
 
 }

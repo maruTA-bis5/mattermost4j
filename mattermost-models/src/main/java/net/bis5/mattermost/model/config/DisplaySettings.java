@@ -14,7 +14,7 @@
 
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -24,8 +24,9 @@ import lombok.Data;
  * @since Mattermost Server 4.9
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class DisplaySettings {
 
   private boolean experimentalTimezone;
+  /* @since Mattermost Server 5.0.0 */
+  private List<String> customUrlSchemes;
 }
