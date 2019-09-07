@@ -32,4 +32,10 @@ public class PluginSettings {
   private Map<String, PluginState> pluginStates;
   /* @since Mattermost Server 4.5 */
   private String clientDirectory;
+  /* @since Mattermost Server 5.14 */
+  private boolean allowInsecureDownloadUrl;
+  /* @since Mattermost Server 5.14 */
+  private boolean enableHealthCheck = true;
+  private String directory;
+
 }

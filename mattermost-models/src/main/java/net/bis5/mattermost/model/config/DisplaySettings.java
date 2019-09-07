@@ -14,6 +14,7 @@
 
 package net.bis5.mattermost.model.config;
 
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -26,4 +27,6 @@ import lombok.Data;
 public class DisplaySettings {
 
   private boolean experimentalTimezone;
+  /* @since Mattermost Server 5.0.0 */
+  private List<String> customUrlSchemes;
 }

@@ -45,4 +45,17 @@ public class ClusterSettings {
   /* @since Mattermost Server 4.0 */
   private int streamingPort;
 
+  /* @since Mattermost Server 5.14.0 */
+  private String networkInterface;
+  /* @since Mattermost Server 5.14.0 */
+  private String bindAddress;
+  /* @since Mattermost Server 5.14.0 */
+  private String advertiseAddress;
+  /* @since Mattermost Server 5.0.0 */
+  private int maxIdleConns;
+  /* @since Mattermost Server 5.0.0 */
+  private int maxIdleConnsPerHost;
+  /* @since Mattermost Server 5.0.0 */
+  private int idleConnTimeoutMilliseconds;
+
 }

@@ -28,8 +28,13 @@ public class SamlSettings {
 
   // Basic
   private boolean enable;
+  /* @since Mattermost Server 5.3.0 */
+  private boolean enableSyncWithLdapIncludeAuth;
+
   private boolean verify;
   private boolean encrypt;
+  /* @since Mattermost Server 5.14.0 */
+  private boolean signRequest;
 
   private String idpUrl;
   private String idpDescriptorUrl;
@@ -40,6 +45,8 @@ public class SamlSettings {
   private String privateKeyFile;
 
   // User Mapping
+  /* @since Mattermost Server 5.3.0 */
+  private String idAttribute;
   private String firstNameAttribute;
   private String lastNameAttribute;
   private String emailAttribute;

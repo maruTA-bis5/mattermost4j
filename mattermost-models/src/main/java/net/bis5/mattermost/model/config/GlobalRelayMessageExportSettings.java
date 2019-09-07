@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Takayuki Maruyama
+ * Copyright (c) 2019 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -17,26 +17,16 @@ package net.bis5.mattermost.model.config;
 import lombok.Data;
 
 /**
- * Message export settings.
+ * Global Relay format specific settings.
  * 
- * @author Takayuki Maruyama
- * @since Mattermost Server 4.5 (Enterprise Edition)
+ * @since Mattermost Server 5.9.0
  */
 @Data
-public class MessageExportSettings {
+public class GlobalRelayMessageExportSettings {
 
-  private boolean enableExport;
-  private String dailyRunTime = "01:00";
-  private int exportFromTimestamp;
-  private String fileLocation = "export";
-  private int batchSize = 10000;
-  /* @since Mattermost Server 4.9 */
   private String customerType;
-  /* @since Mattermost Server 4.9 */
+  private String smtpUsername;
+  private String smtpPassword;
   private String emailAddress;
-  /* @since Mattermost Server 4.9 */
-  private String exportFormat;
-  /* @since Mattermost Server 4.9 */
-  private GlobalRelayMessageExportSettings globalRelaySettings;
 
 }
