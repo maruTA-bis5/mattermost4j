@@ -14,7 +14,6 @@
 
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import lombok.Data;
 
@@ -24,7 +23,6 @@ import lombok.Data;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ClusterSettings {
 
   private boolean enable;

@@ -14,7 +14,6 @@
 
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import lombok.Data;
 
@@ -25,7 +24,6 @@ import lombok.Data;
  * @since Mattermost Server 4.2 (Enterprise Edition)
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ThemeSettings {
 
   private boolean enableThemeSelection;

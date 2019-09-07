@@ -14,7 +14,6 @@
 
 package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Map;
 import lombok.Data;
 import net.bis5.mattermost.model.config.plugin.PluginState;
@@ -25,7 +24,6 @@ import net.bis5.mattermost.model.config.plugin.PluginState;
  * @author Takayuki Maruyama
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class PluginSettings {
 
   private boolean enable = true;
