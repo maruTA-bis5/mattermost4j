@@ -25,9 +25,12 @@ import lombok.Data;
 @Data
 public class ChannelStats {
 
-  @JsonProperty("channel_id")
   private String channelId;
-  @JsonProperty("member_count")
   private long memberCount;
+  /* @since Mattermost Server 5.16 */
+  private long guestCount;
+  /* @since Mattermost Server 5.16 */
+  @JsonProperty("pinnedpost_count")
+  private long pinnedPostCount;
 
 }
