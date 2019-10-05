@@ -130,7 +130,11 @@ jobs:
               - maven-{{ .Branch }}-{{ checksum "pom.xml" }}
               - maven-{{ .Branch }}-
               - maven-
-      - run: mvn clean verify sonar:sonar --show-version -s .circleci/settings-sonar.xml
+      - run:
+          name: trigger scan 
+          command: |
+              export SONAR_PR_NUM=$(echo $CI_PULL_REQUEST | sed 's/^.*\///')
+              mvn clean verify sonar:sonar --show-version -s .circleci/settings-sonar.xml -Dsonar.pullrequest.key=$SONAR_PR_NUM -Dsonar.pullrequest.branch=$CIRCLE_BRANCH
       - save_cache:
           paths:
               - ~/.m2
