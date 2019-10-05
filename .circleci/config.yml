@@ -133,8 +133,12 @@ jobs:
       - run:
           name: trigger scan 
           command: |
-              export SONAR_PR_NUM=$(echo $CI_PULL_REQUEST | sed 's/^.*\///')
-              mvn clean verify sonar:sonar --show-version -s .circleci/settings-sonar.xml -Dsonar.pullrequest.key=$SONAR_PR_NUM -Dsonar.pullrequest.branch=$CIRCLE_BRANCH
+              if [ "${CI_PULL_REQUEST}" = "" ]; then
+                  OPTS="-Dsonar.branch.name=${CIRCLE_BRANCH}"
+              else
+                  OPTS="-Dsonar.pullrequest.key=$(echo $CI_PULL_REQUEST | sed 's/^.*\///') -Dsonar.pullrequest.branch=${CIRCLE_BRANCH}"
+              fi
+              mvn clean verify sonar:sonar --show-version -s .circleci/settings-sonar.xml $OPTS
       - save_cache:
           paths:
               - ~/.m2
