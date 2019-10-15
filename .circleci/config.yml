@@ -92,7 +92,7 @@ jobs:
   test-mattermost-esr:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.9.5-rc1
+      MATTERMOST_VERSION: 5.9.5
   test-mattermost-latest:
     <<: *test-mattermost-base
     environment:
@@ -100,11 +100,11 @@ jobs:
   test-mattermost-previous:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.15.1-rc1
+      MATTERMOST_VERSION: 5.15.1
   test-mattermost-previous2:
     <<: *test-mattermost-base
     environment:
-      MATTERMOST_VERSION: 5.14.4-rc1
+      MATTERMOST_VERSION: 5.14.4
   sonarqube: 
     <<: *test-mattermost-base
     environment:
