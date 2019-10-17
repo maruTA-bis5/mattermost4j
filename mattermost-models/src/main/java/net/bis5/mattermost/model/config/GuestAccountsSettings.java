@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-present, Takayuki Maruyama
+ * Copyright (c) 2019 Takayuki Maruyama
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -12,25 +12,21 @@
  * the License.
  */
 
-package net.bis5.mattermost.model;
+package net.bis5.mattermost.model.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
- * Channel statistics.
+ * Guest account settings.
  * 
  * @author Takayuki Maruyama
+ * @since Mattermost Server 5.16
  */
 @Data
-public class ChannelStats {
-
-  private String channelId;
-  private long memberCount;
-  /* @since Mattermost Server 5.16 */
-  private long guestCount;
-  /* @since Mattermost Server 5.16 */
-  @JsonProperty("pinnedpost_count")
-  private long pinnedPostCount;
+public class GuestAccountsSettings {
+  private boolean enable;
+  private boolean allowEmailAccounts = true;
+  private boolean enforceMultifactorAuthentication;
+  private String restrictCreationToDomains;
 
 }

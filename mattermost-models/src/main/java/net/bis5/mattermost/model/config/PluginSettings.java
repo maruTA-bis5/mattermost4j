@@ -37,5 +37,9 @@ public class PluginSettings {
   /* @since Mattermost Server 5.14 */
   private boolean enableHealthCheck = true;
   private String directory;
+  /* @since Mattermost Server 5.16 */
+  private boolean enableMarketplace = true;
+  /* @since Mattermost Server 5.16 */
+  private String marketplaceUrl = "https://marketplace.integrations.mattermost.com";
 
 }
