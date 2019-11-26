@@ -62,7 +62,8 @@ public class MattermostModelMapperProvider implements ContextResolver<ObjectMapp
 
   @Override
   public ObjectMapper getContext(Class<?> type) {
-    if (type == Config.class || type.getName().startsWith("net.bis5.mattermost.model.config")) {
+    if (type != null && (type == Config.class
+        || type.getName().startsWith("net.bis5.mattermost.model.config"))) {
       return configObjectMapper;
     }
     return defaultObjectMapper;

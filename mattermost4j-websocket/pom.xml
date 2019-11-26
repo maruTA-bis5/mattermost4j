@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.bis5.mattermost4j</groupId>
+		<artifactId>mattermost4j-parent</artifactId>
+		<version>0.13.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>mattermost4j-websocket</artifactId>
+	<name>Mattermost4j WebSocket Client</name>
+	<properties>
+		<websocket-client-product>undertow</websocket-client-product>
+		<websocket-client-version>${undertow.version}</websocket-client-version>
+		<undertow.version>2.0.20.Final</undertow.version>
+	</properties>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>net.bis5.mattermost4j</groupId>
+			<artifactId>mattermost4j-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.websocket</groupId>
+			<artifactId>jakarta.websocket-api</artifactId>
+			<version>1.1.1</version>
+			<scope>provided</scope><!-- undertow bundled this -->
+		</dependency>
+		<dependency>
+			<groupId>io.undertow</groupId>
+			<artifactId>undertow-websockets-jsr</artifactId>
+			<version>${undertow.version}</version>
+			<exclusions>
+				<!-- Jersey depends javax.annotation-api-1.2.
+					Add exclusion to avoid modulepath related error for Java 9+ -->
+				<exclusion>
+					<groupId>org.jboss.spec.javax.annotation</groupId>
+					<artifactId>jboss-annotations-api_1.2_spec</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>27.1-jre</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.code.findbugs</groupId>
+					<artifactId>jsr305</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+</project>
