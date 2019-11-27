@@ -3,9 +3,9 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -174,7 +174,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 /**
  * Mattermost API Version4 Client default implementation.
- * 
+ *
  * @author Maruyama Takayuki
  * @since 2017/06/10
  */
@@ -186,21 +186,40 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   protected static final String API_URL_SUFFIX = "/api/v4";
   private final String url;
   private final String apiUrl;
-  private String authToken;
-  private AuthType authType;
   private final Level clientLogLevel;
   private final boolean ignoreUnknownProperties;
   private final Client httpClient;
+  private String authToken;
+  private AuthType authType;
 
   public static MattermostClientBuilder builder() {
     return new MattermostClientBuilder();
   }
 
+  protected Client buildClient(Consumer<ClientBuilder> httpClientConfig) {
+    ClientBuilder builder = ClientBuilder.newBuilder()
+        .register(new MattermostModelMapperProvider(ignoreUnknownProperties))
+        .register(JacksonFeature.class).register(MultiPartFeature.class)
+        // needs for PUT request with null entity
+        // (/commands/{command_id}/regen_token)
+        .property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
+    if (clientLogLevel != null) {
+      builder.register(new LoggingFeature(Logger.getLogger(getClass().getName()), clientLogLevel,
+          Verbosity.PAYLOAD_ANY, 100000));
+    }
+
+    httpClientConfig.accept(builder);
+
+    return builder.build();
+  }
+
   public static class MattermostClientBuilder {
+
     private Level logLevel;
     private String url;
     private boolean ignoreUnknownProperties;
-    private Consumer<ClientBuilder> httpClientConfig = clientBuilder -> {};
+    private Consumer<ClientBuilder> httpClientConfig = clientBuilder -> {
+    };
 
     public MattermostClientBuilder logLevel(Level logLevel) {
       this.logLevel = logLevel;
@@ -225,23 +244,6 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
     public MattermostClient build() {
       return new MattermostClient(url, logLevel, ignoreUnknownProperties, httpClientConfig);
     }
-  }
-
-  protected Client buildClient(Consumer<ClientBuilder> httpClientConfig) {
-    ClientBuilder builder = ClientBuilder.newBuilder()
-        .register(new MattermostModelMapperProvider(ignoreUnknownProperties))
-        .register(JacksonFeature.class).register(MultiPartFeature.class)
-        // needs for PUT request with null entity
-        // (/commands/{command_id}/regen_token)
-        .property(ClientProperties.SUPPRESS_HTTP_COMPLIANCE_VALIDATION, true);
-    if (clientLogLevel != null) {
-      builder.register(new LoggingFeature(Logger.getLogger(getClass().getName()), clientLogLevel,
-          Verbosity.PAYLOAD_ANY, 100000));
-    }
-
-    httpClientConfig.accept(builder);
-
-    return builder.build();
   }
 
   @Override
@@ -283,7 +285,7 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 
   /**
    * Set Personal Access Token that use to access Mattermost API to this client.
-   * 
+   *
    * @since Mattermost Server 4.1
    */
   public void setAccessToken(String token) {
