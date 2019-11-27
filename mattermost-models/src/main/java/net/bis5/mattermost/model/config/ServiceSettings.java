@@ -234,6 +234,8 @@ public class ServiceSettings {
   private boolean enableBotAccountCreation;
   /* @since Mattermost Server 5.14 */
   private boolean enableSvgs;
+  /* @since Mattermost Server 5.17 */
+  private boolean enableLatex;
 
 
   /**
