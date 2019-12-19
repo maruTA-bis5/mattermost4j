@@ -469,6 +469,9 @@ public class MattermostApiTest {
     }
 
     @Test
+    @Disabled
+    // Since 5.18.0, 5.17.2, 5.16.4, 5.15.4 and 5.9.7, removed ability to change type via
+    // updateChannel
     public void updateChannel_ChangeType() {
       String channelId = th.basicChannel().getId();
       assertThat(th.basicChannel().getType(), is(ChannelType.Open));
