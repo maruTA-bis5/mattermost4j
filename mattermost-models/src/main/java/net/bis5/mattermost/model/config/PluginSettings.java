@@ -14,6 +14,8 @@
 
 package net.bis5.mattermost.model.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import lombok.Data;
 import net.bis5.mattermost.model.config.plugin.PluginState;
@@ -41,5 +43,9 @@ public class PluginSettings {
   private boolean enableMarketplace = true;
   /* @since Mattermost Server 5.16 */
   private String marketplaceUrl = "https://marketplace.integrations.mattermost.com";
+  /* @since Mattermost Server 5.18 */
+  private boolean requirePluginSignature;
+  /* @since Mattermost Server 5.18 */
+  private List<String> signaturePublicKeyFiles = new ArrayList<>();
 
 }

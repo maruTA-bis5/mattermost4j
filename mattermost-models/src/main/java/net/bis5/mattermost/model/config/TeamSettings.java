@@ -71,5 +71,7 @@ public class TeamSettings {
   private boolean experimentalViewArchivedChannels;
   /* @since Mattermost Server 5.2 */
   private List<String> experimentalDefaultChannels;
+  /* @since Mattermost Server 5.18 */
+  private boolean lockTeammateNameDisplay;
 
 }
