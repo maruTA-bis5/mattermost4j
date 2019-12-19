@@ -17,6 +17,8 @@ package net.bis5.mattermost.model.config;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import net.bis5.mattermost.model.config.consts.saml.CanonicalAlgorithm;
+import net.bis5.mattermost.model.config.consts.saml.SignatureAlgorithm;
 
 /**
  * SAML settings.
@@ -69,8 +71,15 @@ public class SamlSettings {
   private String scopingIdpProviderId;
   /* @since Mattermost Server 4.9 */
   private String scopingIdpName;
+  /* @since Mattermost Server 5.18 */
+  private SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.SHA1;
+  /* @since Mattermost Server 5.18 */
+  private CanonicalAlgorithm canonicalAlgorithm = CanonicalAlgorithm.CANONICALIZATION;
+  /* @since Mattermost Server 5.18 */
+  private String guestAttribute;
 
   @Getter(onMethod = @__({@Deprecated}))
   @Setter(onMethod = @__({@Deprecated}))
   private boolean enableSync;
+
 }

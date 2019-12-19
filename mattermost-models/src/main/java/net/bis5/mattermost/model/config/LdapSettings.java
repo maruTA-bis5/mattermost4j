@@ -76,6 +76,8 @@ public class LdapSettings {
   private String groupIdAttribute;
   /* @since Mattermost Server 5.14 */
   private boolean trace;
+  /* @since Mattermost Server 5.18 */
+  private String guestFilter;
 
   @Getter(onMethod = @__({@Deprecated}))
   @Setter(onMethod = @__({@Deprecated}))

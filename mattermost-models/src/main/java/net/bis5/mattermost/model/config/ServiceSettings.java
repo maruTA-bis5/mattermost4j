@@ -16,6 +16,8 @@ package net.bis5.mattermost.model.config;
 
 import java.util.List;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.bis5.mattermost.model.config.consts.AllowEditPost;
 import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
 import net.bis5.mattermost.model.config.consts.GroupUnreadChannels;
@@ -222,7 +224,9 @@ public class ServiceSettings {
   private long tlsStrictTransportMaxAge;
   /* @since Mattermost Server 5.6 */
   private List<String> tlsOverwriteCiphers;
-  /* @since Mattermost Server 5.8 */
+  /* @since Mattermost Server 5.8, removed in 5.18 */
+  @Getter(onMethod = @__(@Deprecated))
+  @Setter(onMethod = @__(@Deprecated))
   private boolean experimentalLdapGroupSync;
   /* @since Mattermost Server 5.8 */
   private boolean experimentalStrictCsrfEnforcement;
