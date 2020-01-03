@@ -169,8 +169,6 @@ import org.junit.jupiter.api.Test;
 public class MattermostApiTest {
 
   private static final String APPLICATION = getApplicationUrl();
-  private static final String INBUCKET_HOST = getInbucketHost();
-  private static final String INBUCKET_PORT = getInbucketPort();
   private MattermostClient client;
   private static TestHelper th;
 
@@ -186,24 +184,16 @@ public class MattermostApiTest {
     return val != null ? val : defaultValue;
   }
 
-  private static String getInbucketHost() {
-    return getEnv("INBUCKET_HOST", "localhost");
-  }
-
-  private static String getInbucketPort() {
-    return getEnv("INBUCKET_PORT", "2500");
-  }
-
   private String dummyHttpServerHost() {
-    return getEnv("DUMMY_HTTP_SERVER_HOST", "localhost");
+    return getEnv("DUMMY_HTTP_SERVER_HOST", "static.bis5.net");
   }
 
   private int dummyHttpServerPort() {
-    return Integer.valueOf(getEnv("DUMMY_HTTP_SERVER_PORT", "8075"));
+    return Integer.valueOf(getEnv("DUMMY_HTTP_SERVER_PORT", "0"));
   }
 
   private boolean useLocalDummyServer() {
-    return Boolean.valueOf(getEnv("USE_LOCAL_DUMMY_SERVER", "true"));
+    return Boolean.valueOf(getEnv("USE_LOCAL_DUMMY_SERVER", "false"));
   }
 
 
@@ -222,7 +212,7 @@ public class MattermostApiTest {
   @BeforeEach
   public void setup() {
     client = createNewClient();
-    th.changeClient(client).initBasic().useSmtp(INBUCKET_HOST, INBUCKET_PORT);
+    th.changeClient(client).initBasic();
   }
 
   @AfterEach
@@ -3221,7 +3211,7 @@ public class MattermostApiTest {
 
     @Test
     public void testEmail() {
-      th.useSmtp(INBUCKET_HOST, INBUCKET_PORT).logout().loginSystemAdmin();
+      th.logout().loginSystemAdmin();
 
       ApiResponse<Boolean> result = assertNoError(client.testEmail());
       assertTrue(result.readEntity());
