@@ -10,7 +10,10 @@ mattermost4j
 Mattermost API v4 client for Java.
 
 ## Requirement
-- JDK 8 (9+ will support soon)
+- JDK 8 or 11
+	- for JDK 11 users: You may add these dependencies for runtime
+		- Jakarta XML Binding
+		- Jakarta Activation
 - Mattermost Server
     - Please check mattermost4j version compatible with your server instance:
     https://github.com/maruTA-bis5/mattermost4j/wiki#what-version-shoud-i-use
