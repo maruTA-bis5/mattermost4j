@@ -1,5 +1,6 @@
+version: 2.1
+
 workflows:
-  version: 2
   build:
     jobs:
       - lint
@@ -21,14 +22,12 @@ workflows:
             - test-mattermost-esr
             - test-mattermost-latest
  
-version: 2
 jobs:
-  lint:
+  base: &base
+    image: ubuntu-16.04:201903-01
     working_directory: ~/repo
-    docker:
-      - image: circleci/openjdk:8u212-jdk-stretch
-    environment:
-      MAVEN_OPTS: -Xmx3200m
+  lint:
+    <<: *base
     steps:
       - checkout
       - restore_cache:
@@ -42,34 +41,13 @@ jobs:
               - ~/.m2
           key: maven-{{ .Branch }}-{{ checksum "pom.xml" }}
   test-mattermost-base: &test-mattermost-base
-    working_directory: ~/repo
-    docker:
-      - image: circleci/openjdk:8u212-jdk-stretch
-      - image: mysql:5.7
-        environment:
-          MYSQL_ROOT_PASSWORD: mostest
-          MYSQL_USER: mmuser
-          MYSQL_PASSWORD: mostest
-          MYSQL_DATABASE: mattermost_test
-      - image: jhillyerd/inbucket:release-2.0.0
-    environment:
-      MAVEN_OPTS: -Xmx3200m
+    <<: *base
     steps:
-      - run:
-          name: setup-mattermost-server
-          command: |
-              mkdir ~/work
-              wget https://releases.mattermost.com/${MATTERMOST_VERSION}/mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz -O ~/work/mattermost.tar.gz
-              tar -C ~ -xvf ~/work/mattermost.tar.gz
-              [ -e ~/mattermost/config/default.json ] && cp ~/mattermost/config/default.json ~/mattermost/config/config.json
-              sed -e 's/dockerhost/localhost/' -e 's/\("EnableUploads": \)false/\1true/' -i ~/mattermost/config/config.json
-      - run: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
-      - run:
-          name: mattermost
-          command: cd ~/mattermost && ~/mattermost/bin/platform
-          background: true
       - checkout
-      - run: for i in 1 2 3 4 5 6 7 8 9 10; do curl -I "${MATTERMOST_URL:-http://localhost:8065}" || sleep 10 && continue; break; done
+      - run:
+          name: run services
+          command: docker-compose up -d
+      - run: dockerize -wait tcp://127.0.0.1:8065 -timeout 120s
       - restore_cache:
           keys:
               - maven-{{ .Branch }}-{{ checksum "pom.xml" }}
@@ -110,20 +88,10 @@ jobs:
     environment:
       MATTERMOST_VERSION: 5.18.0
     steps:
-      - run:
-          name: setup-mattermost-server
-          command: |
-              mkdir ~/work
-              wget https://releases.mattermost.com/${MATTERMOST_VERSION}/mattermost-team-${MATTERMOST_VERSION}-linux-amd64.tar.gz -O ~/work/mattermost.tar.gz
-              tar -C ~ -xvf ~/work/mattermost.tar.gz
-              [ -e ~/mattermost/config/default.json ] && cp ~/mattermost/config/default.json ~/mattermost/config/config.json
-              sed -e 's/dockerhost/localhost/' -e 's/\("EnableUploads": \)false/\1true/' -i ~/mattermost/config/config.json
-      - run: dockerize -wait tcp://127.0.0.1:3306 -timeout 120s
-      - run:
-          name: mattermost
-          command: cd ~/mattermost && ~/mattermost/bin/platform
-          background: true
       - checkout
+      - run:
+          name: run services
+          command: docker-compose up -d
       - run: dockerize -wait tcp://127.0.0.1:8065 -timeout 120s
       - restore_cache:
           keys:
@@ -151,4 +119,3 @@ jobs:
           when: always
       - store_test_results:
           path: ~/test-results
-
