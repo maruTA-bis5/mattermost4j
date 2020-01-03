@@ -24,11 +24,15 @@ workflows:
  
 jobs:
   base: &base
-    image: ubuntu-16.04:201903-01
+    machine:
+      image: "ubuntu-1604:201903-01"
     working_directory: ~/repo
+    steps:
+      - run: "echo Must Override"
   lint:
     <<: *base
     steps:
+      - run: sudo apt install openjdk-8-jdk-headless maven -y
       - checkout
       - restore_cache:
           keys:
@@ -43,6 +47,7 @@ jobs:
   test-mattermost-base: &test-mattermost-base
     <<: *base
     steps:
+      - run: sudo apt install openjdk-8-jdk-headless maven -y
       - checkout
       - run:
           name: run services
@@ -88,6 +93,7 @@ jobs:
     environment:
       MATTERMOST_VERSION: 5.18.0
     steps:
+      - run: sudo apt install openjdk-8-jdk-headless maven -y
       - checkout
       - run:
           name: run services
