@@ -88,19 +88,6 @@ public class TestHelper {
     return this;
   }
 
-  public TestHelper useSmtp(String inbucketHost, String inbucketPort) {
-    logout().loginSystemAdmin();
-    Config config = client.getConfig().readEntity();
-    config.getEmailSettings().setSendEmailNotifications(true);
-    config.getEmailSettings().setSmtpServer(inbucketHost);
-    config.getEmailSettings().setSmtpPort(inbucketPort);
-    config.getEmailSettings().setFeedbackEmail("test@example.com");
-    config.getEmailSettings().setConnectionSecurity(ConnectionSecurity.NONE);
-    config = checkNoError(client.updateConfig(config)).readEntity();
-    logout().loginBasic();
-    return this;
-  }
-
   public TestHelper initBasic() {
     teamAdminUser = createUser();
     loginTeamAdmin();

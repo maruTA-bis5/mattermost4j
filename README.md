@@ -75,6 +75,14 @@ use https://github.com/google/styleguide/ {intellij,eclipse}-java-google-style.x
 ### CheckStyle
 Currently, use CheckStyle's built-in `google_checks.xml`.
 
+## Test
+### Unit test
+- `mvn test`
+
+### Integration with Mattermost Server
+1. `docker-compose up`
+2. `mvn verify`
+
 ## License
 [Apache Software License, Version 2.0](LICENSE.txt)
 

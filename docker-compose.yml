@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql:5.7
+    networks:
+      - mattermost
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PASSWORD: mostest
+      MYSQL_PASSWORD: mostest
+      MYSQL_USER: mmuser
+      MYSQL_DATABASE: mattermost_test
+
+  server:
+    image: "mattermost/mattermost-team-edition:${MATTERMOST_VERSION:-5.18.0}"
+    ports:
+      - "8065:8065"
+    networks:
+      - mattermost
+    environment:
+      MM_USERNAME: mmuser
+      MM_PASSWORD: mostest
+      MM_DBNAME: mattermost_test
+      MM_SQLSETTINGS_DATASOURCE: "mmuser:mostest@tcp(mysql)/mattermost_test?charset=utf8mb4,utf8&readTimeout=30s&writeTimeout=30s"
+      MM_EMAILSETTINGS_SENDEMAILNOTIFICATION: "true"
+      MM_EMAILSETTINGS_FEEDBACKEMAIL: "feedback@localhost"
+      MM_EMAILSETTINGS_SMTPPORT: "2500"
+      MM_EMAILSETTINGS_SMTPSERVER: inbucket
+      MM_LOGSETTINGS_ENABLEFILE: "false"
+      MM_PLUGINSETTINGS_ENABLEUPLOADS: "true"
+      MM_SERVICESETTINGS_ALLOWEDUNTRUSTEDINTERNALCONNECTIONS: "localhost,127.0.0.1,::1"
+      MM_SERVICESETTINGS_SITEURL: "http://localhost:8065"
+
+  inbucket:
+    image: jhillyerd/inbucket:release-2.0.0
+    networks:
+      - mattermost
+
+networks:
+  mattermost:
+    driver: bridge
