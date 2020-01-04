@@ -13,13 +13,15 @@
  */
 package net.bis5.mattermost.client4;
 
+import static net.bis5.mattermost.client4.Assertions.checkNoError;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Response.Status;
+import org.apache.commons.lang3.RandomStringUtils;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import net.bis5.mattermost.client4.model.ApiError;
 import net.bis5.mattermost.model.Channel;
 import net.bis5.mattermost.model.ChannelType;
 import net.bis5.mattermost.model.Config;
@@ -28,8 +30,6 @@ import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.TeamType;
 import net.bis5.mattermost.model.User;
-import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
-import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * Mattermost API Call Test Helper
@@ -46,7 +46,7 @@ public class TestHelper {
     this.client = client;
   }
 
-  TestHelper changeClient(MattermostClient client) {
+  public TestHelper changeClient(MattermostClient client) {
     this.client = client;
     return this;
   }
@@ -62,10 +62,17 @@ public class TestHelper {
   private User basicUser2;
 
   /**
-   * The password compatible default (5.14+) requirements (min length:10, required: 1 uppercase, 1
-   * lowercase, 1 number and 1 symbol).
+   * The password compatible default (5.14+) requirements (min length:10,
+   * required: 1 uppercase, 1 lowercase, 1 number and 1 symbol).
    */
-  static final String DEFAULT_PASSWORD = "The_Passw0rd";
+  public static final String DEFAULT_PASSWORD = "The_Passw0rd";
+
+  public static final String EMOJI_GLOBE = "/noto-emoji_u1f310.png";
+  public static final String EMOJI_CONSTRUCTION = "/noto-emoji_u1f6a7.png";
+
+  public Path getResourcePath(String name) throws URISyntaxException {
+    return Paths.get(getClass().getResource(name).toURI());
+  }
 
   public TestHelper setup() {
     initSystemAdmin();
@@ -123,7 +130,7 @@ public class TestHelper {
     return this;
   }
 
-  protected String newId() {
+  public String newId() {
     return newRandomString(26);
   }
 
@@ -239,7 +246,7 @@ public class TestHelper {
     return "fakechannel" + newRandomString(10);
   }
 
-  protected String newRandomString(int length) {
+  public String newRandomString(int length) {
     return RandomStringUtils.randomAlphanumeric(length).toLowerCase();
   }
 
@@ -268,12 +275,12 @@ public class TestHelper {
     return this;
   }
 
-  protected TestHelper loginAs(User user) {
+  public TestHelper loginAs(User user) {
     client.login(user.getEmail(), user.getPassword());
     return this;
   }
 
-  protected TestHelper linkUserToTeam(User user, Team team) {
+  public TestHelper linkUserToTeam(User user, Team team) {
     checkNoError(client.addTeamMembers(team.getId(), user.getId()));
     return this;
   }
@@ -286,23 +293,5 @@ public class TestHelper {
   public TestHelper updateUserToNonTeamAdmin(User user, Team team) {
     checkNoError(client.updateTeamMemberRoles(team.getId(), user.getId(), Role.TEAM_USER));
     return this;
-  }
-
-  // FIXME ApiResponeの責務
-  public <T> ApiResponse<T> checkNoError(ApiResponse<T> response) {
-    response.getRawResponse().bufferEntity();
-    try {
-      // if ignoreUnknownProperty is true, no exception will be thrown
-      ApiError error = response.readError();
-      Status.Family responseStatus = Status.Family.familyOf(error.getStatusCode());
-      if (responseStatus == Status.Family.CLIENT_ERROR
-          || responseStatus == Status.Family.SERVER_ERROR) {
-        throw new AssertionError("Expected no error, got " + error);
-      }
-      // no error
-    } catch (ProcessingException ex) {
-      // no error
-    }
-    return response;
   }
 }
