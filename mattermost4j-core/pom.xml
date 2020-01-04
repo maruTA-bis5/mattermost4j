@@ -76,7 +76,7 @@
 				<version>2.22.2</version>
 				<configuration>
 					<excludes>
-						<exclude>**/*MattermostApiTest*</exclude>
+						<exclude>**/net/bis5/mattermost/client4/api/*.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
@@ -85,7 +85,7 @@
 				<version>2.22.2</version>
 				<configuration>
 					<includes>
-						<include>**/MattermostApiTest.java</include>
+						<include>**/net/bis5/mattermost/client4/api/*.java</include>
 					</includes>
 				</configuration>
 				<executions>
