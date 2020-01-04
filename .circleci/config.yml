@@ -26,7 +26,7 @@ jobs:
   lint:
     working_directory: ~/repo
     docker:
-      - image: circleci/openjdk:8u212-jdk-stretch
+      - image: circleci/openjdk:11.0.5-jdk-stretch
     environment:
       MAVEN_OPTS: -Xmx3200m
     steps:
@@ -44,7 +44,7 @@ jobs:
   test-mattermost-base: &test-mattermost-base
     working_directory: ~/repo
     docker:
-      - image: circleci/openjdk:8u212-jdk-stretch
+      - image: circleci/openjdk:11.0.5-jdk-stretch
       - image: mysql:5.7
         environment:
           MYSQL_ROOT_PASSWORD: mostest
