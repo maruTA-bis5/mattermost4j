@@ -45,7 +45,7 @@ jobs:
       - run: docker-compose up -d
         env:
           MATTERMOST_VERSION: 5.18.0
-      - run: mvn clean verify sonar:sonar --show-version -s .circleci/settings-sonar.xml
+      - run: mvn clean verify sonar:sonar --show-version -s .github/workflows/settings-sonar.xml
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
