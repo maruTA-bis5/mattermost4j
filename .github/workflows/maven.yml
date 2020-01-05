@@ -15,6 +15,14 @@ jobs:
           path: ~/.m2
           key: m2-${{ hashFiles('**/pom.xml') }}
       - run: mvn clean verify -DskipTests=true --show-version
+      - uses: 8398a7/action-slack@v2
+        with:
+          status: ${{ job.status }}
+          author_name: lint status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: failure()
   test-with-server:
     needs: lint
     runs-on: ubuntu-latest
@@ -34,6 +42,14 @@ jobs:
         env:
           MATTERMOST_VERSION: ${{ matrix.mattermost-version }}
       - run: mvn clean verify --show-version
+      - uses: 8398a7/action-slack@v2
+        with:
+          status: ${{ job.status }}
+          author_name: test status for version ${{ matrix.mattermost-version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: failure()
   sonarqube:
     needs: [test-with-server]
     runs-on: ubuntu-latest
@@ -50,3 +66,11 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: 8398a7/action-slack@v2
+        with:
+          status: ${{ job.status }}
+          author_name: sonarqube status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: failure()
