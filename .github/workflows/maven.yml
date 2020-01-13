@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        mattermost-version: [5.19.0-rc2,5.18.0,5.17.2,5.9.7]
+        mattermost-version: [5.19.0-rc2,5.18.1,5.17.3,5.9.8]
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-java@v1
