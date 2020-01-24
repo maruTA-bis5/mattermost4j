@@ -615,4 +615,51 @@ class ChannelsApiTest implements MattermostClientTest {
     assertEquals(ChannelType.Private, privateChannel.getType());
   }
 
+  @Test
+  public void autocompleteChannels() {
+    th.loginTeamAdmin();
+    String teamId = th.basicTeam().getId();
+    Channel channelA = new Channel("AliceChannel_display", "channelalice", ChannelType.Open, teamId);
+    channelA = assertNoError(client.createChannel(channelA)).readEntity();
+    Channel channelB = new Channel("BobChannel_display", "channelbob", ChannelType.Private, teamId);
+    channelB = assertNoError(client.createChannel(channelB)).readEntity();
+    Channel channelC = new Channel("CharlieChannel_display", "channelcharlie", ChannelType.Open, teamId);
+    channelC = assertNoError(client.createChannel(channelC)).readEntity();
+
+    th.logout().loginBasic();
+    assertNoError(client.addChannelMember(channelA.getId(), th.basicUser().getId()));
+
+    // autocompleteChannel returns channels in team
+    String term = "channel";
+    ChannelList completeChannels = assertNoError(client.autocompleteChannels(teamId, term)).readEntity();
+
+    Set<String> ids = completeChannels.stream().map(Channel::getId).collect(Collectors.toSet());
+    assertThat(ids.size(), is(2));
+    assertThat(ids, containsInAnyOrder(channelA.getId(), channelC.getId()));
+  }
+
+  @Test
+  public void autocompleteChannelsForSearch() {
+    th.loginTeamAdmin();
+    String teamId = th.basicTeam().getId();
+    Channel channelA = new Channel("AliceChannel_display", "channelalice", ChannelType.Open, teamId);
+    channelA = assertNoError(client.createChannel(channelA)).readEntity();
+    Channel channelB = new Channel("BobChannel_display", "channelbob", ChannelType.Private, teamId);
+    channelB = assertNoError(client.createChannel(channelB)).readEntity();
+    Channel channelC = new Channel("CharlieChannel_display", "channelcharlie", ChannelType.Open, teamId);
+    channelC = assertNoError(client.createChannel(channelC)).readEntity();
+    assertNoError(client.addChannelMember(channelA.getId(), th.basicUser().getId()));
+    assertNoError(client.addChannelMember(channelB.getId(), th.basicUser().getId()));
+
+    th.logout().loginBasic();
+
+    // autocompleteChannelsForSearch returns own (joined) channels
+    String term = "channel";
+    ChannelList completeChannels = assertNoError(client.autocompleteChannelsForSearch(teamId, term)).readEntity();
+
+    Set<String> ids = completeChannels.stream().map(Channel::getId).collect(Collectors.toSet());
+    assertThat(ids.size(), is(2));
+    assertThat(ids, containsInAnyOrder(channelA.getId(), channelB.getId()));
+  }
+
 }

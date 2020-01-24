@@ -1358,6 +1358,16 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
     return doApiPost(getChannelRoute(channelId) + "/convert", null, Channel.class);
   }
 
+  @Override
+  public ApiResponse<ChannelList> autocompleteChannels(String teamId, String searchTerm) {
+    return doApiGet(getChannelsForTeamRoute(teamId) + "/autocomplete" + "?name=" + searchTerm, null, ChannelList.class);
+  }
+
+  @Override
+  public ApiResponse<ChannelList> autocompleteChannelsForSearch(String teamId, String searchTerm) {
+    return doApiGet(getChannelsForTeamRoute(teamId) + "/search_autocomplete" + "?name=" + searchTerm, null, ChannelList.class);
+  }
+
   // Post Section
 
   @Override
