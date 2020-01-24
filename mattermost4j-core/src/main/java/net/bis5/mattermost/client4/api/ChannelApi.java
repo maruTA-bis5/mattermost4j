@@ -295,4 +295,14 @@ public interface ChannelApi {
    */
   ApiResponse<Channel> convertChannelToPrivate(String channelId);
 
+  /**
+   * autocomplete channels in team based on search term.
+   */
+  ApiResponse<ChannelList> autocompleteChannels(String teamId, String searchTerm);
+
+  /**
+   * autocomplete your (joined) channels in team based on search term.
+   */
+  ApiResponse<ChannelList> autocompleteChannelsForSearch(String teamId, String searchTerm);
+
 }
