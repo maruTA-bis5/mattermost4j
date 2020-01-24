@@ -297,11 +297,13 @@ public interface ChannelApi {
 
   /**
    * autocomplete channels in team based on search term.
+   * @since Mattermost Server 4.7
    */
   ApiResponse<ChannelList> autocompleteChannels(String teamId, String searchTerm);
 
   /**
    * autocomplete your (joined) channels in team based on search term.
+   * @since Mattermost Server 5.4
    */
   ApiResponse<ChannelList> autocompleteChannelsForSearch(String teamId, String searchTerm);
 
