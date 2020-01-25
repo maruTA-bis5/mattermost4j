@@ -25,20 +25,21 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.MattermostClient;
 import net.bis5.mattermost.client4.MattermostClientTest;
@@ -94,7 +95,7 @@ class EmojiApiTest implements MattermostClientTest {
   public void getCustomEmojiList() throws URISyntaxException {
     Path image = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Emoji emoji1 = new Emoji();
-    emoji1.setName("custom" + th.newId());
+    emoji1.setName("custom_" + th.newId());
     emoji1.setCreatorId(th.basicUser().getId());
     ApiResponse<Emoji> resp1 = client.createEmoji(emoji1, image);
     if (isNotSupportVersion("5.4.0", resp1)) {
@@ -103,15 +104,43 @@ class EmojiApiTest implements MattermostClientTest {
     }
     emoji1 = assertNoError(resp1).readEntity();
     Emoji emoji2 = new Emoji();
-    emoji2.setName("custom" + th.newId());
+    emoji2.setName("custom_" + th.newId());
     emoji2.setCreatorId(th.basicUser().getId());
     emoji2 = client.createEmoji(emoji2, image).readEntity();
 
     ApiResponse<EmojiList> response = assertNoError(client.getEmojiList());
     List<Emoji> emojiList = response.readEntity();
 
-    assertThat(emojiList.stream().map(Emoji::getId).collect(Collectors.toSet()),
+    assertThat(emojiList.stream().map(Emoji::getId).collect(Collectors.toList()),
         hasItems(emoji1.getId(), emoji2.getId()));
+  }
+
+  @Test
+  public void getCustomEmojiListInOrder() throws URISyntaxException {
+    Path image = th.getResourcePath(TestHelper.EMOJI_GLOBE);
+    Emoji emoji1 = new Emoji();
+    emoji1.setName("custom1_" + th.newId());
+    emoji1.setCreatorId(th.basicUser().getId());
+    ApiResponse<Emoji> resp1 = client.createEmoji(emoji1, image);
+    if (isNotSupportVersion("5.4.0", resp1)) {
+      // CreateEmoji call fail between 4.8 and 5.3
+      return;
+    }
+    emoji1 = assertNoError(resp1).readEntity();
+    Emoji emoji2 = new Emoji();
+    emoji2.setName("custom2_" + th.newId());
+    emoji2.setCreatorId(th.basicUser().getId());
+    emoji2 = client.createEmoji(emoji2, image).readEntity();
+
+    ApiResponse<EmojiList> response = assertNoError(client.getEmojiListSorted());
+    List<Emoji> emojiList = response.readEntity();
+
+    Set<String> validIds = new HashSet<>(Arrays.asList(emoji1.getId(), emoji2.getId()));
+    List<String> returnedEmojiIdOrder = emojiList.stream() //
+        .map(Emoji::getId) //
+        .filter(i -> validIds.contains(i)) //
+        .collect(Collectors.toList());
+    assertThat(returnedEmojiIdOrder, contains(emoji1.getId(), emoji2.getId()));
   }
 
   @Test

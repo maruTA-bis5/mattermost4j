@@ -1991,7 +1991,21 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 
   @Override
   public ApiResponse<EmojiList> getEmojiList(Pager pager) {
-    return doApiGet(getEmojisRoute() + pager.toQuery(), null, EmojiList.class);
+    return getEmojiList(pager, false);
+  }
+
+  @Override
+  public ApiResponse<EmojiList> getEmojiListSorted(Pager pager) {
+    return getEmojiList(pager, true);
+  }
+
+  private ApiResponse<EmojiList> getEmojiList(Pager pager, boolean sort) {
+    QueryBuilder query = new QueryBuilder();
+    query.set(pager);
+    if (sort) {
+      query.set("sort", "name");
+    }
+    return doApiGet(getEmojisRoute() + query.toString(), null, EmojiList.class);
   }
 
   @Override
