@@ -51,6 +51,21 @@ public interface EmojiApi {
   ApiResponse<EmojiList> getEmojiList(Pager pager);
 
   /**
+   * returns a list of custom emoji in the system sorted by name.
+   */
+  default ApiResponse<EmojiList> getEmojiListSorted() {
+    return getEmojiListSorted(Pager.defaultPager());
+  }
+
+  /**
+   * returns a list of custom emoji in the system sorted by name.
+   * 
+   * @param pager
+   * @since Mattermost Server 4.7
+   */
+  ApiResponse<EmojiList> getEmojiListSorted(Pager pager);
+
+  /**
    * delete an custom emoji on the provided emoji id string.
    */
   ApiResponse<Boolean> deleteEmoji(String emojiId);
