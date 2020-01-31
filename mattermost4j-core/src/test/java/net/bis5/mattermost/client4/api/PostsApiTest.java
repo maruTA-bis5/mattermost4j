@@ -160,7 +160,7 @@ class PostsApiTest implements MattermostClientTest {
     Post post = th.createPost(th.basicChannel());
     post.setMessage("UPDATE:" + post.getMessage());
 
-    ApiResponse<Post> response = assertNoError(client.updatePost(post.getId(), post));
+    ApiResponse<Post> response = assertNoError(client.updatePost(post));
     Post updatedPost = response.readEntity();
 
     assertThat(updatedPost.getMessage(), is(post.getMessage()));
