@@ -1385,8 +1385,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
-  public ApiResponse<Post> updatePost(String postId, Post post) {
-    return doApiPut(getPostRoute(postId), post, Post.class);
+  public ApiResponse<Post> updatePost(Post post) {
+    return doApiPut(getPostRoute(post.getId()), post, Post.class);
   }
 
   @Override

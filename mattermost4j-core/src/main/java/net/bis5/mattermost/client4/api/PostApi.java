@@ -44,14 +44,16 @@ public interface PostApi {
   /**
    * updates a post based on the provided post object.
    */
-  default ApiResponse<Post> updatePost(Post post) {
-    return updatePost(post.getId(), post);
-  }
+  ApiResponse<Post> updatePost(Post post);
 
   /**
    * updates a post based on the provided post object.
+   * @deprecated use {@link #updatePost(Post)} instead.
    */
-  ApiResponse<Post> updatePost(String postId, Post post);
+  @Deprecated
+  default ApiResponse<Post> updatePost(String postId, Post post) {
+    return updatePost(post);
+  }
 
   /**
    * partially updates a post. Any missing fields are not updated.
