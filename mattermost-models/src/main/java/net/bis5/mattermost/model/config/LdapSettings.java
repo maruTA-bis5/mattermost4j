@@ -78,6 +78,10 @@ public class LdapSettings {
   private boolean trace;
   /* @since Mattermost Server 5.18 */
   private String guestFilter;
+  /* @since Mattermost Server 5.20 */
+  private boolean enableAdminFilter;
+  /* @since Mattermost Server 5.20 */
+  private String adminFilter;
 
   @Getter(onMethod = @__({@Deprecated}))
   @Setter(onMethod = @__({@Deprecated}))
