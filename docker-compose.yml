@@ -13,7 +13,7 @@ services:
       MYSQL_DATABASE: mattermost_test
 
   server:
-    image: "mattermost/mattermost-team-edition:${MATTERMOST_VERSION:-5.18.0}"
+    image: "mattermost/mattermost-team-edition:${MATTERMOST_VERSION:-5.20.0-rc1}"
     ports:
       - "8065:8065"
     networks:
