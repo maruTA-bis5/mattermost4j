@@ -107,9 +107,21 @@ class TeamsApiTest implements MattermostClientTest {
   public void getTeams() {
     Team team = th.loginSystemAdmin().createTeam();
 
+    Pager pager = Pager.of(0,200);
     ApiResponse<TeamList> response =
-        assertNoError(client.getAllTeams(Pager.of(0, Integer.MAX_VALUE), null));
+        assertNoError(client.getAllTeams(pager, null));
     List<Team> teams = response.readEntity();
+    if (teams.size() == 200) {
+      while(true) {
+        pager = pager.nextPage();
+        response = assertNoError(client.getAllTeams(pager, null));
+        List<Team> additionalTeams = response.readEntity();
+        if (additionalTeams.isEmpty()) {
+          break;
+        }
+        teams.addAll(additionalTeams);
+      }
+    }
 
     assertThat(teams.stream().map(Team::getId).collect(Collectors.toSet()), hasItem(team.getId()));
   }
