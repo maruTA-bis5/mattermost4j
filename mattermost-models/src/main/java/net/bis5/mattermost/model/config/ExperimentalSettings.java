@@ -60,5 +60,7 @@ public class ExperimentalSettings {
   private boolean disablePostMetadata;
   /* @since Mattermost Server 5.8 */
   private long linkMetadataTimeoutMilliseconds = 5000;
+  /* @since Mattermost Server 5.20 */
+  private boolean useNewSamlLibrary;
 
 }

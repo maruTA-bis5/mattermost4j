@@ -89,7 +89,7 @@ public class Assertions {
   }
 
   public static boolean isNotSupportVersion(String minimumRequirement, ApiResponse<?> response) {
-    Semver serverVersion = new Semver(response.getRawResponse().getHeaderString("X-Version-Id"));
+    Semver serverVersion = new Semver(response.getRawResponse().getHeaderString("X-Version-Id")).withClearedSuffix();
     Semver requirement = new Semver(minimumRequirement);
     return serverVersion.compareTo(requirement) < 0;
   }

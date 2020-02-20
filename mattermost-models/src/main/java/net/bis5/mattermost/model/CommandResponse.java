@@ -14,9 +14,9 @@
 
 package net.bis5.mattermost.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -49,5 +49,7 @@ public class CommandResponse {
   private List<CommandResponse> extraResponses;
   /* @since Mattermost Server 5.8 */
   private String channelId;
+  /* @since Mattermost Server 5.20 */
+  private boolean skipSlackParsing;
 
 }

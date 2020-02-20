@@ -40,6 +40,8 @@ public class SamlSettings {
 
   private String idpUrl;
   private String idpDescriptorUrl;
+  /* @since Mattermost Server 5.20 */
+  private String idpMetadataUrl;
   private String assertionConsumerServiceUrl;
 
   private String idpCertificateFile;
@@ -77,6 +79,10 @@ public class SamlSettings {
   private CanonicalAlgorithm canonicalAlgorithm = CanonicalAlgorithm.CANONICALIZATION;
   /* @since Mattermost Server 5.18 */
   private String guestAttribute;
+  /* @since Mattermost Server 5.20 */
+  private boolean enableAdminAttribute;
+  /* @since Mattermost Server 5.20 */
+  private String adminAttribute;
 
   @Getter(onMethod = @__({@Deprecated}))
   @Setter(onMethod = @__({@Deprecated}))

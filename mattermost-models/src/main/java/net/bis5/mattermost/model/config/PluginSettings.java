@@ -47,5 +47,9 @@ public class PluginSettings {
   private boolean requirePluginSignature;
   /* @since Mattermost Server 5.18 */
   private List<String> signaturePublicKeyFiles = new ArrayList<>();
+  /* @since Mattermost Server 5.20 */
+  private boolean enableRemoteMarketplace = true;
+  /* @since Mattermost Server 5.20 */
+  private boolean automaticPrepackagedPlugins = true;
 
 }
