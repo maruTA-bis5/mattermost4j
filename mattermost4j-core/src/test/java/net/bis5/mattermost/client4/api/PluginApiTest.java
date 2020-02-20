@@ -19,10 +19,10 @@ package net.bis5.mattermost.client4.api;
 import static net.bis5.mattermost.client4.Assertions.assertNoError;
 import static net.bis5.mattermost.client4.Assertions.assertStatus;
 import static net.bis5.mattermost.client4.Assertions.isNotSupportVersion;
+import static net.bis5.mattermost.client4.Assertions.isSupportVersion;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -30,9 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Optional;
-
 import javax.ws.rs.core.Response.Status;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -40,7 +38,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.MattermostClient;
 import net.bis5.mattermost.client4.MattermostClientTest;
@@ -107,17 +104,29 @@ class PluginApiTest implements MattermostClientTest {
     if (isNotSupportVersion("5.2.0", response)) {
       return;
     }
-    Plugins plugins = response.readEntity();
 
-    assertAll(() -> {
-      Optional<PluginManifest> zoomPlugin = Arrays.asList(plugins.getInactive()).stream()
-          .filter(p -> p.getId().equals("zoom")).findFirst();
-      assertTrue(zoomPlugin.isPresent(), "zoom");
-    }, () -> {
-      Optional<PluginManifest> jiraPlugin = Arrays.asList(plugins.getInactive()).stream()
-          .filter(p -> p.getId().equals("jira")).findFirst();
-      assertTrue(jiraPlugin.isPresent(), "jira");
-    });
+    if (isSupportVersion("5.20.0", response)) {
+      // prepackaged plugin reworks 
+      PluginManifest uploadResult = assertNoError(client.uploadPlugin(simpleLockPluginArchivePath)).readEntity();
+      Plugins plugins = assertNoError(client.getPlugins()).readEntity();
+      Optional<PluginManifest> simpleLockPlugin = Arrays.asList(plugins.getInactive()).stream()
+        .filter(p -> p.getId().equals(uploadResult.getId())).findFirst();
+      assertTrue(simpleLockPlugin.isPresent());
+
+      // cleanup
+      client.removePlugin(uploadResult.getId());
+    } else {
+      Plugins plugins = response.readEntity();
+      assertAll(() -> {
+        Optional<PluginManifest> zoomPlugin = Arrays.asList(plugins.getInactive()).stream()
+            .filter(p -> p.getId().equals("zoom")).findFirst();
+        assertTrue(zoomPlugin.isPresent(), "zoom");
+      }, () -> {
+        Optional<PluginManifest> jiraPlugin = Arrays.asList(plugins.getInactive()).stream()
+            .filter(p -> p.getId().equals("jira")).findFirst();
+        assertTrue(jiraPlugin.isPresent(), "jira");
+      });
+    }
   }
 
   @Test
