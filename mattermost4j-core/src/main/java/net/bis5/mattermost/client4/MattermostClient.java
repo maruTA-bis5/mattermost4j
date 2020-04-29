@@ -642,7 +642,7 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   // Authentication Section
 
   @Override
-  public User loginById(String id, String password) {
+  public ApiResponse<User> loginById(String id, String password) {
     return login(LoginRequest.builder().id(id).password(password).build());
   }
 
@@ -654,24 +654,24 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 
   private static final String HEADER_TOKEN = "token";
 
-  protected User login(LoginRequest param) {
-    return onLogin(doApiPost("/users/login", param)).readEntity();
+  protected ApiResponse<User> login(LoginRequest param) {
+    return onLogin(doApiPost("/users/login", param));
   }
 
 
   @Override
-  public User login(String loginId, String password) {
+  public ApiResponse<User> login(String loginId, String password) {
     return login(LoginRequest.builder().loginId(loginId).password(password).build());
   }
 
 
   @Override
-  public User loginByLdap(String loginId, String password) {
+  public ApiResponse<User> loginByLdap(String loginId, String password) {
     return login(LoginRequest.builder().loginId(loginId).password(password).ldapOnly(true).build());
   }
 
   @Override
-  public User loginWithDevice(String loginId, String password, String deviceId) {
+  public ApiResponse<User> loginWithDevice(String loginId, String password, String deviceId) {
     return login(
         LoginRequest.builder().loginId(loginId).password(password).deviceId(deviceId).build());
   }

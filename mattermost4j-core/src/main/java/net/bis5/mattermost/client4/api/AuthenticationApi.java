@@ -29,24 +29,24 @@ public interface AuthenticationApi {
   /**
    * authenticates a user by user id and password.
    */
-  User loginById(String id, String password);
+  ApiResponse<User> loginById(String id, String password);
 
   /**
    * authenticates a user by login id, which can be username, email, or some sort of SSO identifier
    * based on server configuration, and a password.
    */
-  User login(String loginId, String password);
+  ApiResponse<User> login(String loginId, String password);
 
   /**
    * authenticates a user by LDAP id and password.
    */
-  User loginByLdap(String loginId, String password);
+  ApiResponse<User> loginByLdap(String loginId, String password);
 
   /**
    * authenticates a user by login id (username, email or some sort of SSO identifier based on
    * configuration), password and attaches a device id to the session.
    */
-  User loginWithDevice(String loginId, String password, String deviceId);
+  ApiResponse<User> loginWithDevice(String loginId, String password, String deviceId);
 
   /**
    * terminates the current user's session.
