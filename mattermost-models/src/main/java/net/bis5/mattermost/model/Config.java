@@ -24,6 +24,7 @@ import net.bis5.mattermost.model.config.DataRetentionSettings;
 import net.bis5.mattermost.model.config.DisplaySettings;
 import net.bis5.mattermost.model.config.ElasticsearchSettings;
 import net.bis5.mattermost.model.config.EmailSettings;
+import net.bis5.mattermost.model.config.ExperimentalAuditSettings;
 import net.bis5.mattermost.model.config.ExperimentalSettings;
 import net.bis5.mattermost.model.config.ExtensionSettings;
 import net.bis5.mattermost.model.config.FileSettings;
@@ -37,6 +38,7 @@ import net.bis5.mattermost.model.config.MessageExportSettings;
 import net.bis5.mattermost.model.config.MetricsSettings;
 import net.bis5.mattermost.model.config.NativeAppSettings;
 import net.bis5.mattermost.model.config.NotificationLogSettings;
+import net.bis5.mattermost.model.config.Office365Settings;
 import net.bis5.mattermost.model.config.PasswordSettings;
 import net.bis5.mattermost.model.config.PluginSettings;
 import net.bis5.mattermost.model.config.PrivacySettings;
@@ -70,7 +72,7 @@ public class Config {
   private SupportSettings supportSettings;
   private SsoSettings gitLabSettings;
   private SsoSettings googleSettings;
-  private SsoSettings office365Settings;
+  private Office365Settings office365Settings;
   private LdapSettings ldapSettings;
   private ComplianceSettings complianceSettings;
   private LocalizationSettings localizationSettings;
@@ -113,6 +115,8 @@ public class Config {
   private NotificationLogSettings notificationLogSettings;
   /* @since Mattermost Server 5.16 */
   private GuestAccountsSettings guestAccountsSettings;
+  /* @since Mattermost Servre 5.22 */
+  private ExperimentalAuditSettings experimentalAuditSettings;
 
   /**
    * Should not use this.

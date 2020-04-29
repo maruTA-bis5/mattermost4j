@@ -19,6 +19,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.bis5.mattermost.model.config.consts.AllowEditPost;
+import net.bis5.mattermost.model.config.consts.ChannelSidebarOrganization;
 import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
 import net.bis5.mattermost.model.config.consts.GroupUnreadChannels;
 import net.bis5.mattermost.model.config.consts.ImageProxyType;
@@ -240,6 +241,12 @@ public class ServiceSettings {
   private boolean enableSvgs;
   /* @since Mattermost Server 5.17 */
   private boolean enableLatex;
+  /* @since Mattermost Server 5.22 */
+  private boolean enableOpenTracing;
+  /* @since Mattermost Server 5.22 */
+  private int idleTimeout = 60;
+  /* @since Mattermost Server 5.22 */
+  private ChannelSidebarOrganization experimentalChannelSidebarOrganization = ChannelSidebarOrganization.DISABLED;
 
 
   /**
