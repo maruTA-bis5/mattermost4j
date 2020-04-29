@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.bis5.mattermost4j</groupId>
 		<artifactId>mattermost4j-parent</artifactId>
-		<version>0.20.2-SNAPSHOT</version>
+		<version>0.21.0</version>
 	</parent>
 	<artifactId>mattermost4j-core</artifactId>
 	<name>Mattermost APIv4 Client for Java</name>
