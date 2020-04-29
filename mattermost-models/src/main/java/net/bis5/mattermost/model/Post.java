@@ -14,9 +14,9 @@
 
 package net.bis5.mattermost.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -75,5 +75,7 @@ public class Post {
   private boolean hasReactions;
   /* @since Mattermost Server 5.8 */
   private PostMetadata metadata;
+  /* @since Mattermost Server 5.22 */
+  private long replyCount;
 
 }
