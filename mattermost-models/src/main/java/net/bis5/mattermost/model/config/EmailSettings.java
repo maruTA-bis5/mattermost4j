@@ -63,6 +63,8 @@ public class EmailSettings {
   private boolean enablePreviewModeBanner;
   /* @since Mattermost Server 5.10 */
   private String replyToAddress;
+  /* @since Mattermost Server 5.22 */
+  private int smtpServerTimeout = 10;
 
   /**
    * Should not use this.
