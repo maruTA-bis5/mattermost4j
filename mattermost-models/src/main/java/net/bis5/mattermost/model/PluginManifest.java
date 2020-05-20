@@ -14,8 +14,8 @@
 
 package net.bis5.mattermost.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -33,6 +33,12 @@ public class PluginManifest {
   private PluginServer backend;
   private PluginWebapp webapp;
   private PluginSettingsSchema settingsSchema;
+  /* @since Mattermost Server 5.23 */
+  private String homepageUrl;
+  /* @since Mattermost Server 5.23 */
+  private String supportUrl;
+  /* @since Mattermost Server 5.23 */
+  private String iconPath;
 
   /**
    * Server side plugin executables.
