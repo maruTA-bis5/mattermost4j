@@ -19,9 +19,9 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
 import lombok.AllArgsConstructor;
 import net.bis5.mattermost.client4.model.ApiError;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * API response.
@@ -69,12 +69,12 @@ public abstract class ApiResponse<T> {
    * @return The api response contains {@code true} when status OK, otherwise {@code false}.
    */
   public ApiResponse<Boolean> checkStatusOk() {
-    Response response = getRawResponse();
-    response.bufferEntity();
-    if (response.getMediaType().equals(MediaType.TEXT_PLAIN_TYPE)) {
-      return checkPlainStatusOk(response);
+    Response rawResponse = getRawResponse();
+    rawResponse.bufferEntity();
+    if (rawResponse.getMediaType().isCompatible(MediaType.TEXT_PLAIN_TYPE)) {
+      return checkPlainStatusOk(rawResponse);
     } else {
-      return checkJsonStatusOk(response);
+      return checkJsonStatusOk(rawResponse);
     }
   }
 
