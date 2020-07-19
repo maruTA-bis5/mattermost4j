@@ -41,7 +41,7 @@ client.setAccessToken(token);
 ### Use Incoming Webhook
 ```
 // You can also use builder for create client instance.
-IncomingWebhookClient client = new IncomingWebhookClient("YOUR-MATTERMOST-URL")
+IncomingWebhookClient client = new IncomingWebhookClient("YOUR-MATTERMOST-URL");
 
 IncomingWebhookRequest payload = new IncomingWebhookRequest();
 payload.setText("Hello World!");
