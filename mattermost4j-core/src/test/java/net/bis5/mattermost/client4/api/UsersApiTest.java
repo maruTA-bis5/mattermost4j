@@ -90,19 +90,19 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     client = createClient();
     th.changeClient(client).initBasic();
   }
 
   @AfterEach
-  public void tearDown() {
+  void tearDown() {
     th.logout();
     client.close();
   }
 
   @Test
-  public void createUser() {
+  void createUser() {
     User user = new User();
     user.setEmail(th.generateTestEmail());
     user.setUsername(th.generateTestUsername());
@@ -116,7 +116,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsers() {
+  void getUsers() {
     ApiResponse<UserList> response = assertNoError(client.getUsers(Pager.of(0, 60), null));
     List<User> users = response.readEntity();
 
@@ -124,7 +124,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsers_InChannel() {
+  void getUsers_InChannel() {
     th.loginBasic();
     Channel channel = th.createPublicChannel();
     assertNoError(client.addChannelMember(channel.getId(), th.basicUser2().getId()));
@@ -138,7 +138,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsers_InChannel_Order() {
+  void getUsers_InChannel_Order() {
     th.logout().loginSystemAdmin();
     User user1 = th.createUser("order1_" + th.newId());
     th.linkUserToTeam(user1, th.basicTeam());
@@ -189,7 +189,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsers_NotInChannel() {
+  void getUsers_NotInChannel() {
     Set<String> notInChannelUserIds = new HashSet<>(
         Arrays.asList(th.basicUser().getId(), th.basicUser2().getId(), th.teamAdminUser().getId()));
     th.loginBasic();
@@ -205,7 +205,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsers_InTeam() {
+  void getUsers_InTeam() {
     User notInTeamUser = th.loginSystemAdmin().createUser();
     Set<String> inTeamUserIds = new HashSet<>(
         Arrays.asList(th.basicUser().getId(), th.basicUser2().getId(), th.teamAdminUser().getId()));
@@ -221,7 +221,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsers_InTeam_Order() {
+  void getUsers_InTeam_Order() {
     th.logout().loginSystemAdmin();
     User user1 = th.createUser("order1_" + th.newId());
     th.logout().loginAs(user1);
@@ -249,7 +249,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsers_NotInTeam() {
+  void getUsers_NotInTeam() {
     th.loginBasic();
     Set<String> inTeamUserIds = new HashSet<>(Arrays.asList(th.basicUser().getId(),
         th.basicUser2().getId(), th.systemAdminUser().getId(), th.teamAdminUser().getId()));
@@ -263,7 +263,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsers_WithoutTeam() {
+  void getUsers_WithoutTeam() {
     User withoutTeamUser = th.loginSystemAdmin().createUser();
     th.loginSystemAdmin();
 
@@ -276,7 +276,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsersByIds() {
+  void getUsersByIds() {
 
     ApiResponse<UserList> response =
         assertNoError(client.getUsersByIds(th.basicUser().getId(), th.basicUser2().getId()));
@@ -287,7 +287,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsersByUsernames() {
+  void getUsersByUsernames() {
 
     ApiResponse<UserList> response = assertNoError(
         client.getUsersByUsernames(th.basicUser().getUsername(), th.basicUser2().getUsername()));
@@ -298,7 +298,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void searchUsers() {
+  void searchUsers() {
     UserSearch criteria = UserSearch.builder().term(th.basicUser().getUsername())
         .teamId(th.basicTeam().getId()).build();
 
@@ -310,7 +310,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void autocompleteUsers() {
+  void autocompleteUsers() {
 
     ApiResponse<UserAutocomplete> response =
         assertNoError(client.autocompleteUsers(th.basicUser().getUsername(), null));
@@ -321,7 +321,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void autocompleteUsers_InTeam() {
+  void autocompleteUsers_InTeam() {
 
     ApiResponse<UserAutocomplete> response = assertNoError(
         client.autocompleteUsersInTeam(th.basicTeam().getId(), th.basicUser().getUsername(), null));
@@ -332,7 +332,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void autocompleteUsers_InChannel() {
+  void autocompleteUsers_InChannel() {
     Channel channel = th.createPublicChannel();
 
     ApiResponse<UserAutocomplete> response = assertNoError(
@@ -347,7 +347,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUser() {
+  void getUser() {
     String userId = th.basicUser().getId();
 
     ApiResponse<User> response = assertNoError(client.getUser(userId, null));
@@ -357,7 +357,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateUser() {
+  void updateUser() {
     User user = th.basicUser();
     String firstName = "newFirst" + user.getFirstName();
     String lastName = "newLast" + user.getLastName();
@@ -372,7 +372,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deactivateUser() {
+  void deactivateUser() {
     th.loginSystemAdmin();
     String userId = th.basicUser().getId();
 
@@ -383,7 +383,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void patchUser() {
+  void patchUser() {
     UserPatch patch = new UserPatch();
     String firstName = "newFirst" + th.basicUser().getFirstName();
     String lastName = "newLast" + th.basicUser().getLastName();
@@ -398,7 +398,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void patchEmailForCurrentUserWithPassword() {
+  void patchEmailForCurrentUserWithPassword() {
     th.logout().loginSystemAdmin();
     UserPatch patch = new UserPatch();
     patch.setEmail("newemail" + th.systemAdminUser().getId() + "@inbucket.local");
@@ -413,7 +413,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void patchEmailForOtherUserWithoutPassword() {
+  void patchEmailForOtherUserWithoutPassword() {
     th.logout().loginSystemAdmin();
     UserPatch patch = new UserPatch();
     patch.setEmail("newemail" + th.basicUser().getId() + "@inbucket.local");
@@ -428,7 +428,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateUserRoles() {
+  void updateUserRoles() {
     th.loginSystemAdmin();
 
     ApiResponse<Boolean> response = assertNoError(
@@ -439,7 +439,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateUserActiveStatus() {
+  void updateUserActiveStatus() {
     th.logout().loginSystemAdmin();
     ApiResponse<Boolean> response =
         assertNoError(client.updateUserActive(th.basicUser().getId(), false));
@@ -449,7 +449,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUserProfileImage() throws FileNotFoundException, IOException {
+  void getUserProfileImage() throws FileNotFoundException, IOException {
 
     ApiResponse<byte[]> response =
         assertNoError(client.getProfileImage(th.basicUser().getId(), null));
@@ -463,7 +463,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void setUserProfileImage() throws URISyntaxException {
+  void setUserProfileImage() throws URISyntaxException {
     Path image = th.getResourcePath(TestHelper.EMOJI_GLOBE);
 
     ApiResponse<Boolean> response =
@@ -474,7 +474,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteUserProfileImage() throws URISyntaxException {
+  void deleteUserProfileImage() throws URISyntaxException {
     Path image = th.getResourcePath(TestHelper.EMOJI_CONSTRUCTION);
     ApiResponse<Boolean> uploadResult =
         assertNoError(client.setProfileImage(th.basicUser().getId(), image));
@@ -489,7 +489,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUserByName() {
+  void getUserByName() {
     String username = th.basicUser().getUsername();
 
     ApiResponse<User> response = assertNoError(client.getUserByUsername(username, null));
@@ -499,7 +499,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void resetPassword() {
+  void resetPassword() {
 
     // invalid token
     assertStatus(
@@ -508,14 +508,14 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateUserMfa() {
+  void updateUserMfa() {
 
     // Enterprise Edition required
     assertStatus(client.updateUserMfa(th.basicUser().getId(), null, false), Status.NOT_IMPLEMENTED);
   }
 
   @Test
-  public void generateMfaSecret() {
+  void generateMfaSecret() {
     th.loginSystemAdmin();
 
     // Enterprise Edition required
@@ -523,7 +523,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void checkMfa() {
+  void checkMfa() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();
     Config config = configResponse.readEntity();
@@ -548,7 +548,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void checkMfaThrowsExceptionDisableLegacyMfa() {
+  void checkMfaThrowsExceptionDisableLegacyMfa() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();
     if (isNotSupportVersion("5.9.0", configResponse)) {
@@ -571,7 +571,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateUserPassword() {
+  void updateUserPassword() {
     String userId = th.basicUser().getId();
     String currentPassword = th.basicUser().getPassword();
     String newPassword = "new" + currentPassword;
@@ -584,7 +584,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void sendPasswordResetEmail() {
+  void sendPasswordResetEmail() {
     String email = th.basicUser().getEmail();
 
     ApiResponse<Boolean> response = assertNoError(client.sendPasswordResetEmail(email));
@@ -594,7 +594,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUserByEmail() {
+  void getUserByEmail() {
     String email = th.basicUser().getEmail();
 
     ApiResponse<User> response = assertNoError(client.getUserByEmail(email, null));
@@ -604,7 +604,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUserSessions() {
+  void getUserSessions() {
     String userId = th.basicUser().getId();
 
     ApiResponse<SessionList> response = assertNoError(client.getSessions(userId, null));
@@ -614,7 +614,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void revokeUserSession() {
+  void revokeUserSession() {
     ApiResponse<SessionList> response =
         assertNoError(client.getSessions(th.basicUser().getId(), null));
     Session session = response.readEntity().stream().findAny().get();
@@ -627,7 +627,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void attachMobileDevice() {
+  void attachMobileDevice() {
     ApiResponse<Boolean> response = assertNoError(client.attachDeviceId(th.newId()));
     boolean result = response.readEntity();
 
@@ -635,7 +635,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getAudits() {
+  void getAudits() {
 
     ApiResponse<Audits> response =
         assertNoError(client.getUserAudits(th.basicUser().getId(), Pager.of(0, 50), null));
@@ -645,14 +645,14 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void verifyEmail() {
+  void verifyEmail() {
 
     // invalid token
     assertStatus(client.verifyUserEmail(th.newId()), Status.BAD_REQUEST);
   }
 
   @Test
-  public void sendVerificationEmail() {
+  void sendVerificationEmail() {
 
     ApiResponse<Boolean> response =
         assertNoError(client.sendVerificationEmail(th.basicUser().getEmail()));
@@ -662,7 +662,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void switchLoginMethod() {
+  void switchLoginMethod() {
     SwitchRequest request = new SwitchRequest();
     request.setCurrentService(AuthService.Email);
     request.setNewService(AuthService.GitLab);
@@ -681,7 +681,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createUserAccessToken() {
+  void createUserAccessToken() {
     String userId = th.basicUser().getId();
     setupUserAccessTokenRolesForNormalUser(userId);
     String description = userId + "_UserAccessTokenDesc";
@@ -695,7 +695,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUserAccessTokens() {
+  void getUserAccessTokens() {
     String userId = th.basicUser().getId();
     setupUserAccessTokenRolesForNormalUser(userId);
     String description1 = th.newRandomString(32);
@@ -712,7 +712,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUserAccessTokensAllUsers() {
+  void getUserAccessTokensAllUsers() {
     String userId = th.basicUser().getId();
     setupUserAccessTokenRolesForNormalUser(userId);
     String description = userId + "_UserAccessTokenDesc";
@@ -727,7 +727,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void revokeUserAccessToken() {
+  void revokeUserAccessToken() {
     String userId = th.basicUser().getId();
     setupUserAccessTokenRolesForNormalUser(userId);
     String description = userId;
@@ -740,7 +740,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUserAccessToken() {
+  void getUserAccessToken() {
     String userId = th.basicUser().getId();
     setupUserAccessTokenRolesForNormalUser(userId);
     String description = userId;
@@ -754,7 +754,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void disableUserAccessToken() {
+  void disableUserAccessToken() {
     String userId = th.basicUser().getId();
     setupUserAccessTokenRolesForNormalUser(userId);
     String description = userId;
@@ -768,7 +768,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void enableUserAccessToken() {
+  void enableUserAccessToken() {
     String userId = th.basicUser().getId();
     setupUserAccessTokenRolesForNormalUser(userId);
     String description = userId;
@@ -784,7 +784,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void searchTokens() {
+  void searchTokens() {
     setupUserAccessTokenRolesForNormalUser(th.basicUser().getId());
     setupUserAccessTokenRolesForNormalUser(th.basicUser2().getId());
     setupUserAccessTokenRolesForNormalUser(th.teamAdminUser().getId());
@@ -805,7 +805,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void revokeAllActiveSessionForUser() {
+  void revokeAllActiveSessionForUser() {
     User targetUser = th.basicUser2();
     try (MattermostClient theUserClient = createClient()) {
       theUserClient.login(targetUser.getUsername(), targetUser.getPassword());

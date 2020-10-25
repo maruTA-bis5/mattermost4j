@@ -72,13 +72,13 @@ class FilesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void uploadNoFileThrowsException() {
+  void uploadNoFileThrowsException() {
     String channelId = th.basicChannel().getId();
     assertThrows(IllegalArgumentException.class, () -> client.uploadFile(channelId));
   }
 
   @Test
-  public void uplaodFile() throws URISyntaxException, IOException {
+  void uplaodFile() throws URISyntaxException, IOException {
     Path filePath = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     String channelId = th.basicChannel().getId();
 
@@ -89,7 +89,7 @@ class FilesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void uploadMultipleFile() throws URISyntaxException, IOException {
+  void uploadMultipleFile() throws URISyntaxException, IOException {
     Path file1 = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Path file2 = th.getResourcePath(TestHelper.EMOJI_CONSTRUCTION);
     String channelId = th.basicChannel().getId();
@@ -108,7 +108,7 @@ class FilesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getFile() throws URISyntaxException, IOException {
+  void getFile() throws URISyntaxException, IOException {
     Path filePath = th.getResourcePath("/LICENSE.txt");
     String channelId = th.basicChannel().getId();
     FileUploadResult uploadResult = assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -121,7 +121,7 @@ class FilesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getFileThumbnail() throws URISyntaxException, IOException {
+  void getFileThumbnail() throws URISyntaxException, IOException {
     Path filePath = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     String channelId = th.basicChannel().getId();
     FileUploadResult uploadResult = assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -134,7 +134,7 @@ class FilesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getFilePreview() throws URISyntaxException, IOException {
+  void getFilePreview() throws URISyntaxException, IOException {
     Path filePath = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     String channelId = th.basicChannel().getId();
     FileUploadResult uploadResult = assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -147,7 +147,7 @@ class FilesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPublicFileLink() throws URISyntaxException, IOException {
+  void getPublicFileLink() throws URISyntaxException, IOException {
     Path filePath = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     String channelId = th.basicChannel().getId();
     FileUploadResult uploadResult = assertNoError(client.uploadFile(channelId, filePath)).readEntity();
@@ -171,7 +171,7 @@ class FilesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getFileMetadata() throws URISyntaxException, IOException {
+  void getFileMetadata() throws URISyntaxException, IOException {
     Path filePath = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     String channelId = th.basicChannel().getId();
     FileUploadResult uploadResult = assertNoError(client.uploadFile(channelId, filePath)).readEntity();

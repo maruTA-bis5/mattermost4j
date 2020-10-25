@@ -66,7 +66,7 @@ class SamlApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getSamlMetadata() throws IOException {
+  void getSamlMetadata() throws IOException {
     th.logout().loginSystemAdmin();
 
     ApiResponse<Path> response = client.getSamlMetadata();
@@ -75,7 +75,7 @@ class SamlApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void uploadSamlIdpCertificate() throws IOException {
+  void uploadSamlIdpCertificate() throws IOException {
     th.logout().loginSystemAdmin();
 
     Path file = Files.createTempFile("", ".crt");
@@ -87,7 +87,7 @@ class SamlApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void uploadSamlPublicCertificate() throws IOException {
+  void uploadSamlPublicCertificate() throws IOException {
     th.logout().loginSystemAdmin();
 
     Path file = Files.createTempFile("", ".crt");
@@ -99,7 +99,7 @@ class SamlApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void uploadSamlPrivateCertificate() throws IOException {
+  void uploadSamlPrivateCertificate() throws IOException {
     th.logout().loginSystemAdmin();
 
     Path file = Files.createTempFile("", ".key");
@@ -111,7 +111,7 @@ class SamlApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteSamlIdpCertificate() throws IOException {
+  void deleteSamlIdpCertificate() throws IOException {
     th.logout().loginSystemAdmin();
 
     Path file = Files.createTempFile("", ".crt");
@@ -124,7 +124,7 @@ class SamlApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteSamlPublicCertificate() throws IOException {
+  void deleteSamlPublicCertificate() throws IOException {
     th.logout().loginSystemAdmin();
 
     Path file = Files.createTempFile("", ".crt");
@@ -137,7 +137,7 @@ class SamlApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteSamlPrivateCertificate() throws IOException {
+  void deleteSamlPrivateCertificate() throws IOException {
     th.logout().loginSystemAdmin();
 
     Path file = Files.createTempFile("", ".key");
@@ -150,7 +150,7 @@ class SamlApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getSamlCertificateStatus() throws IOException {
+  void getSamlCertificateStatus() throws IOException {
     th.logout().loginSystemAdmin();
 
     Path file = Files.createTempFile("", ".key");

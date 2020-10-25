@@ -72,7 +72,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createIncomingWebhook() {
+  void createIncomingWebhook() {
     th.logout().loginTeamAdmin();
     String channelId = th.basicChannel().getId();
     String displayName = "webhook" + th.newId();
@@ -92,7 +92,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void listIncomingWebhooks() {
+  void listIncomingWebhooks() {
     th.logout().loginTeamAdmin();
     String channelId = th.basicChannel().getId();
     IncomingWebhook webhook1 = new IncomingWebhook();
@@ -112,7 +112,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void listIncomingWebhooksForTeam() {
+  void listIncomingWebhooksForTeam() {
     th.logout().loginTeamAdmin();
     String channelId = th.basicChannel().getId();
     String teamId = th.basicTeam().getId();
@@ -132,7 +132,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getIncomingWebhook() {
+  void getIncomingWebhook() {
     th.logout().loginTeamAdmin();
     String channelId = th.basicChannel().getId();
     IncomingWebhook webhook = new IncomingWebhook();
@@ -148,7 +148,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateIncomingWebhook() {
+  void updateIncomingWebhook() {
     th.logout().loginTeamAdmin();
     String channelId = th.basicChannel().getId();
     IncomingWebhook webhook = new IncomingWebhook();
@@ -174,7 +174,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteIncomingWebhook() {
+  void deleteIncomingWebhook() {
     th.logout().loginTeamAdmin();
     String channelId = th.basicChannel().getId();
     IncomingWebhook webhook = new IncomingWebhook();
@@ -191,7 +191,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createOutgoingWebhook() {
+  void createOutgoingWebhook() {
     th.logout().loginTeamAdmin();
     String teamId = th.basicTeam().getId();
     String channelId = th.basicChannel().getId();
@@ -226,7 +226,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void listOutgoingWebhooks() {
+  void listOutgoingWebhooks() {
     String teamId = th.basicTeam().getId();
     String displayName = th.newRandomString(32);
     List<String> callbackUrls = Arrays.asList("http://callback-url");
@@ -253,7 +253,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void listOutgoingWebhooksForTeam() {
+  void listOutgoingWebhooksForTeam() {
     th.logout().loginTeamAdmin();
     String teamId = th.basicTeam().getId();
     String displayName = th.newRandomString(32);
@@ -274,7 +274,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void listOutgoingWebhooksForChannel() {
+  void listOutgoingWebhooksForChannel() {
     th.logout().loginTeamAdmin();
     String teamId = th.basicTeam().getId();
     String channelId = th.basicChannel().getId();
@@ -312,7 +312,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getOutgoingWebhook() {
+  void getOutgoingWebhook() {
     th.logout().loginTeamAdmin();
     OutgoingWebhook webhook = new OutgoingWebhook();
     webhook.setTeamId(th.basicTeam().getId());
@@ -329,7 +329,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteOutgoingWebhook() {
+  void deleteOutgoingWebhook() {
     th.logout().loginTeamAdmin();
     OutgoingWebhook webhook = new OutgoingWebhook();
     webhook.setTeamId(th.basicTeam().getId());
@@ -348,7 +348,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateOutgoingWebhook() {
+  void updateOutgoingWebhook() {
     th.logout().loginTeamAdmin();
     OutgoingWebhook webhook = new OutgoingWebhook();
     webhook.setTeamId(th.basicTeam().getId());
@@ -370,7 +370,7 @@ class WebhooksApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void regenerateOutgoingWebhookToken() {
+  void regenerateOutgoingWebhookToken() {
     th.logout().loginTeamAdmin();
     OutgoingWebhook webhook = new OutgoingWebhook();
     webhook.setTeamId(th.basicTeam().getId());

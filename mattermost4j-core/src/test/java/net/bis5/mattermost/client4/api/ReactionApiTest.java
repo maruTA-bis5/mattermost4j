@@ -64,7 +64,7 @@ class ReactionApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void saveReaction() {
+  void saveReaction() {
     Post targetPost = th.basicPost();
     User reactedUser = th.basicUser();
     Reaction reaction = new Reaction();
@@ -78,7 +78,7 @@ class ReactionApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteReaction() {
+  void deleteReaction() {
     Post targetPost = th.basicPost();
     User reactedUser = th.basicUser();
     Reaction reaction = new Reaction();
@@ -93,7 +93,7 @@ class ReactionApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getReactions() {
+  void getReactions() {
     Post targetPost = th.basicPost();
     User reactedUser = th.basicUser();
     Reaction reaction = new Reaction();

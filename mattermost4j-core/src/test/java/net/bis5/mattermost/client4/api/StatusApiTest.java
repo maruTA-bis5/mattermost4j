@@ -59,7 +59,7 @@ class StatusApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUserStatus() {
+  void getUserStatus() {
     String userId = th.basicUser().getId();
     assertNoError(client.viewChannel(userId, new ChannelView(th.basicChannel().getId())));
 
@@ -69,7 +69,7 @@ class StatusApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUserStatusesByIds() {
+  void getUserStatusesByIds() {
     String loginUserId = th.basicUser().getId();
     assertNoError(client.viewChannel(loginUserId, new ChannelView(th.basicChannel().getId())));
     String otherUserId = th.basicUser2().getId();
@@ -88,7 +88,7 @@ class StatusApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateUserStatus() {
+  void updateUserStatus() {
     String userId = th.basicUser().getId();
     net.bis5.mattermost.model.Status newStatus = new net.bis5.mattermost.model.Status();
     newStatus.setUserId(userId);

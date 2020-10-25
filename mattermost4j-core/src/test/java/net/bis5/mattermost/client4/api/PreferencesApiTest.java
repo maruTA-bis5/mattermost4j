@@ -61,7 +61,7 @@ class PreferencesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPreferences() {
+  void getPreferences() {
     String userId = th.basicUser().getId();
 
     ApiResponse<Preferences> response = assertNoError(client.getPreferences(userId));
@@ -73,7 +73,7 @@ class PreferencesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void savePreferences() {
+  void savePreferences() {
     String userId = th.basicUser().getId();
     Preferences preferences = client.getPreferences(userId).readEntity();
     Preference preference = preferences.stream().filter(p -> p.getCategory() == PreferenceCategory.TUTORIAL_STEPS)
@@ -87,7 +87,7 @@ class PreferencesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deletePreference() {
+  void deletePreference() {
     String userId = th.basicUser().getId();
     Preferences currentPreferences = client.getPreferences(userId).readEntity();
     Preference tutorial = currentPreferences.stream()
@@ -102,7 +102,7 @@ class PreferencesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPreferencesByCategory() {
+  void getPreferencesByCategory() {
     String userId = th.basicUser().getId();
     PreferenceCategory category = PreferenceCategory.TUTORIAL_STEPS;
 
@@ -113,7 +113,7 @@ class PreferencesApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPreference() {
+  void getPreference() {
     String userId = th.basicUser().getId();
     PreferenceCategory category = PreferenceCategory.DISPLAY_SETTINGS;
     String name = Preference.Name.ChannelDisplayMode.getKey();

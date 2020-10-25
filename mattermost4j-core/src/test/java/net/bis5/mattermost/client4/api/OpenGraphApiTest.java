@@ -75,7 +75,7 @@ class OpenGraphApiTest implements MattermostClientTest {
   NanoHTTPD server;
 
   @BeforeEach
-  public void setupServer() throws IOException {
+  void setupServer() throws IOException {
     if (!useLocalDummyServer()) {
       return;
     }
@@ -93,7 +93,7 @@ class OpenGraphApiTest implements MattermostClientTest {
   }
 
   @AfterEach
-  public void tearDownServer() {
+  void tearDownServer() {
     if (!useLocalDummyServer()) {
       return;
     }
@@ -101,7 +101,7 @@ class OpenGraphApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getMetadata() {
+  void getMetadata() {
     th.logout().loginSystemAdmin();
     Config config = client.getConfig().readEntity();
     config.getServiceSettings().setAllowedUntrustedInternalConnections(

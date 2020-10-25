@@ -73,7 +73,7 @@ class SystemApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void databaseRecycle() {
+  void databaseRecycle() {
     th.logout().loginSystemAdmin();
 
     ApiResponse<Boolean> result = assertNoError(client.databaseRecycle());
@@ -81,7 +81,7 @@ class SystemApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getAnalytics() {
+  void getAnalytics() {
     th.logout().loginSystemAdmin();
     AnalyticsRows analyticsRows = assertNoError(client.getAnalytics()).readEntity();
 
@@ -90,7 +90,7 @@ class SystemApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getAnalyticsSpecifiedCategory() {
+  void getAnalyticsSpecifiedCategory() {
     th.logout().loginSystemAdmin();
     AnalyticsRows analyticsRows = assertNoError(client.getAnalytics(AnalyticsCategory.EXTRA_COUNTS)).readEntity();
 
@@ -104,7 +104,7 @@ class SystemApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getAnalyticsSpecifiedTeam() {
+  void getAnalyticsSpecifiedTeam() {
     th.logout().loginSystemAdmin();
     Team basicTeam = th.basicTeam();
     AnalyticsRows analyticsRows = assertNoError(client.getAnalytics(basicTeam.getId())).readEntity();
@@ -127,27 +127,27 @@ class SystemApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getOldClientConfig() {
+  void getOldClientConfig() {
     ApiResponse<Map<String, String>> response = assertNoError(client.getOldClientConfig());
     Map<String, String> clientConfig = response.readEntity();
     assertTrue(clientConfig.containsKey("Version"));
   }
 
   @Test
-  public void getOldClientLicense() {
+  void getOldClientLicense() {
     ApiResponse<Map<String, String>> response = assertNoError(client.getOldClientLicense());
     Map<String, String> clientLicense = response.readEntity();
     assertTrue(clientLicense.containsKey("IsLicensed"));
   }
 
   @Test
-  public void ping() {
+  void ping() {
     ApiResponse<Boolean> result = assertNoError(client.getPing());
     assertTrue(result.readEntity());
   }
 
   @Test
-  public void invalidateCache() {
+  void invalidateCache() {
     th.logout().loginSystemAdmin();
 
     ApiResponse<Boolean> result = assertNoError(client.invalidateCaches());
@@ -155,7 +155,7 @@ class SystemApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void reloadConfig() {
+  void reloadConfig() {
     th.logout().loginSystemAdmin();
 
     ApiResponse<Boolean> result = assertNoError(client.reloadConfig());
@@ -163,7 +163,7 @@ class SystemApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void testEmail() {
+  void testEmail() {
     th.logout().loginSystemAdmin();
 
     ApiResponse<Boolean> result = assertNoError(client.testEmail());
@@ -171,7 +171,7 @@ class SystemApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void uploadLicenseFile() throws IOException {
+  void uploadLicenseFile() throws IOException {
     Path licenseFile = Files.createTempFile(null, null); // invalid contents
     licenseFile.toFile().deleteOnExit();
 
@@ -183,7 +183,7 @@ class SystemApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void removeLicense() {
+  void removeLicense() {
     th.logout().loginBasic();
     assertStatus(client.removeLicense(), Status.FORBIDDEN);
 

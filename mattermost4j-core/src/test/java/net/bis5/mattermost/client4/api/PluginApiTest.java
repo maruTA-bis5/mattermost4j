@@ -72,7 +72,7 @@ class PluginApiTest implements MattermostClientTest {
   private static Path drawPluginArchivePath;
 
   @BeforeAll
-  public static void setupPluginArchivePath() throws IOException {
+  static void setupPluginArchivePath() throws IOException {
     InputStream resource = PluginApiTest.class //
         .getResourceAsStream("/net.bis5.mattermost.simplelock-0.0.1.tar.gz");
     simpleLockPluginArchivePath = Files.createTempFile(null, null);
@@ -86,7 +86,7 @@ class PluginApiTest implements MattermostClientTest {
   }
 
   @AfterAll
-  public static void deletePluginArchive() {
+  static void deletePluginArchive() {
     if (simpleLockPluginArchivePath != null) {
       simpleLockPluginArchivePath.toFile().delete();
     }
@@ -96,7 +96,7 @@ class PluginApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPlugins() {
+  void getPlugins() {
     th.logout().loginSystemAdmin();
 
     ApiResponse<Plugins> response = assertNoError(client.getPlugins());
@@ -130,7 +130,7 @@ class PluginApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void uploadPlugin() {
+  void uploadPlugin() {
     th.logout().loginSystemAdmin();
     ApiResponse<Plugins> response = client.getPlugins();
     // 5.2.0 is server plugin release candidate version
@@ -158,7 +158,7 @@ class PluginApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void removePlugin() {
+  void removePlugin() {
     th.logout().loginSystemAdmin();
     ApiResponse<Plugins> response = client.getPlugins();
     // 5.2.0 is server plugin release candidate version
@@ -178,7 +178,7 @@ class PluginApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void enablePlugin() {
+  void enablePlugin() {
     th.logout().loginSystemAdmin();
     ApiResponse<Plugins> response = client.getPlugins();
     // 5.2.0 is server plugin release candidate version
@@ -198,7 +198,7 @@ class PluginApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void disablePlugin() {
+  void disablePlugin() {
     th.logout().loginSystemAdmin();
     ApiResponse<Plugins> response = client.getPlugins();
     // 5.2.0 is server plugin release candidate version
@@ -219,7 +219,7 @@ class PluginApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getWebappPlugins() {
+  void getWebappPlugins() {
     th.logout().loginSystemAdmin();
     ApiResponse<Plugins> response = client.getPlugins();
     // 5.2.0 is server plugin release candidate version

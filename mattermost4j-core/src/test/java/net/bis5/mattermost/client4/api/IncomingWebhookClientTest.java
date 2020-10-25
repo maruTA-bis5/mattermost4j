@@ -65,7 +65,7 @@ class IncomingWebhookClientTest implements MattermostClientTest {
   }
 
   @Test
-  public void testHook_IncomingWebhook_Post() {
+  void testHook_IncomingWebhook_Post() {
     th.logout().loginTeamAdmin();
     IncomingWebhook webhook = new IncomingWebhook();
     {
@@ -91,7 +91,7 @@ class IncomingWebhookClientTest implements MattermostClientTest {
   }
 
   @Test
-  public void testHook_IncomingWebhookWithIconEmoji() {
+  void testHook_IncomingWebhookWithIconEmoji() {
     th.logout().loginTeamAdmin();
     IncomingWebhook webhook = new IncomingWebhook();
     {
