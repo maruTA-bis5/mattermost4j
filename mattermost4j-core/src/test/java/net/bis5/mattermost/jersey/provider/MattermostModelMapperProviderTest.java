@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Test cases for {@link MattermostModelMapperProvider}.
  */
-public class MattermostModelMapperProviderTest {
+class MattermostModelMapperProviderTest {
 
   @Nested
   static class IgnoreUnknownPropertiesTest {
@@ -36,7 +36,7 @@ public class MattermostModelMapperProviderTest {
         "{\"UNKNOWN_PROPERTY\":\"value\",\"id\":\"qjwhr6gcq3d8d883cgsuk17h9a\"}";
 
     @Test
-    public void ignoreUnknownPropertyCorrectly()
+    void ignoreUnknownPropertyCorrectly()
         throws JsonParseException, JsonMappingException, IOException {
       ContextResolver<ObjectMapper> provider = new MattermostModelMapperProvider(true);
       ObjectMapper objectMapper = provider.getContext(ObjectMapper.class);
@@ -46,7 +46,7 @@ public class MattermostModelMapperProviderTest {
     }
 
     @Test
-    public void throwExceptionStrict() {
+    void throwExceptionStrict() {
       ContextResolver<ObjectMapper> provider = new MattermostModelMapperProvider(false);
       ObjectMapper objectMapper = provider.getContext(ObjectMapper.class);
 

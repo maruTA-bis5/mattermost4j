@@ -53,7 +53,7 @@ class ClusterApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getClusterStatus() {
+  void getClusterStatus() {
     th.logout().loginSystemAdmin();
 
     // In Team Edition, return empty list.

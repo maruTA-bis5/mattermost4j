@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  * Tests if {@link net.bis5.mattermost.client4.MattermostClient.MattermostClientBuilder#httpConfig(Consumer)}
  * is applied.
  */
-public class HttpConfigTest {
+class HttpConfigTest {
 
   @Test
   void testHttpConfig()

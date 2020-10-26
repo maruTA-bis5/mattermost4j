@@ -73,7 +73,7 @@ class EmojiApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createCustomEmoji() throws URISyntaxException {
+  void createCustomEmoji() throws URISyntaxException {
     Path image = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Emoji emoji = new Emoji();
     String emojiName = "custom" + th.newId();
@@ -92,7 +92,7 @@ class EmojiApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getCustomEmojiList() throws URISyntaxException {
+  void getCustomEmojiList() throws URISyntaxException {
     Path image = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Emoji emoji1 = new Emoji();
     emoji1.setName("custom_" + th.newId());
@@ -116,7 +116,7 @@ class EmojiApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getCustomEmojiListInOrder() throws URISyntaxException {
+  void getCustomEmojiListInOrder() throws URISyntaxException {
     Path image = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Emoji emoji1 = new Emoji();
     emoji1.setName("custom1_" + th.newId());
@@ -144,7 +144,7 @@ class EmojiApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getCustomEmoji() throws URISyntaxException {
+  void getCustomEmoji() throws URISyntaxException {
     Path image = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Emoji emoji = new Emoji();
     emoji.setName("custom" + th.newId());
@@ -164,7 +164,7 @@ class EmojiApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteCustomEmoji() throws URISyntaxException {
+  void deleteCustomEmoji() throws URISyntaxException {
     Path image = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Emoji emoji = new Emoji();
     emoji.setName("custom" + th.newId());
@@ -190,7 +190,7 @@ class EmojiApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getCustomEmojiImage() throws URISyntaxException, IOException {
+  void getCustomEmojiImage() throws URISyntaxException, IOException {
     Path originalImage = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Emoji emoji = new Emoji();
     emoji.setName("custom" + th.newId());
@@ -211,7 +211,7 @@ class EmojiApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getCustomEmojiByName() throws URISyntaxException {
+  void getCustomEmojiByName() throws URISyntaxException {
     Path image = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Emoji emoji = new Emoji();
     emoji.setName("custom" + th.newId());
@@ -231,7 +231,7 @@ class EmojiApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void searchEmoji() throws URISyntaxException {
+  void searchEmoji() throws URISyntaxException {
     Path emojiGlobe = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Emoji emoji = new Emoji();
     emoji.setName("customGlobe" + th.newId());
@@ -257,7 +257,7 @@ class EmojiApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void autocompleteEmoji() throws URISyntaxException {
+  void autocompleteEmoji() throws URISyntaxException {
     Path emojiGlobe = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     Emoji emoji = new Emoji();
     emoji.setName("customAutocompleteGlobe" + th.newId());

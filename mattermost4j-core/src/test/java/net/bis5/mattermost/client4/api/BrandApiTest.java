@@ -59,7 +59,7 @@ class BrandApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getBrandImageForNotEmpty() throws URISyntaxException, IOException {
+  void getBrandImageForNotEmpty() throws URISyntaxException, IOException {
     th.logout().loginSystemAdmin();
     Path brandImage = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);
@@ -74,7 +74,7 @@ class BrandApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void uploadBrandImage() throws URISyntaxException {
+  void uploadBrandImage() throws URISyntaxException {
     th.logout().loginSystemAdmin();
     Path brandImage = th.getResourcePath(TestHelper.EMOJI_GLOBE);
 
@@ -88,7 +88,7 @@ class BrandApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteBrandImage() throws URISyntaxException {
+  void deleteBrandImage() throws URISyntaxException {
     th.logout().loginSystemAdmin();
     Path brandImage = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     ApiResponse<Boolean> uploadResponse = client.uploadBrandImage(brandImage);

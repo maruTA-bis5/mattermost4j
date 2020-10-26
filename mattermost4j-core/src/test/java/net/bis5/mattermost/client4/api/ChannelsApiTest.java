@@ -77,25 +77,25 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     client = createClient();
     th.changeClient(client).initBasic();
   }
 
   @AfterEach
-  public void tearDown() {
+  void tearDown() {
     th.logout();
     client.close();
   }
 
   @Test
-  public void createChannel_Open_Required() {
+  void createChannel_Open_Required() {
     Channel channel = new Channel("DisplayName", "name", ChannelType.Open, th.basicTeam().getId());
     createChannel_Success(channel);
   }
 
   @Test
-  public void createChannel_Open_All() {
+  void createChannel_Open_All() {
     Channel channel = new Channel("DisplayName", "name", ChannelType.Open, th.basicTeam().getId());
     channel.setPurpose("purpose");
     channel.setHeader("header");
@@ -103,13 +103,13 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createChannel_Private_Required() {
+  void createChannel_Private_Required() {
     Channel channel = new Channel("DisplayName", "name", ChannelType.Private, th.basicTeam().getId());
     createChannel_Success(channel);
   }
 
   @Test
-  public void createChannel_Private_All() {
+  void createChannel_Private_All() {
     Channel channel = new Channel("DisplayName", "name", ChannelType.Private, th.basicTeam().getId());
     channel.setPurpose("purpose");
     channel.setHeader("header");
@@ -117,7 +117,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createChannel_Fail_Direct() {
+  void createChannel_Fail_Direct() {
     Channel channel = new Channel("DisplayName", "name", ChannelType.Direct, th.basicTeam().getId());
 
     assertStatus(client.createChannel(channel), Status.BAD_REQUEST);
@@ -144,7 +144,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createDirectChannel() {
+  void createDirectChannel() {
     User user1 = th.basicUser();
     User user2 = th.basicUser2();
 
@@ -155,12 +155,12 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createDirectChannel_OneUser() {
+  void createDirectChannel_OneUser() {
     assertStatus(client.createDirectChannel(th.basicUser().getId(), null), Status.BAD_REQUEST);
   }
 
   @Test
-  public void createGroupChannel() {
+  void createGroupChannel() {
     User user1 = th.basicUser();
     User user2 = th.basicUser2();
     User user3 = th.createUser();
@@ -174,7 +174,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createGroupChannel_Fail_TwoUsers() {
+  void createGroupChannel_Fail_TwoUsers() {
     User user1 = th.basicUser();
     User user2 = th.basicUser2();
 
@@ -182,7 +182,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void channelListByTeamId() {
+  void channelListByTeamId() {
     Team theTeam = th.loginSystemAdmin().createTeam();
     User theUser = th.createUser();
     th.linkUserToTeam(theUser, theTeam);
@@ -202,7 +202,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getAChannel() {
+  void getAChannel() {
     String channelId = th.basicChannel().getId();
 
     ApiResponse<Channel> response = assertNoError(client.getChannel(channelId, null));
@@ -212,7 +212,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateChannel() {
+  void updateChannel() {
     String channelId = th.basicChannel().getId();
     String newName = "new-channel-name";
     String newDispName = "New Display Name";
@@ -235,7 +235,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateChannel_ChannelNotFound() {
+  void updateChannel_ChannelNotFound() {
     String channelId = th.newId();
     String newName = "new-channel-name";
     String newDispName = "New Display Name";
@@ -256,7 +256,7 @@ class ChannelsApiTest implements MattermostClientTest {
   // Since 5.18.0, 5.17.2, 5.16.4, 5.15.4 and 5.9.7, removed ability to change
   // type via
   // updateChannel
-  public void updateChannel_ChangeType() {
+  void updateChannel_ChangeType() {
     String channelId = th.basicChannel().getId();
     assertThat(th.basicChannel().getType(), is(ChannelType.Open));
     ChannelType newType = ChannelType.Private;
@@ -271,7 +271,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteChannel() {
+  void deleteChannel() {
     String channelId = th.basicChannel().getId();
 
     ApiResponse<Boolean> deleteResponse = assertNoError(client.deleteChannel(channelId));
@@ -283,7 +283,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void patchChannel() {
+  void patchChannel() {
     String channelId = th.basicChannel().getId();
     String newDispName = "new Display name";
     ChannelPatch patch = new ChannelPatch();
@@ -296,7 +296,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void patchChannel_ChannelNotFound() {
+  void patchChannel_ChannelNotFound() {
     String channelId = th.newId();
     String newDispName = "new Display name";
     ChannelPatch patch = new ChannelPatch();
@@ -306,7 +306,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void restoreChannel() {
+  void restoreChannel() {
     Channel channel = th.createPublicChannel();
     ApiResponse<Boolean> deleteResult = assertNoError(client.deleteChannel(channel.getId()));
     assertTrue(deleteResult.readEntity());
@@ -329,7 +329,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelStatistics() {
+  void getChannelStatistics() {
     String channelId = th.basicChannel().getId();
 
     ApiResponse<ChannelStats> response = assertNoError(client.getChannelStats(channelId, null));
@@ -339,7 +339,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelPinnedPosts() {
+  void getChannelPinnedPosts() {
     String channelId = th.basicChannel().getId();
     Post pinned = th.createPinnedPost(channelId);
 
@@ -351,7 +351,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelByName() {
+  void getChannelByName() {
     String channelName = th.basicChannel().getName();
 
     ApiResponse<Channel> response = assertNoError(client.getChannelByName(channelName, th.basicTeam().getId(), null));
@@ -361,14 +361,14 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelByName_ChannelNotFound() {
+  void getChannelByName_ChannelNotFound() {
     String channelName = "fake-channel-name";
 
     assertStatus(client.getChannelByName(channelName, th.basicTeam().getId(), null), Status.NOT_FOUND);
   }
 
   @Test
-  public void getChannelByNameAndTeamName() {
+  void getChannelByNameAndTeamName() {
     String channelName = th.basicChannel().getName();
     String teamName = th.basicTeam().getName();
 
@@ -379,7 +379,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelByNameAndTeamName_ChannelNotFound() {
+  void getChannelByNameAndTeamName_ChannelNotFound() {
     String channelName = "fake-channel-name";
     String teamName = th.basicTeam().getName();
 
@@ -387,7 +387,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelByNameAndTeamName_TeamNotFound() {
+  void getChannelByNameAndTeamName_TeamNotFound() {
     String channelName = "fake-channel-name";
     String teamName = "fake-team-name";
 
@@ -395,7 +395,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelMembers() {
+  void getChannelMembers() {
     User user1 = th.createUser();
     User user2 = th.createUser();
     th.loginSystemAdmin().linkUserToTeam(user1, th.basicTeam()).linkUserToTeam(user2, th.basicTeam()).loginAs(user1);
@@ -413,7 +413,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void addUserToChannel() {
+  void addUserToChannel() {
     Channel channel = th.basicChannel();
     User user = th.createUser();
     th.loginSystemAdmin().linkUserToTeam(user, th.basicTeam()).loginBasic();
@@ -426,7 +426,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelMembersByIds() {
+  void getChannelMembersByIds() {
     Channel channel = th.createPublicChannel();
     User user1 = th.createUser();
     User user2 = th.createUser();
@@ -444,7 +444,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelMember() {
+  void getChannelMember() {
     Channel channel = th.basicChannel();
     User user = th.basicUser();
 
@@ -456,7 +456,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void removeUserFromChannel() {
+  void removeUserFromChannel() {
     Channel channel = th.basicChannel();
     User user = th.basicUser2();
 
@@ -469,7 +469,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateChannelRoles() {
+  void updateChannelRoles() {
     User channelAdmin = th.basicUser();
     User channelUser = th.basicUser2();
     Channel channel = th.loginAs(channelAdmin).createPublicChannel();
@@ -484,12 +484,12 @@ class ChannelsApiTest implements MattermostClientTest {
 
   @Test
   @Disabled
-  public void updateChannelNotifications() {
+  void updateChannelNotifications() {
     // TODO props定数を作る
   }
 
   @Test
-  public void viewChannel() {
+  void viewChannel() {
     User user = th.basicUser();
     Channel channel = th.basicChannel2();
     ChannelView view = new ChannelView(channel.getId());
@@ -501,7 +501,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelMembersForUser() {
+  void getChannelMembersForUser() {
     User user = th.createUser();
     th.loginSystemAdmin().linkUserToTeam(user, th.basicTeam()).loginAs(user);
     Channel channel1 = th.createPublicChannel();
@@ -518,7 +518,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getChannelsForUser() {
+  void getChannelsForUser() {
     User user = th.createUser();
     th.loginSystemAdmin().linkUserToTeam(user, th.basicTeam()).loginAs(user);
     Channel channel1 = th.createPublicChannel();
@@ -535,7 +535,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUnreadMessages() {
+  void getUnreadMessages() {
     User user = th.basicUser();
     Channel channel = th.basicChannel();
 
@@ -549,7 +549,7 @@ class ChannelsApiTest implements MattermostClientTest {
    * Test case for issue#99
    */
   @Test
-  public void getChannelHasChannelMentionsProp() {
+  void getChannelHasChannelMentionsProp() {
     Channel channelPublic1 = new Channel("Public 1", "public1", ChannelType.Open, th.basicTeam().getId());
     ApiResponse<Channel> createChannelResponse = client.createChannel(channelPublic1);
     if (isNotSupportVersion("5.1.0", createChannelResponse)) {
@@ -590,7 +590,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getDeletedChannels() {
+  void getDeletedChannels() {
     Channel deleted1 = th.createPublicChannel();
     Channel deleted2 = th.createPublicChannel();
     client.deleteChannel(deleted1.getId());
@@ -604,7 +604,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void convertChannelToPrivate() {
+  void convertChannelToPrivate() {
     Channel publicChannel = th.createPublicChannel();
     String channelId = publicChannel.getId();
 
@@ -616,7 +616,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void autocompleteChannels() {
+  void autocompleteChannels() {
     th.loginTeamAdmin();
     String teamId = th.basicTeam().getId();
     Channel channelA = new Channel("AliceChannel_display", "channelalice", ChannelType.Open, teamId);
@@ -639,7 +639,7 @@ class ChannelsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void autocompleteChannelsForSearch() {
+  void autocompleteChannelsForSearch() {
     th.loginTeamAdmin();
     String teamId = th.basicTeam().getId();
     Channel channelA = new Channel("AliceChannel_display", "channelalice", ChannelType.Open, teamId);

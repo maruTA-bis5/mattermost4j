@@ -55,7 +55,7 @@ class LdapApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void syncLdap() {
+  void syncLdap() {
     th.logout().loginSystemAdmin();
 
     // Enterprise Edition required
@@ -67,7 +67,7 @@ class LdapApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void testLdap() {
+  void testLdap() {
     th.logout().loginSystemAdmin();
 
     // Enterprise Edition required

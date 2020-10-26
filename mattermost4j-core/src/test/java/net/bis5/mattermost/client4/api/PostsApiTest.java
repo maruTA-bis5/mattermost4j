@@ -82,7 +82,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createPost() {
+  void createPost() {
     Post post = new Post();
     post.setChannelId(th.basicChannel().getId());
     post.setMessage("Hello World!");
@@ -95,7 +95,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createEphemeralPost() {
+  void createEphemeralPost() {
     // create_post_ephemeral permission currently only given to system admin
     th.logout().loginSystemAdmin();
 
@@ -112,7 +112,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPost() {
+  void getPost() {
     String postId = th.basicPost().getId();
 
     ApiResponse<Post> response = assertNoError(client.getPost(postId, null));
@@ -122,7 +122,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPostHasEmbedImage() throws IOException, URISyntaxException {
+  void getPostHasEmbedImage() throws IOException, URISyntaxException {
     String channelId = th.basicChannel().getId();
     Post post = new Post();
     post.setChannelId(channelId);
@@ -146,7 +146,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deletePost() {
+  void deletePost() {
     String postId = th.createPost(th.basicChannel()).getId();
 
     ApiResponse<Boolean> response = assertNoError(client.deletePost(postId));
@@ -156,7 +156,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updatePost() {
+  void updatePost() {
     Post post = th.createPost(th.basicChannel());
     post.setMessage("UPDATE:" + post.getMessage());
 
@@ -167,7 +167,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void patchPost() {
+  void patchPost() {
     String postId = th.createPost(th.basicChannel()).getId();
     PostPatch patch = new PostPatch();
     patch.setMessage("NEW MESSAGE");
@@ -179,7 +179,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getThread() {
+  void getThread() {
     String postId = th.basicPost().getId();
 
     ApiResponse<PostList> response = assertNoError(client.getPostThread(postId, null));
@@ -189,7 +189,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getFlaggedPosts() {
+  void getFlaggedPosts() {
     Post post = th.basicPost();
 
     // XXX "Flag post" operation need make more simple?
@@ -215,7 +215,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getFileInfoForPost() throws IOException, URISyntaxException {
+  void getFileInfoForPost() throws IOException, URISyntaxException {
     Path file1 = th.getResourcePath(TestHelper.EMOJI_CONSTRUCTION);
     Path file2 = th.getResourcePath(TestHelper.EMOJI_GLOBE);
     String channelId = th.basicChannel().getId();
@@ -236,7 +236,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPostsForChannel() {
+  void getPostsForChannel() {
     String channelId = th.basicChannel().getId();
 
     ApiResponse<PostList> response = assertNoError(client.getPostsForChannel(channelId, Pager.of(0, 60), null));
@@ -247,7 +247,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPostsForChannel_Since() {
+  void getPostsForChannel_Since() {
     String channelId = th.basicChannel().getId();
     ZonedDateTime since = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
 
@@ -259,7 +259,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPostsForChannel_Before() {
+  void getPostsForChannel_Before() {
     String channelId = th.basicChannel().getId();
     Post post1 = th.createPost(th.basicChannel());
     Post post2 = th.createPost(th.basicChannel());
@@ -278,7 +278,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getPostsForChannel_After() {
+  void getPostsForChannel_After() {
     String channelId = th.basicChannel().getId();
     Post post1 = th.createPost(th.basicChannel());
     Post post2 = th.createPost(th.basicChannel());
@@ -297,7 +297,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void searchForTeamPosts() {
+  void searchForTeamPosts() {
     String teamId = th.basicTeam().getId();
     String channelId = th.basicChannel().getId();
     Post post1 = new Post(channelId, "hello");
@@ -321,7 +321,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void pinPostToChannel() {
+  void pinPostToChannel() {
     Post post = th.createPost(th.basicChannel());
 
     ApiResponse<Boolean> response = assertNoError(client.pinPost(post.getId()));
@@ -338,7 +338,7 @@ class PostsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void unPinPost() {
+  void unPinPost() {
     Post post = th.createPost(th.basicChannel());
     assertNoError(client.pinPost(post.getId()));
 

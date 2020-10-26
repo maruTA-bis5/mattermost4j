@@ -67,7 +67,7 @@ class CommandsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createCommand() {
+  void createCommand() {
     th.loginTeamAdmin();
     Command command = new Command();
     // required params
@@ -101,7 +101,7 @@ class CommandsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void listCommandsForTeam() {
+  void listCommandsForTeam() {
     th.logout().loginTeamAdmin();
     String teamId = th.basicTeam().getId();
     Command command = new Command();
@@ -121,7 +121,7 @@ class CommandsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void listCommandForTeamExcludeSystemCommands() {
+  void listCommandForTeamExcludeSystemCommands() {
     th.logout().loginTeamAdmin();
     String teamId = th.basicTeam().getId();
     Command command = new Command();
@@ -141,7 +141,7 @@ class CommandsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getAutoCompleteCommands() {
+  void getAutoCompleteCommands() {
     th.loginTeamAdmin();
     String teamId = th.basicTeam().getId();
     Command autoCompleteCmd = new Command();
@@ -174,7 +174,7 @@ class CommandsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateCommand() {
+  void updateCommand() {
     th.logout().loginTeamAdmin();
     Command command = new Command();
     {
@@ -219,7 +219,7 @@ class CommandsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteCommand() {
+  void deleteCommand() {
     th.logout().loginTeamAdmin();
     Command command = new Command();
     {
@@ -240,7 +240,7 @@ class CommandsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void generateNewToken() {
+  void generateNewToken() {
     th.logout().loginTeamAdmin();
     Command command = new Command();
     {
@@ -260,7 +260,7 @@ class CommandsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void executeCommand() {
+  void executeCommand() {
     String inChannel = th.basicChannel().getId();
     String command = "/away";
 

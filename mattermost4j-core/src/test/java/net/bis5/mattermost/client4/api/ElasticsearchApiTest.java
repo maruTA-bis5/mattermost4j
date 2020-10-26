@@ -53,7 +53,7 @@ class ElasticsearchApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void testElasticsearchConfig() {
+  void testElasticsearchConfig() {
     th.logout().loginSystemAdmin();
 
     // Enterprise Edition required
@@ -61,7 +61,7 @@ class ElasticsearchApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void purgeElasticsearchIndexes() {
+  void purgeElasticsearchIndexes() {
     th.logout().loginSystemAdmin();
 
     // Enterprise Edition required

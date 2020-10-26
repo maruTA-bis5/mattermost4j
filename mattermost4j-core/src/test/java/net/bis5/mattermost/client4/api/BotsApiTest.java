@@ -62,7 +62,7 @@ class BotsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createBot() {
+  void createBot() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();
     if (isNotSupportVersion("5.10.0", configResponse)) {
@@ -87,7 +87,7 @@ class BotsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void patchBot() {
+  void patchBot() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();
     if (isNotSupportVersion("5.10.0", configResponse)) {
@@ -116,7 +116,7 @@ class BotsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getBot() {
+  void getBot() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();
     if (isNotSupportVersion("5.10.0", configResponse)) {
@@ -141,7 +141,7 @@ class BotsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getBots() {
+  void getBots() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();
     if (isNotSupportVersion("5.10.0", configResponse)) {
@@ -171,7 +171,7 @@ class BotsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void disableBot() {
+  void disableBot() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();
     if (isNotSupportVersion("5.10.0", configResponse)) {
@@ -192,7 +192,7 @@ class BotsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void enableBot() {
+  void enableBot() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();
     if (isNotSupportVersion("5.10.0", configResponse)) {
@@ -215,7 +215,7 @@ class BotsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void assignBotToUser() {
+  void assignBotToUser() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();
     if (isNotSupportVersion("5.10.0", configResponse)) {

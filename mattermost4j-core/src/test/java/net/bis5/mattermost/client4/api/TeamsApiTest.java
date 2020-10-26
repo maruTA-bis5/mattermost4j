@@ -85,7 +85,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void createTeam() {
+  void createTeam() {
     th.loginSystemAdmin();
     Team team = new Team();
     final String teamName = th.generateTestTeamName();
@@ -104,7 +104,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeams() {
+  void getTeams() {
     Team team = th.loginSystemAdmin().createTeam();
 
     Pager pager = Pager.of(0,200);
@@ -127,7 +127,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeam() {
+  void getTeam() {
 
     ApiResponse<Team> response = assertNoError(client.getTeam(th.basicTeam().getId(), null));
     Team team = response.readEntity();
@@ -136,7 +136,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateTeam() {
+  void updateTeam() {
     th.loginTeamAdmin();
     Team team = th.basicTeam();
     final String teamId = team.getId();
@@ -151,7 +151,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteTeam_Soft() {
+  void deleteTeam_Soft() {
     th.loginSystemAdmin();
 
     ApiResponse<Boolean> response = assertNoError(client.deleteTeam(th.basicTeam().getId()));
@@ -161,7 +161,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void deleteTeam_Permanent() {
+  void deleteTeam_Permanent() {
     th.loginSystemAdmin();
 
     ApiResponse<Boolean> response = assertNoError(client.deleteTeam(th.basicTeam().getId(), true));
@@ -171,7 +171,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void patchTeam() {
+  void patchTeam() {
     th.loginTeamAdmin();
     TeamPatch patch = new TeamPatch();
     final String newDisplayName = "new" + th.basicTeam().getDisplayName();
@@ -184,7 +184,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeamByName() {
+  void getTeamByName() {
     final String teamId = th.basicTeam().getId();
     final String teamName = th.basicTeam().getName();
 
@@ -195,7 +195,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void searchTeams() {
+  void searchTeams() {
     TeamSearch search = new TeamSearch();
     search.setTerm(th.basicTeam().getName());
 
@@ -207,7 +207,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void teamExists_Exists() {
+  void teamExists_Exists() {
 
     ApiResponse<TeamExists> response =
         assertNoError(client.teamExists(th.basicTeam().getName(), null));
@@ -217,7 +217,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void teamExists_NotExists() {
+  void teamExists_NotExists() {
 
     ApiResponse<TeamExists> response =
         assertNoError(client.teamExists("fake" + th.generateTestTeamName(), null));
@@ -227,7 +227,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getUsersTeams() {
+  void getUsersTeams() {
     String userId = th.basicUser().getId();
 
     ApiResponse<TeamList> response = assertNoError(client.getTeamsForUser(userId, null));
@@ -238,7 +238,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeamMembers() {
+  void getTeamMembers() {
 
     ApiResponse<TeamMemberList> response =
         assertNoError(client.getTeamMembers(th.basicTeam().getId(), Pager.of(0, 60), null));
@@ -249,7 +249,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void addUserToTeam() {
+  void addUserToTeam() {
     th.loginSystemAdmin();
     User user = th.createUser();
     th.loginTeamAdmin();
@@ -263,7 +263,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void addUserToTeamFromInvite() {
+  void addUserToTeamFromInvite() {
     th.logout().loginSystemAdmin();
     User noTeamUser = th.createUser();
     String inviteId = th.basicTeam().getInviteId();
@@ -278,7 +278,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void addMultipleUsersToTeam() {
+  void addMultipleUsersToTeam() {
     th.loginSystemAdmin();
     User user1 = th.createUser();
     User user2 = th.createUser();
@@ -293,7 +293,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeamMembersForUser() {
+  void getTeamMembersForUser() {
 
     ApiResponse<TeamMemberList> response =
         assertNoError(client.getTeamMembersForUser(th.basicUser().getId(), null));
@@ -304,7 +304,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeamMember() {
+  void getTeamMember() {
     String teamId = th.basicTeam().getId();
     String userId = th.basicUser2().getId();
 
@@ -316,7 +316,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void removeUserFromTeam() {
+  void removeUserFromTeam() {
     th.loginTeamAdmin();
     String teamId = th.basicTeam().getId();
     String userId = th.basicUser2().getId();
@@ -328,7 +328,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeamMembersByIds() {
+  void getTeamMembersByIds() {
 
     ApiResponse<TeamMemberList> response =
         assertNoError(client.getTeamMembersByIds(th.basicTeam().getId(), th.basicUser().getId(),
@@ -340,7 +340,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeamStats() {
+  void getTeamStats() {
 
     ApiResponse<TeamStats> response =
         assertNoError(client.getTeamStats(th.basicTeam().getId(), null));
@@ -350,7 +350,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void setTeamIcon() throws URISyntaxException {
+  void setTeamIcon() throws URISyntaxException {
     th.logout().loginTeamAdmin();
     Path iconPath = th.getResourcePath(TestHelper.EMOJI_CONSTRUCTION);
     String teamId = th.basicTeam().getId();
@@ -360,7 +360,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeamIcon() throws URISyntaxException, IOException {
+  void getTeamIcon() throws URISyntaxException, IOException {
     th.logout().loginTeamAdmin();
     Path iconPath = th.getResourcePath(TestHelper.EMOJI_CONSTRUCTION);
     String teamId = th.basicTeam().getId();
@@ -371,7 +371,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void removeTeamIcon() throws URISyntaxException {
+  void removeTeamIcon() throws URISyntaxException {
     th.logout().loginTeamAdmin();
     Path iconPath = th.getResourcePath(TestHelper.EMOJI_CONSTRUCTION);
     String teamId = th.basicTeam().getId();
@@ -382,7 +382,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void updateTeamMemberRoles() {
+  void updateTeamMemberRoles() {
     th.loginTeamAdmin();
 
     ApiResponse<Boolean> response = assertNoError(client
@@ -393,7 +393,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeamUnreadsForUser() {
+  void getTeamUnreadsForUser() {
 
     ApiResponse<TeamUnreadList> response =
         assertNoError(client.getTeamUnreadForUser(th.basicUser().getId(), null));
@@ -404,7 +404,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getTeamUnreadsForTeam() {
+  void getTeamUnreadsForTeam() {
 
     ApiResponse<TeamUnread> response =
         assertNoError(client.getTeamUnread(th.basicTeam().getId(), th.basicUser().getId()));
@@ -414,7 +414,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void tnviteUsersToTheTeamByEmail() {
+  void tnviteUsersToTheTeamByEmail() {
 
     ApiResponse<Boolean> response = assertNoError(client.inviteUsersToTeam(th.basicTeam().getId(),
         Collections.singletonList(th.generateTestEmail())));
@@ -425,11 +425,11 @@ class TeamsApiTest implements MattermostClientTest {
 
   @Test
   @Disabled // Not Implemented
-  public void importTeamFromOtherApplication() {
+  void importTeamFromOtherApplication() {
   }
 
   @Test
-  public void getPublicChannels() {
+  void getPublicChannels() {
 
     ApiResponse<ChannelList> response = assertNoError(
         client.getPublicChannelsForTeam(th.basicTeam().getId(), Pager.of(0, 60), null));
@@ -439,7 +439,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void searchChannels() {
+  void searchChannels() {
     ChannelSearch search = new ChannelSearch();
     search.setTerm(th.basicChannel().getName());
 
@@ -451,7 +451,7 @@ class TeamsApiTest implements MattermostClientTest {
   }
 
   @Test
-  public void getInviteInfo() {
+  void getInviteInfo() {
     Team team = th.basicTeam();
     String inviteId = team.getInviteId();
 
