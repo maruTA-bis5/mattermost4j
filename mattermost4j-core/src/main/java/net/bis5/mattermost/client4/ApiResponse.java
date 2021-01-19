@@ -14,11 +14,11 @@
 
 package net.bis5.mattermost.client4;
 
+import jakarta.ws.rs.ProcessingException;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.Map;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import lombok.AllArgsConstructor;
 import net.bis5.mattermost.client4.model.ApiError;

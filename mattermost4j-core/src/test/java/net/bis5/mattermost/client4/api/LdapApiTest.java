@@ -19,7 +19,7 @@ package net.bis5.mattermost.client4.api;
 import static net.bis5.mattermost.client4.Assertions.assertStatus;
 import static net.bis5.mattermost.client4.Assertions.isSupportVersion;
 
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

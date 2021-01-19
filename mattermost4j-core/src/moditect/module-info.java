@@ -22,9 +22,9 @@ module net.bis5.mattermost4j.core {
 
     requires transitive com.fasterxml.jackson.annotation;
     requires transitive com.fasterxml.jackson.databind;
+    requires transitive jakarta.ws.rs;
     requires transitive java.logging;
     requires transitive java.sql;
-    requires transitive java.ws.rs;
     requires transitive jersey.media.multipart;
     requires transitive net.bis5.mattermost4j.models;
     requires transitive opengraph4j;
