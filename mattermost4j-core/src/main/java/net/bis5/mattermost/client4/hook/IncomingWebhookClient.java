@@ -14,14 +14,14 @@
 
 package net.bis5.mattermost.client4.hook;
 
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.api.hook.IncomingWebhook;
 import net.bis5.mattermost.jersey.provider.MattermostModelMapperProvider;
