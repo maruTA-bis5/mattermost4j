@@ -19,7 +19,6 @@ import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 /**
  * Channel.
  * 
