@@ -15,10 +15,10 @@
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
 
 /**
  * Channel.
