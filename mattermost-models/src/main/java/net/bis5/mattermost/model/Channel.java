@@ -15,9 +15,10 @@
 package net.bis5.mattermost.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Map;
 
 /**
  * Channel.
@@ -74,5 +75,7 @@ public class Channel {
   private Map<String, Object> props;
   /* @since Mattermost Server 5.10 */
   private boolean groupConstrained;
+  /* @since Mattermost Server 5.32 */
+  private boolean shared;
 
 }
