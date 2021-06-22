@@ -74,5 +74,8 @@ public class Channel {
   private Map<String, Object> props;
   /* @since Mattermost Server 5.10 */
   private boolean groupConstrained;
+  /* @since Mattermost Server 5.35 */
+  @JsonProperty("total_msg_count_root")
+  private long totalMsgCountRoot;
 
 }
