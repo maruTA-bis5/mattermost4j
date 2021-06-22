@@ -76,5 +76,8 @@ public class Channel {
   private boolean groupConstrained;
   /* @since Mattermost Server 5.32 */
   private boolean shared;
+  /* @since Mattermost Server 5.35 */
+  @JsonProperty("total_msg_count_root")
+  private long totalMsgCountRoot;
 
 }
