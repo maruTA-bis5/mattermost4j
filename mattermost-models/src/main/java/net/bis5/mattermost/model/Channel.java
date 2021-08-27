@@ -74,5 +74,7 @@ public class Channel {
   private Map<String, Object> props;
   /* @since Mattermost Server 5.10 */
   private boolean groupConstrained;
-
+  /* @since Mattermost Server 5.36 */
+  @JsonProperty("policy_id")
+  private String policyId;
 }
