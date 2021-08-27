@@ -35,5 +35,8 @@ public class Status {
   private long lastActivityAt;
   @JsonProperty("active_channel")
   private String activeChannel;
+  /* @since Mattermost Server 5.36 */
+  @JsonProperty("dnd_end_time")
+  private long dndEndTime;
 
 }
