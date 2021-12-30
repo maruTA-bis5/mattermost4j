@@ -37,7 +37,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           java-version: 11
-          distributon: temurin
+          distribution: temurin
           cache: maven
       - run: docker-compose up -d
         env:
