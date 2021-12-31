@@ -22,6 +22,7 @@ services:
       MM_USERNAME: mmuser
       MM_PASSWORD: mostest
       MM_DBNAME: mattermost_test
+      MM_SQLSETTINGS_DRIVERNAME: mysql
       MM_SQLSETTINGS_DATASOURCE: "mmuser:mostest@tcp(mysql)/mattermost_test?charset=utf8mb4,utf8&readTimeout=30s&writeTimeout=30s"
       MM_EMAILSETTINGS_SENDEMAILNOTIFICATION: "true"
       MM_EMAILSETTINGS_FEEDBACKEMAIL: "feedback@localhost"
