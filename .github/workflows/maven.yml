@@ -43,7 +43,7 @@ jobs:
           MATTERMOST_VERSION: ${{ matrix.mattermost-version }}
       - run: mvn clean verify --show-version
       - name: SonarQube scan
-        run: mvn sonar:sonar -s .github/workflows/settingss-sonar.xml
+        run: mvn sonar:sonar -s .github/workflows/settings-sonar.xml
         if: github.repository == 'maruTA-bis5/mattermost4j' && github.actor != 'dependabot[bot]' && ${{ matrix.mattermost-version }} == '5.23.0'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
