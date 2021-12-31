@@ -1,0 +1,31 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "20:00"
+  open-pull-requests-limit: 10
+  reviewers:
+  - maruTA-bis5
+  ignore:
+  - dependency-name: org.codehaus.mojo:findbugs-maven-plugin
+    versions:
+    - "> 3.0.4"
+  - dependency-name: com.puppycrawl.tools:checkstyle
+    versions:
+    - "8.40"
+    - "8.41"
+    - 8.41.1
+  - dependency-name: com.github.spotbugs:spotbugs-maven-plugin
+    versions:
+    - 4.2.2
+  - dependency-name: org.projectlombok:lombok-maven-plugin
+    versions:
+    - 1.18.18.0
+  - dependency-name: org.projectlombok:lombok
+    versions:
+    - 1.18.18
+  commit-message:
+    prefix: chore
+    include: scope

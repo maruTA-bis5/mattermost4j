@@ -78,5 +78,8 @@ public class User {
   private boolean isBot;
   /* @since Mattermost Server 5.12 */
   private String botDescription;
+  /* @since Mattermost Server 5.35 */
+  @JsonProperty("disable_welcome_email")
+  private boolean disableWelcomeEmail;
 
 }
