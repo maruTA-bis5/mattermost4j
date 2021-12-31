@@ -28,5 +28,7 @@ public class GlobalRelayMessageExportSettings {
   private String smtpUsername;
   private String smtpPassword;
   private String emailAddress;
+  /** @since Mattermost Server 5.26 */
+  private int smtpServerTimeout;
 
 }

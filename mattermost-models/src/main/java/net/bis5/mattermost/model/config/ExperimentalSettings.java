@@ -62,5 +62,13 @@ public class ExperimentalSettings {
   private long linkMetadataTimeoutMilliseconds = 5000;
   /* @since Mattermost Server 5.20 */
   private boolean useNewSamlLibrary;
+  /** @since Mattermost Server 5.28 */
+  private long cloudUserLimit;
+  /** @since Mattermost Server 5.28 */
+  private boolean cloudBilling;
+  /** @since Mattermost Server 5.30 */
+  private boolean enableSharedChannels;
+  /** @since Mattermost Server 5.35 */
+  private boolean enableRemoteClusterService;
 
 }

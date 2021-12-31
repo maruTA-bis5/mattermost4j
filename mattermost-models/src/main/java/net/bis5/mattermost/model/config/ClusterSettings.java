@@ -57,5 +57,9 @@ public class ClusterSettings {
   private int maxIdleConnsPerHost;
   /* @since Mattermost Server 5.0.0 */
   private int idleConnTimeoutMilliseconds;
+  /** @since Mattermost Server 5.26 */
+  private boolean enableExperimentalGossipEncryption;
+  /** @since Mattermost Server 5.33 */
+  private boolean enableGossipCompression;
 
 }

@@ -73,5 +73,7 @@ public class TeamSettings {
   private List<String> experimentalDefaultChannels;
   /* @since Mattermost Server 5.18 */
   private boolean lockTeammateNameDisplay;
+  /** @since Mattermost Server 5.33 */
+  private boolean enableCustomUserStatuses;
 
 }

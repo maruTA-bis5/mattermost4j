@@ -38,5 +38,7 @@ public class ExperimentalAuditSettings {
   private int fileMaxBackups;
   private boolean fileCompress;
   private int fileMaxQueueSize = 1000;
+  /** @since Mattermost Server 5.28 */
+  private String advancedLoggingConfig;
 
 }

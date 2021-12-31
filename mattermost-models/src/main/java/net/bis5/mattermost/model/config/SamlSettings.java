@@ -83,6 +83,10 @@ public class SamlSettings {
   private boolean enableAdminAttribute;
   /* @since Mattermost Server 5.20 */
   private String adminAttribute;
+  /** @since Mattermost Server 5.25 */
+  private String serviceProviderIdentifier;
+  /** @since Mattermost Server 5.30 */
+  private boolean ignoreGuestsLdapSync;
 
   @Getter(onMethod = @__({@Deprecated}))
   @Setter(onMethod = @__({@Deprecated}))

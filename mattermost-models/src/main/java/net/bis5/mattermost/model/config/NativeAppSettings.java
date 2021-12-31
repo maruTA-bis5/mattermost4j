@@ -14,6 +14,9 @@
 
 package net.bis5.mattermost.model.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -27,5 +30,7 @@ public class NativeAppSettings {
   private String appDownloadLink;
   private String androidAppDownloadLink;
   private String iosAppDownloadLink;
+  /** @since Mattermost Server 5.32 */
+  private List<String> appCustomUrlSchemes = new ArrayList<>();
 
 }

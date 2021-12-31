@@ -65,6 +65,8 @@ public class EmailSettings {
   private String replyToAddress;
   /* @since Mattermost Server 5.22 */
   private int smtpServerTimeout = 10;
+  /** @since Mattermost Server 5.26 */
+  private int pushNotificationBuffer = 1000;
 
   /**
    * Should not use this.

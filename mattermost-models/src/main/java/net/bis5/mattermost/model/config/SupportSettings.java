@@ -34,5 +34,7 @@ public class SupportSettings {
   private boolean customTermsOfServiceEnabled;
   /* @since Mattermost Server 5.6 */
   private int customTermsOfServiceReAcceptancePeriod;
+  /** @since Mattermost Server 5.26 */
+  private boolean enableAskCommunityLink;
 
 }

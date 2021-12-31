@@ -65,5 +65,11 @@ public class FileSettings {
   private boolean enableMobileDownload;
   /* @since Mattermost Server 4.2 */
   private boolean amazonS3Trace;
+  /** @since Mattermost Server 5.26 */
+  private String amazonS3PathPrefix;
+  /** @since Mattermost Server 5.35 */
+  private boolean extractContent = true;
+  /** @since Mattermost Server 5.35 */
+  private boolean archiveRecursion;
 
 }

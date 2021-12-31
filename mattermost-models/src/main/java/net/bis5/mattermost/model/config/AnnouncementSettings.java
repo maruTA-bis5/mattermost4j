@@ -30,4 +30,15 @@ public class AnnouncementSettings {
   private String bannerColor;
   private String bannerTextColor;
   private boolean allowBannerDismissal;
+  /** @since Mattermost Server 5.28 */
+  private boolean adminNoticesEnabled = true;
+  /** @since Mattermost Server 5.28 */
+  private boolean userNoticesEnabled = true;
+  /** @since Mattermost Server 5.30 */
+  private String noticesUrl;
+  /** @since Mattermost Server 5.30 */
+  private int noticesFetchFrequency;
+  /** @since Mattermost Server 5.30 */
+  private boolean noticesSkipCache;
+
 }

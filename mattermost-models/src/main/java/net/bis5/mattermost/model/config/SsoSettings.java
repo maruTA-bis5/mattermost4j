@@ -31,5 +31,11 @@ public class SsoSettings {
   private String authEndpoint;
   private String tokenEndpoint;
   private String userApiEndpoint;
+  /** @since Mattermost Server 5.33 */
+  private String discoveryEndpoint;
+  /** @since Mattermost Server 5.33 */
+  private String buttonText;
+  /** @since Mattermost Server 5.33 */
+  private String buttonColor;
 
 }

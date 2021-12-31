@@ -14,10 +14,14 @@
 
 package net.bis5.mattermost.model;
 
+import java.util.Map;
+
 import lombok.Data;
 import net.bis5.mattermost.model.config.AnalyticsSettings;
 import net.bis5.mattermost.model.config.AnnouncementSettings;
+import net.bis5.mattermost.model.config.BleveSettings;
 import net.bis5.mattermost.model.config.ClientRequirements;
+import net.bis5.mattermost.model.config.CloudSettings;
 import net.bis5.mattermost.model.config.ClusterSettings;
 import net.bis5.mattermost.model.config.ComplianceSettings;
 import net.bis5.mattermost.model.config.DataRetentionSettings;
@@ -26,10 +30,12 @@ import net.bis5.mattermost.model.config.ElasticsearchSettings;
 import net.bis5.mattermost.model.config.EmailSettings;
 import net.bis5.mattermost.model.config.ExperimentalAuditSettings;
 import net.bis5.mattermost.model.config.ExperimentalSettings;
+import net.bis5.mattermost.model.config.ExportSettings;
 import net.bis5.mattermost.model.config.ExtensionSettings;
 import net.bis5.mattermost.model.config.FileSettings;
 import net.bis5.mattermost.model.config.GuestAccountsSettings;
 import net.bis5.mattermost.model.config.ImageProxySettings;
+import net.bis5.mattermost.model.config.ImportSettings;
 import net.bis5.mattermost.model.config.JobSettings;
 import net.bis5.mattermost.model.config.LdapSettings;
 import net.bis5.mattermost.model.config.LocalizationSettings;
@@ -117,6 +123,18 @@ public class Config {
   private GuestAccountsSettings guestAccountsSettings;
   /* @since Mattermost Servre 5.22 */
   private ExperimentalAuditSettings experimentalAuditSettings;
+  /** @since Mattermost Server 5.33 */
+  private SsoSettings openIdSettings;
+  /** @since Mattermost Server 5.24 */
+  private BleveSettings bleveSettings;
+  /** @since Mattermost Server 5.30 */
+  private CloudSettings cloudSettings;
+  /** @since Mattermost Server 5.30 */
+  private Map<String, Object> featureFlags;
+  /** @since Mattermost Server 5.32 */
+  private ImportSettings importSettings;
+  /** @since Mattermost Server 5.34 */
+  private ExportSettings exportSettings;
 
   /**
    * Should not use this.
