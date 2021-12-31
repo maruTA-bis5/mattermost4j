@@ -6,14 +6,12 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-java@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
         with:
-          java-version: 11.0.5
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: m2-${{ hashFiles('**/pom.xml') }}
+          java-version: 11
+          distribution: temurin
+          cache: maven
       - run: mvn clean verify -DskipTests=true --show-version
       - uses: 8398a7/action-slack@v2
         with:
@@ -28,20 +26,29 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        mattermost-version: [5.23.0,5.22.3,5.21.0,5.19.2]
+        mattermost-version:
+          - 5.23.0
+          - 5.22.3
+          - 5.21.0
+          - 5.19.2
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-java@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
         with:
-          java-version: 11.0.5
-      - uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: m2-${{ hashFiles('**/pom.xml') }}
+          java-version: 11
+          distribution: temurin
+          cache: maven
       - run: docker-compose up -d
         env:
           MATTERMOST_VERSION: ${{ matrix.mattermost-version }}
       - run: mvn clean verify --show-version
+      - name: SonarQube scan
+        run: mvn sonar:sonar -s .github/workflows/settings-sonar.xml
+        if: github.repository == 'maruTA-bis5/mattermost4j' && github.actor != 'dependabot[bot]' && matrix.mattermost-version == '5.23.0'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: 8398a7/action-slack@v2
         with:
           status: ${{ job.status }}
@@ -50,27 +57,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: failure()
-  sonarqube:
-    needs: [test-with-server]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-java@v1
-        with:
-          java-version: 11.0.5
-      - run: docker-compose up -d
-        env:
-          MATTERMOST_VERSION: 5.23.0
-      - run: mvn clean verify sonar:sonar --show-version -s .github/workflows/settings-sonar.xml
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: 8398a7/action-slack@v2
-        with:
-          status: ${{ job.status }}
-          author_name: sonarqube status
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: always()
