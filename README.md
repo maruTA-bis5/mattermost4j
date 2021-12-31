@@ -5,7 +5,6 @@ mattermost4j
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.bis5.mattermost4j/mattermost4j-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.bis5.mattermost4j/mattermost4j-core)
 [![Javadocs](http://javadoc.io/badge/net.bis5.mattermost4j/mattermost4j-core.svg)](http://javadoc.io/doc/net.bis5.mattermost4j/mattermost4j-core)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=net.bis5.mattermost4j%3Amattermost4j-parent&metric=coverage)](https://sonarcloud.io/dashboard?id=net.bis5.mattermost4j%3Amattermost4j-parent)
-[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=maruTA-bis5/mattermost4j)](https://dependabot.com)
 
 Mattermost API v4 client for Java.
 
@@ -56,13 +55,13 @@ client.postByIncomingWebhook(payload);
 <dependency>
 	<groupId>net.bis5.mattermost4j</groupId>
 	<artifactId>mattermost4j-core</artifactId>
-	<version>0.22.1</version>
+	<version>0.23.0</version>
 </dependency>
 ```
 
 ### Gradle:
 ```
-compile 'net.bis5.mattermost4j:mattermost4j-core:0.22.1'
+compile 'net.bis5.mattermost4j:mattermost4j-core:0.23.0'
 ```
 
 ## Contribution
