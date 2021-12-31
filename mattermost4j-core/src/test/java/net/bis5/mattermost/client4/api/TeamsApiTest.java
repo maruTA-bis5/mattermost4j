@@ -17,6 +17,7 @@
 package net.bis5.mattermost.client4.api;
 
 import static net.bis5.mattermost.client4.Assertions.assertNoError;
+import static net.bis5.mattermost.client4.Assertions.assertStatus;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
@@ -25,18 +26,23 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import jakarta.ws.rs.core.Response.Status;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.MattermostClient;
 import net.bis5.mattermost.client4.MattermostClientTest;
@@ -46,6 +52,7 @@ import net.bis5.mattermost.client4.TestHelper;
 import net.bis5.mattermost.model.Channel;
 import net.bis5.mattermost.model.ChannelList;
 import net.bis5.mattermost.model.ChannelSearch;
+import net.bis5.mattermost.model.Config;
 import net.bis5.mattermost.model.Role;
 import net.bis5.mattermost.model.Team;
 import net.bis5.mattermost.model.TeamExists;
@@ -163,11 +170,24 @@ class TeamsApiTest implements MattermostClientTest {
   @Test
   void deleteTeam_Permanent() {
     th.loginSystemAdmin();
+    Config config = th.client().getConfig().readEntity();
+    config.getServiceSettings().setEnableApiTeamDeletion(true);
+    assertNoError(th.client().updateConfig(config));
+
 
     ApiResponse<Boolean> response = assertNoError(client.deleteTeam(th.basicTeam().getId(), true));
     boolean result = response.readEntity();
 
     assertThat(result, is(true));
+  }
+
+  @Test
+  void deleteTeam_Permanent_featureDisabled() {
+    th.loginSystemAdmin();
+    Config config = th.client().getConfig().readEntity();
+    assertFalse(config.getServiceSettings().isEnableApiTeamDeletion(), "precondition");
+
+    assertStatus(client.deleteTeam(th.basicTeam().getId(), true), Status.UNAUTHORIZED);
   }
 
   @Test

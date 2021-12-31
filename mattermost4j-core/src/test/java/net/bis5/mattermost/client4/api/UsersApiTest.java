@@ -511,7 +511,7 @@ class UsersApiTest implements MattermostClientTest {
   void updateUserMfa() {
 
     // Enterprise Edition required
-    assertStatus(client.updateUserMfa(th.basicUser().getId(), null, false), Status.NOT_IMPLEMENTED);
+    assertStatus(client.updateUserMfa(th.basicUser().getId(), "code", true), Status.NOT_IMPLEMENTED);
   }
 
   @Test
