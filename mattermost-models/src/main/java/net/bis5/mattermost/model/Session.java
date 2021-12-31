@@ -49,5 +49,9 @@ public class Session {
   private Map<String, String> props;
   @JsonProperty("team_members")
   private List<TeamMember> teamMembers;
+  /** @since Mattermost Server 5.24 */
+  private boolean local;
+  /** @since Mattermost Server 5.26 */
+  private boolean expiredNotify;
 
 }

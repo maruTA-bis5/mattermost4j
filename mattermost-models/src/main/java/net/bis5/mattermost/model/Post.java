@@ -14,9 +14,12 @@
 
 package net.bis5.mattermost.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -77,5 +80,9 @@ public class Post {
   private PostMetadata metadata;
   /* @since Mattermost Server 5.22 */
   private long replyCount;
+  /** @since Mattermost Server 5.32 */
+  private long lastReplyAt;
+  /** @since Mattermost Server 5.32 */
+  private List<User> participants = new ArrayList<>();
 
 }

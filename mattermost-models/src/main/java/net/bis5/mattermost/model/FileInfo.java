@@ -54,5 +54,11 @@ public class FileInfo {
   private int height;
   @JsonProperty("has_preview_image")
   private boolean hasPreviewImage;
+  /** @since Mattermost Server 5.30 */
+  private byte[] miniPreview;
+  /** @since Mattermost Server 5.35 */
+  private String channelId;
+  /** @since Mattermost Server 5.35 */
+  private String remoteId;
 
 }

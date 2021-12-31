@@ -50,5 +50,9 @@ public class ChannelMember {
   private String explicitRoles;
   /* @since Mattermost Server 5.12 */
   private boolean schemeGuest;
+  /** @since Mattermost Server 5.35 */
+  private long mentionCountRoot;
+  /** @since Mattermost Server 5.35 */
+  private long msgCountRoot;
 
 }

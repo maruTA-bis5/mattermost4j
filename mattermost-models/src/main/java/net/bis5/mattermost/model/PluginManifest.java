@@ -33,6 +33,8 @@ public class PluginManifest {
   private PluginServer backend;
   private PluginWebapp webapp;
   private PluginSettingsSchema settingsSchema;
+  /** @since Mattermost Server 5.22 */
+  private String releaseNotesUrl;
   /* @since Mattermost Server 5.23 */
   private String homepageUrl;
   /* @since Mattermost Server 5.23 */
