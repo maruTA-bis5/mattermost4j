@@ -104,15 +104,15 @@ public class AutocompleteArg {
   }
 
   public AutocompleteTextArg getTextArgumentData() {
-    return data;
+    return getData();
   }
 
   public AutocompleteStaticListArg getStaticListArgumentData() {
-    return data;
+    return getData();
   }
 
   public AutocompleteDynamicListArg getDynamicListArgumentData() {
-    return data;
+    return getData();
   }
 
 }
