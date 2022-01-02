@@ -98,6 +98,12 @@ public class Assertions {
     return !isNotSupportVersion(minimumRequirement, response);
   }
 
+  public static boolean isRemovedVersion(String removedVersion, ApiResponse<?> response) {
+    Semver serverVersion = new Semver(response.getRawResponse().getHeaderString("X-Version-Id")).withClearedSuffix();
+    Semver removed = new Semver(removedVersion);
+    return serverVersion.compareTo(removed) >= 0;
+  }
+
   public static boolean isMajorMinorVersionMatches(String majorMinorVersion, ApiResponse<?> response) {
     Semver serverVersion = new Semver(response.getRawResponse().getHeaderString("X-Version-Id"));
     Semver majorMinorSemver = new Semver(majorMinorVersion, SemverType.LOOSE);

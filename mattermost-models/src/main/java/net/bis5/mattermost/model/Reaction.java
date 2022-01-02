@@ -33,4 +33,11 @@ public class Reaction {
   private String emojiName;
   @JsonProperty("create_at")
   private long createAt;
+  /** @since Mattermost Server 5.33 */
+  private long updateAt;
+  /** @since Mattermost Server 5.33 */
+  private long deleteAt;
+  /** @since Mattermost Server 5.35 */
+  private String remoteId;
+
 }

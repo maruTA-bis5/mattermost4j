@@ -30,4 +30,7 @@ public class DataRetentionSettings {
   private int messageRetentionDays;
   private int fileRetentionDays;
   private String deletionJobStartTime = "02:00";
+  /** @since Mattermost Server 5.36 */
+  private int batchSize = 30000;
+
 }

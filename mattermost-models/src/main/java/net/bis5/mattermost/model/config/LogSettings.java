@@ -35,4 +35,10 @@ public class LogSettings {
   private boolean fileJson = true;
   /* @since Mattermost Server 4.10 */
   private boolean consoleJson = true;
+  /** @since Mattermost Server 5.26 */
+  private boolean enableSentry;
+  /** @since Mattermost Server 5.26 */
+  private String advancedLoggingConfig;
+  /** @since Mattermost Server 5.36 */
+  private boolean enableColor;
 }

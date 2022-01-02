@@ -292,7 +292,10 @@ public interface ChannelApi {
 
   /**
    * convert channel from public to private.
+   * 
+   * @deprecated /convert API is no longer supported by Mattermost Server 6.x or later.
    */
+  @Deprecated
   ApiResponse<Channel> convertChannelToPrivate(String channelId);
 
   /**

@@ -73,4 +73,11 @@ public class Command {
   private String description;
   @JsonProperty("url")
   private String url;
+  /** @since Mattermost Server 5.24 */
+  private AutocompleteData autocompleteData; 
+  /** @since Mattermost Server 5.24 */
+  private String autocompleteIconData;
+  /** @since Mattermost Server 5.28 */
+  private String pluginId;
+
 }

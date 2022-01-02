@@ -15,11 +15,13 @@
 package net.bis5.mattermost.model.config;
 
 import java.util.List;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.bis5.mattermost.model.config.consts.AllowEditPost;
 import net.bis5.mattermost.model.config.consts.ChannelSidebarOrganization;
+import net.bis5.mattermost.model.config.consts.CollapsedThreads;
 import net.bis5.mattermost.model.config.consts.ConnectionSecurity;
 import net.bis5.mattermost.model.config.consts.GroupUnreadChannels;
 import net.bis5.mattermost.model.config.consts.ImageProxyType;
@@ -231,7 +233,11 @@ public class ServiceSettings {
   private boolean experimentalLdapGroupSync;
   /* @since Mattermost Server 5.8 */
   private boolean experimentalStrictCsrfEnforcement;
-  /* @since Mattermost Server 5.9 */
+  /**
+   * @since Mattermost Server 5.9
+   * @deprecated Legacy MFA is no longer supported by Mattermost Server 6.x or later.
+   */
+  @Deprecated
   private boolean disableLegacyMfa;
   /* @since Mattermost Server 5.12 */
   private List<String> trustedProxyIpHeader;
@@ -247,7 +253,46 @@ public class ServiceSettings {
   private int idleTimeout = 60;
   /* @since Mattermost Server 5.22 */
   private ChannelSidebarOrganization experimentalChannelSidebarOrganization = ChannelSidebarOrganization.DISABLED;
-
+  /** @since Mattermost Server 5.24 */
+  private boolean extendSessionLengthWithActivity = true;
+  /** @since Mattermost Server 5.24 */
+  private boolean enableLocalMode;
+  /** @since Mattermost Server 5.24 */
+  private String localModeSocketLocation;
+  /** @since Mattermost Server 5.28 */
+  private boolean enableApiChannelDeletion;
+  /** @since Mattermost Server 5.28 */
+  private boolean enableApiUserDeletion;
+  /** @since Mattermost Server 5.29 */
+  private boolean threadAutoFollow = true;
+  /** @since Mattermost Server 5.29 */
+  private String managedResourcePaths;
+  /** @since Mattermost Server 5.30 */
+  private boolean enableAwsMetering;
+  /** @since Mattermost Server 5.30 */
+  private String splitKey;
+  /** @since Mattermost Server 5.30 */
+  private int featureFlagSyncIntervalSeconds;
+  /** @since Mattermost Server 5.30 */
+  private boolean debugSplit;
+  /** @since Mattermost Server 5.32 */
+  private boolean enableLegacySidebar;
+  /** @since Mattermost Server 5.35 */
+  private String restrictLinkPreviews;
+  /** @since Mattermost Server 5.35 */
+  private boolean enableFileSearch = true;
+  /** @since Mattermost Server 5.36 */
+  private boolean enableReliableWebSockets = true;
+  /** @since Mattermost Server 5.37 */
+  private CollapsedThreads collapsedThreads = CollapsedThreads.DISABLED;
+  /** @since Mattermost Server 6.0 */
+  private boolean enablePermalinkPreviews = true;
+  /** @since Mattermost Server 6.0 */
+  private boolean enableOnboardingFlow = true;
+  /** @since Mattermost Server 6.1 */
+  private boolean enableInlineLatex = true;
+  /** @since Mattermost Server 6.2 */
+  private String developerFlags;
 
   /**
    * This method should not use.

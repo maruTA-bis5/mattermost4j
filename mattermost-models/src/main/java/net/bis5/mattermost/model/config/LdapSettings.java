@@ -82,6 +82,12 @@ public class LdapSettings {
   private boolean enableAdminFilter;
   /* @since Mattermost Server 5.20 */
   private String adminFilter;
+  /** @since Mattermost Server 5.24 */
+  private String pictureAttribute;
+  /** @since Mattermost Server 5.28 */
+  private String publicCertificateFile;
+  /** @since Mattermost Server 5.28 */
+  private String privateKeyFile;
 
   @Getter(onMethod = @__({@Deprecated}))
   @Setter(onMethod = @__({@Deprecated}))

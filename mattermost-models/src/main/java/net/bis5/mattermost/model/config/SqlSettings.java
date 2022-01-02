@@ -14,7 +14,9 @@
 
 package net.bis5.mattermost.model.config;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -39,4 +41,11 @@ public class SqlSettings {
   private int connMaxLifetimeMilliseconds;
   /* @since Mattermost Server 5.4 */
   private boolean enablePublicChannelsMaterialization;
+  /** @since Mattermost Server 5.24 */
+  private boolean disableDatabaseSearch;
+  /** @since Mattermost Server 5.33 */
+  private int connMaxIdleTimeMilliseconds = 300_000;
+  /** @since Mattermost Server 5.35 */
+  private List<ReplicaLagSettings> replicaLagSettings = new ArrayList<>();
+
 }

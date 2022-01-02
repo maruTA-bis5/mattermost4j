@@ -27,5 +27,7 @@ public class ComplianceSettings {
   private boolean enable;
   private String directory;
   private boolean enableDaily;
+  /** @since Mattermost Server 5.36 */
+  private int batchSize;
 
 }

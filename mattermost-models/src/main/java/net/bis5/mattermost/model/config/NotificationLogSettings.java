@@ -32,5 +32,9 @@ public class NotificationLogSettings {
   private String fileLevel = "INFO";
   private boolean fileJson = true;
   private String fileLocation;
+  /** @since Mattermost Server 5.28 */
+  private String advancedLoggingConfig;
+  /** @since Mattermost Server 5.36 */
+  private boolean enableColor;
 
 }

@@ -27,5 +27,7 @@ public class JobSettings {
 
   private boolean runJobs;
   private boolean runScheduler;
+  /** @since Mattermost Server 6.1 */
+  private int cleanupJobsThresholdDays = -1;
 
 }

@@ -35,10 +35,25 @@ import net.bis5.mattermost.model.serialize.HasCodeSerializer;
 @Getter
 public enum PreferenceCategory implements HasCode<PreferenceCategory> {
 
-  DIRECT_CHANNEL_SHOW("direct_channel_show"), TUTORIAL_STEPS("tutorial_step"), ADVANCED_SETTINGS(
-      "advanced_settings"), FLAGGED_POST("flagged_post"), //
-  DISPLAY_SETTINGS("display_settings"), THEME("theme"), AUTHORIZED_OAUTH_APP("oauth_app"), LAST(
-      "last"), NOTIFICATIONS("notifications");
+  DIRECT_CHANNEL_SHOW("direct_channel_show"),
+  /** @since Mattermost Server 5.26 */
+  GROUOP_CHANNEL_SHOW("group_channel_show"),
+  TUTORIAL_STEPS("tutorial_step"),
+  ADVANCED_SETTINGS("advanced_settings"),
+  FLAGGED_POST("flagged_post"),
+  /** @since Mattermost Server 4.1 */
+  FAVORITE_CHANNEL("favorite_channel"),
+  /** @since Mattermost Server 5.4 */
+  SIDEBAR_SETTINGS("sidebar_settings"),
+  DISPLAY_SETTINGS("display_settings"),
+  /** @since Mattermost Server 5.38 */
+  RECOMMENDED_NEXT_STEPS("recommended_next_steps"),
+  THEME("theme"),
+  AUTHORIZED_OAUTH_APP("oauth_app"),
+  LAST("last"),
+  /** @since Mattermost Server 5.33 */
+  CUSTOM_STATUS("custom_status"),
+  NOTIFICATIONS("notifications");
   private final String code;
 
   private PreferenceCategory(String code) {

@@ -51,5 +51,7 @@ public class PluginSettings {
   private boolean enableRemoteMarketplace = true;
   /* @since Mattermost Server 5.20 */
   private boolean automaticPrepackagedPlugins = true;
+  /** @since Mattermost Server 5.36 */
+  private String chimeraOAuthProxyUrl;
 
 }

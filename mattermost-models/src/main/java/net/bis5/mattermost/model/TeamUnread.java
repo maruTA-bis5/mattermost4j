@@ -31,5 +31,13 @@ public class TeamUnread {
   private String msgCount;
   @JsonProperty("mention_count")
   private String mentionCount;
+  /** @since Mattermost Server 5.35 */
+  private long mentionCountRoot;
+  /** @since Mattermost Server 5.35 */
+  private long msgCountRoot;
+  /** @since Mattermost Server 5.38 */
+  private long threadCount;
+  /** @since Mattermost Server 5.38 */
+  private long threadMentionCount;
 
 }

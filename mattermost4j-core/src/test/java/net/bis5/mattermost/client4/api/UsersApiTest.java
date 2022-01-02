@@ -20,6 +20,7 @@ import static net.bis5.mattermost.client4.Assertions.assertNoError;
 import static net.bis5.mattermost.client4.Assertions.assertStatus;
 import static net.bis5.mattermost.client4.Assertions.isNotSupportVersion;
 import static net.bis5.mattermost.client4.Assertions.isSupportVersion;
+import static net.bis5.mattermost.client4.Assertions.isRemovedVersion;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
@@ -511,7 +512,7 @@ class UsersApiTest implements MattermostClientTest {
   void updateUserMfa() {
 
     // Enterprise Edition required
-    assertStatus(client.updateUserMfa(th.basicUser().getId(), null, false), Status.NOT_IMPLEMENTED);
+    assertStatus(client.updateUserMfa(th.basicUser().getId(), "code", true), Status.NOT_IMPLEMENTED);
   }
 
   @Test
@@ -523,10 +524,14 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
+  @SuppressWarnings("deprecation")
   void checkMfa() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();
     Config config = configResponse.readEntity();
+    if (isRemovedVersion("6.0.0", configResponse)) {
+      return;
+    }
     if (isSupportVersion("5.9.0", configResponse)) {
       config.getServiceSettings().setDisableLegacyMfa(false);
       assertNoError(client.updateConfig(config));
@@ -548,6 +553,7 @@ class UsersApiTest implements MattermostClientTest {
   }
 
   @Test
+  @SuppressWarnings("deprecation")
   void checkMfaThrowsExceptionDisableLegacyMfa() {
     th.logout().loginSystemAdmin();
     ApiResponse<Config> configResponse = client.getConfig();

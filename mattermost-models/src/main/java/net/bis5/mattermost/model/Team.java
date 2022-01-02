@@ -57,5 +57,7 @@ public class Team {
   private String schemeId;
   /* @since Mattermost Server 5.10 */
   private boolean groupConstrained;
+  /** @since Mattermost Server 5.36 */
+  private String policyId;
 
 }

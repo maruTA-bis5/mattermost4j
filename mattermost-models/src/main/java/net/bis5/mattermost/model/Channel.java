@@ -82,4 +82,6 @@ public class Channel {
   /* @since Mattermost Server 5.36 */
   @JsonProperty("policy_id")
   private String policyId;
+  /** @since Mattermost Server 6.1 */
+  private long lastRootPostAt;
 }

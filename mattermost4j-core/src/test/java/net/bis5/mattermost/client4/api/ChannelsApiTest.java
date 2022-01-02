@@ -19,6 +19,7 @@ package net.bis5.mattermost.client4.api;
 import static net.bis5.mattermost.client4.Assertions.assertNoError;
 import static net.bis5.mattermost.client4.Assertions.assertStatus;
 import static net.bis5.mattermost.client4.Assertions.isNotSupportVersion;
+import static net.bis5.mattermost.client4.Assertions.isRemovedVersion;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -605,6 +606,10 @@ class ChannelsApiTest implements MattermostClientTest {
 
   @Test
   void convertChannelToPrivate() {
+    ApiResponse<Boolean> pingResponse = th.client().getPing();
+    if (isRemovedVersion("6.0.0", pingResponse)) {
+      return;
+    }
     Channel publicChannel = th.createPublicChannel();
     String channelId = publicChannel.getId();
 
@@ -619,18 +624,18 @@ class ChannelsApiTest implements MattermostClientTest {
   void autocompleteChannels() {
     th.loginTeamAdmin();
     String teamId = th.basicTeam().getId();
-    Channel channelA = new Channel("AliceChannel_display", "channelalice", ChannelType.Open, teamId);
+    Channel channelA = new Channel("AliceChannel_display", "acchannelalice", ChannelType.Open, teamId);
     channelA = assertNoError(client.createChannel(channelA)).readEntity();
-    Channel channelB = new Channel("BobChannel_display", "channelbob", ChannelType.Private, teamId);
+    Channel channelB = new Channel("BobChannel_display", "acchannelbob", ChannelType.Private, teamId);
     channelB = assertNoError(client.createChannel(channelB)).readEntity();
-    Channel channelC = new Channel("CharlieChannel_display", "channelcharlie", ChannelType.Open, teamId);
+    Channel channelC = new Channel("CharlieChannel_display", "acchannelcharlie", ChannelType.Open, teamId);
     channelC = assertNoError(client.createChannel(channelC)).readEntity();
 
     th.logout().loginBasic();
     assertNoError(client.addChannelMember(channelA.getId(), th.basicUser().getId()));
 
     // autocompleteChannel returns channels in team
-    String term = "channel";
+    String term = "acchannel";
     ChannelList completeChannels = assertNoError(client.autocompleteChannels(teamId, term)).readEntity();
 
     Set<String> ids = completeChannels.stream().map(Channel::getId).collect(Collectors.toSet());
@@ -642,11 +647,11 @@ class ChannelsApiTest implements MattermostClientTest {
   void autocompleteChannelsForSearch() {
     th.loginTeamAdmin();
     String teamId = th.basicTeam().getId();
-    Channel channelA = new Channel("AliceChannel_display", "channelalice", ChannelType.Open, teamId);
+    Channel channelA = new Channel("AliceChannel_display", "acchannelalice", ChannelType.Open, teamId);
     channelA = assertNoError(client.createChannel(channelA)).readEntity();
-    Channel channelB = new Channel("BobChannel_display", "channelbob", ChannelType.Private, teamId);
+    Channel channelB = new Channel("BobChannel_display", "acchannelbob", ChannelType.Private, teamId);
     channelB = assertNoError(client.createChannel(channelB)).readEntity();
-    Channel channelC = new Channel("CharlieChannel_display", "channelcharlie", ChannelType.Open, teamId);
+    Channel channelC = new Channel("CharlieChannel_display", "acchannelcharlie", ChannelType.Open, teamId);
     channelC = assertNoError(client.createChannel(channelC)).readEntity();
     assertNoError(client.addChannelMember(channelA.getId(), th.basicUser().getId()));
     assertNoError(client.addChannelMember(channelB.getId(), th.basicUser().getId()));
@@ -654,7 +659,7 @@ class ChannelsApiTest implements MattermostClientTest {
     th.logout().loginBasic();
 
     // autocompleteChannelsForSearch returns own (joined) channels
-    String term = "channel";
+    String term = "acchannel";
     ChannelList completeChannels = assertNoError(client.autocompleteChannelsForSearch(teamId, term)).readEntity();
 
     Set<String> ids = completeChannels.stream().map(Channel::getId).collect(Collectors.toSet());

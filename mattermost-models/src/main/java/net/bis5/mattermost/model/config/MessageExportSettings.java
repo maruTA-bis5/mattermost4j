@@ -38,5 +38,7 @@ public class MessageExportSettings {
   private String exportFormat;
   /* @since Mattermost Server 4.9 */
   private GlobalRelayMessageExportSettings globalRelaySettings;
+  /** @since Mattermost Server 5.28 */
+  private boolean downloadExportResults;
 
 }
