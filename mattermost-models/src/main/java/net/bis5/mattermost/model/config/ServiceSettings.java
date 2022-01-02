@@ -289,6 +289,8 @@ public class ServiceSettings {
   private boolean enablePermalinkPreviews = true;
   /** @since Mattermost Server 6.0 */
   private boolean enableOnboardingFlow = true;
+  /** @since Mattermost Server 6.1 */
+  private boolean enableInlineLatex = true;
 
 
   /**
