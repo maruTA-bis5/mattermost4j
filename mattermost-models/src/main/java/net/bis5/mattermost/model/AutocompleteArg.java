@@ -50,7 +50,7 @@ public class AutocompleteArg {
   @JsonDeserialize(using = AutocompleteArgTypeDeserializer.class)
   @Getter
   @RequiredArgsConstructor
-  public static enum AutocompleteArgType implements HasCode<AutocompleteArgType> {
+  public enum AutocompleteArgType implements HasCode<AutocompleteArgType> {
     TEXT_INPUT("TextInput"), STATIC_LIST("StaticList"), DYNAMIC_LIST("DynamicList");
     private final String code;
 
