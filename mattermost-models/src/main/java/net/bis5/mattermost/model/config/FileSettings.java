@@ -71,5 +71,7 @@ public class FileSettings {
   private boolean extractContent = true;
   /** @since Mattermost Server 5.35 */
   private boolean archiveRecursion;
+  /** @since Mattermost Server 6.0 */
+  private long maxImageResolution;
 
 }

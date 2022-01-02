@@ -59,6 +59,10 @@ public class PluginManifest {
     private String darwinAmd64;
     @JsonProperty("windows-amd64")
     private String windowsAmd64;
+    @JsonProperty("darwin-arm64")
+    private String darwinArm64;
+    @JsonProperty("linux-arm64")
+    private String linuxArm64;
   }
 
   @Data
