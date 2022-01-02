@@ -291,7 +291,8 @@ public class ServiceSettings {
   private boolean enableOnboardingFlow = true;
   /** @since Mattermost Server 6.1 */
   private boolean enableInlineLatex = true;
-
+  /** @since Mattermost Server 6.2 */
+  private String developerFlags;
 
   /**
    * This method should not use.
