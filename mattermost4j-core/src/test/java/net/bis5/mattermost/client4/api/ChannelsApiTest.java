@@ -19,6 +19,7 @@ package net.bis5.mattermost.client4.api;
 import static net.bis5.mattermost.client4.Assertions.assertNoError;
 import static net.bis5.mattermost.client4.Assertions.assertStatus;
 import static net.bis5.mattermost.client4.Assertions.isNotSupportVersion;
+import static net.bis5.mattermost.client4.Assertions.isRemovedVersion;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -605,6 +606,10 @@ class ChannelsApiTest implements MattermostClientTest {
 
   @Test
   void convertChannelToPrivate() {
+    ApiResponse<Boolean> pingResponse = th.client().getPing();
+    if (isRemovedVersion("6.0.0", pingResponse)) {
+      return;
+    }
     Channel publicChannel = th.createPublicChannel();
     String channelId = publicChannel.getId();
 

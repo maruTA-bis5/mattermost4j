@@ -340,7 +340,10 @@ public interface UserApi {
 
   /**
    * checks whether a user has MFA active on their account or not based on the provided login id.
+   * 
+   * @deprecated Legacy MFA is no longer supported by Mattermost Server 6.x or later.
    */
+  @Deprecated
   boolean checkUserMfa(String loginId);
 
   /**

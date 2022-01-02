@@ -233,7 +233,11 @@ public class ServiceSettings {
   private boolean experimentalLdapGroupSync;
   /* @since Mattermost Server 5.8 */
   private boolean experimentalStrictCsrfEnforcement;
-  /* @since Mattermost Server 5.9 */
+  /**
+   * @since Mattermost Server 5.9
+   * @deprecated Legacy MFA is no longer supported by Mattermost Server 6.x or later.
+   */
+  @Deprecated
   private boolean disableLegacyMfa;
   /* @since Mattermost Server 5.12 */
   private List<String> trustedProxyIpHeader;
@@ -281,6 +285,10 @@ public class ServiceSettings {
   private boolean enableReliableWebSockets = true;
   /** @since Mattermost Server 5.37 */
   private CollapsedThreads collapsedThreads = CollapsedThreads.DISABLED;
+  /** @since Mattermost Server 6.0 */
+  private boolean enablePermalinkPreviews = true;
+  /** @since Mattermost Server 6.0 */
+  private boolean enableOnboardingFlow = true;
 
 
   /**
