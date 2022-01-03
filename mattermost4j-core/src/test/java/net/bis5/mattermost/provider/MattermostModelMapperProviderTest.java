@@ -12,18 +12,22 @@
  * the License.
  */
 
-package net.bis5.mattermost.jersey.provider;
+package net.bis5.mattermost.provider;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.ws.rs.ext.ContextResolver;
-import java.io.IOException;
-import net.bis5.mattermost.model.User;
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import jakarta.ws.rs.ext.ContextResolver;
+import net.bis5.mattermost.model.User;
 
 /**
  * Test cases for {@link MattermostModelMapperProvider}.

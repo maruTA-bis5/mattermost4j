@@ -3,10 +3,10 @@
 	<parent>
 		<groupId>net.bis5.mattermost4j</groupId>
 		<artifactId>mattermost4j-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>0.23.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>mattermost4j-core</artifactId>
-	<name>Mattermost APIv4 Client for Java</name>
+	<artifactId>mattermost4j-jersey</artifactId>
+	<name>Mattermost4J :: Jersey Client</name>
 
 	<dependencies>
 		<dependency>
@@ -15,39 +15,25 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
+			<groupId>net.bis5.mattermost4j</groupId>
+			<artifactId>mattermost4j-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>jakarta.ws.rs</groupId>
-			<artifactId>jakarta.ws.rs-api</artifactId>
-			<version>3.0.0</version>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.12.0</version>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.bis5.opengraph4j</groupId>
-			<artifactId>opengraph4j</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.xml.bind</groupId>
-			<artifactId>jakarta.xml.bind-api</artifactId>
-			<version>3.0.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.activation</groupId>
-			<artifactId>jakarta.activation-api</artifactId>
-			<version>2.0.0</version>
-			<scope>provided</scope>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.vdurmont</groupId>
@@ -78,6 +64,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.2</version>
 				<configuration>
 					<excludes>
 						<exclude>**/net/bis5/mattermost/client4/api/*.java</exclude>
@@ -85,18 +72,25 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.10.1</version>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.22.2</version>
 				<configuration>
-					<generatedSourcesDirectory>${project.build.directory}/generated-sources/delombok</generatedSourcesDirectory>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-							<version>1.18.24</version>
-						</path>
-					</annotationProcessorPaths>
+					<includes>
+						<include>**/net/bis5/mattermost/client4/api/*.java</include>
+					</includes>
 				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.moditect</groupId>
+				<artifactId>moditect-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

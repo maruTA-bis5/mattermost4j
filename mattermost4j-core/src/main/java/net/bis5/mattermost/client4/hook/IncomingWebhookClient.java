@@ -14,21 +14,18 @@
 
 package net.bis5.mattermost.client4.hook;
 
+import java.util.logging.Level;
+
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.client4.api.hook.IncomingWebhook;
-import net.bis5.mattermost.jersey.provider.MattermostModelMapperProvider;
+import net.bis5.mattermost.client4.factory.MattermostClientFactory;
 import net.bis5.mattermost.model.IncomingWebhookRequest;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.glassfish.jersey.logging.LoggingFeature;
-import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
 
 /**
  * Incoming Webhook client.
@@ -50,12 +47,7 @@ public class IncomingWebhookClient implements IncomingWebhook {
   }
 
   protected Client createClient(Level clientLogLevel) {
-    ClientBuilder builder = ClientBuilder.newBuilder().register(MattermostModelMapperProvider.class)
-        .register(JacksonFeature.class);
-    if (clientLogLevel != null) {
-      builder.register(new LoggingFeature(Logger.getLogger(getClass().getName()), clientLogLevel,
-          Verbosity.PAYLOAD_ANY, 1000));
-    }
+    ClientBuilder builder = MattermostClientFactory.createClientBuilder(false, clientLogLevel);
     return builder.build();
   }
 

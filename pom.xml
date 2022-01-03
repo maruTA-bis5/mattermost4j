@@ -10,6 +10,7 @@
 	<modules>
 		<module>mattermost4j-core</module>
 		<module>mattermost-models</module>
+		<module>mattermost4j-jersey</module>
 	</modules>
 	<licenses>
 		<license>

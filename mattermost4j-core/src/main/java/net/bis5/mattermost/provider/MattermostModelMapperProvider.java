@@ -12,7 +12,7 @@
  * the License.
  */
 
-package net.bis5.mattermost.jersey.provider;
+package net.bis5.mattermost.provider;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
