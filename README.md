@@ -85,6 +85,11 @@ Currently, use CheckStyle's built-in `google_checks.xml`.
 1. `docker-compose up`
 2. `mvn verify`
 
+## Contact
+- Create GitHub Issue (https://github.com/maruTA-bis5/primefaces-excella-exporter/issues/new)
+- or Start new Discussion (https://github.com/maruTA-bis5/primefaces-excella-exporter/discussions/new)
+- or DM me on the Mattermost Community Server (https://community.mattermost.com/core/messages/@maruta-bis5)
+
 ## License
 [Apache Software License, Version 2.0](LICENSE.txt)
 
