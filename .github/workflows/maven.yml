@@ -33,12 +33,12 @@ jobs:
     strategy:
       matrix:
         mattermost-version:
-          - 6.3.0-rc1
+          - 6.3.0
           - 6.2.1
           - 6.1.1
           - 5.37.6
         mattermost-version-latest:
-          - 6.3.0-rc1
+          - 6.3.0
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
