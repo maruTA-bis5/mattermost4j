@@ -16,7 +16,7 @@
 
 package net.bis5.mattermost.client4;
 
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +37,11 @@ public interface MultiPartAdapter {
     private final MediaType mediaType;
     @Getter
     private List<Part> bodyParts = new ArrayList<>();
-    public FormMultiPart bodyPart(String name, Path filePath) {
-      bodyParts.add(new FileBodyPart(name, filePath));
+    public FormMultiPart bodyPart(String name, InputStream stream) {
+      return bodyPart(name, stream, name);
+    }
+    public FormMultiPart bodyPart(String name, InputStream stream, String fileName) {
+      bodyParts.add(new FileBodyPart(name, stream, fileName));
       return this;
     }
     public FormMultiPart field(String name, String value) {
@@ -57,7 +60,8 @@ public interface MultiPartAdapter {
   @Getter
   public static class FileBodyPart implements Part {
     private final String name;
-    private final Path filePath;
+    private final InputStream stream;
+    private final String fileName;
   }
 
   @RequiredArgsConstructor

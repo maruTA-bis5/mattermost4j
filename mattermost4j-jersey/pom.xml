@@ -36,57 +36,24 @@
 			<artifactId>jersey-media-multipart</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.vdurmont</groupId>
-			<artifactId>semver4j</artifactId>
-			<version>3.1.0</version>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>mattermost4j-integration-test-base</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.15</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>1.3.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.nanohttpd</groupId>
-			<artifactId>nanohttpd</artifactId>
-			<version>2.3.1</version>
-			<scope>test</scope>
+			<type>test-jar</type>
+			<classifier>tests</classifier>
 		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
 				<configuration>
-					<excludes>
-						<exclude>**/net/bis5/mattermost/client4/api/*.java</exclude>
-					</excludes>
+					<failIfNoTests>true</failIfNoTests>
+          <dependenciesToScan>
+						<dependency>${project.groupId}:mattermost4j-integration-test-base:test-jar:tests</dependency>
+					</dependenciesToScan>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.22.2</version>
-				<configuration>
-					<includes>
-						<include>**/net/bis5/mattermost/client4/api/*.java</include>
-					</includes>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.moditect</groupId>

@@ -6,7 +6,7 @@ import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.client.Client;
@@ -61,7 +61,7 @@ public class JerseyMultiPartAdapter implements MultiPartAdapter {
   }
 
   private BodyPart toJerseyBodyPart(FileBodyPart filePart) {
-    return new FileDataBodyPart(filePart.getName(), filePart.getFilePath().toFile());
+    return new StreamDataBodyPart(filePart.getName(), filePart.getStream(), filePart.getFileName());
   }
 
   private BodyPart toJerseyBodyPart(FieldPart part) {

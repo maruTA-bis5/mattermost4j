@@ -11,6 +11,7 @@
 		<module>mattermost4j-core</module>
 		<module>mattermost-models</module>
 		<module>mattermost4j-jersey</module>
+		<module>mattermost4j-integration-test-base</module>
 	</modules>
 	<licenses>
 		<license>

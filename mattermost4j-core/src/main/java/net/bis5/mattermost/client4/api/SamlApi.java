@@ -33,18 +33,21 @@ public interface SamlApi {
 
   /**
    * will upload an IDP certificate for SAML and set the config to use it.
+   * @throws IOException
    */
-  ApiResponse<Boolean> uploadSamlIdpCertificate(Path dataFile, String fileName);
+  ApiResponse<Boolean> uploadSamlIdpCertificate(Path dataFile, String fileName) throws IOException;
 
   /**
    * will upload a public certificate for SAML and set the config to use it.
+   * @throws IOException
    */
-  ApiResponse<Boolean> uploadSamlPublicCertificate(Path dataFile, String fileName);
+  ApiResponse<Boolean> uploadSamlPublicCertificate(Path dataFile, String fileName) throws IOException;
 
   /**
    * will upload a private key for SAML and set the config to use it.
+   * @throws IOException
    */
-  ApiResponse<Boolean> uploadSamlPrivateCertificate(Path dataFile, String fileName);
+  ApiResponse<Boolean> uploadSamlPrivateCertificate(Path dataFile, String fileName) throws IOException;
 
   /**
    * deletes the SAML IDP certificate from the server and updates the config to not use it and

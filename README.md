@@ -78,12 +78,13 @@ use https://github.com/google/styleguide/ {intellij,eclipse}-java-google-style.x
 Currently, use CheckStyle's built-in `google_checks.xml`.
 
 ## Test
-### Unit test
-- `mvn test`
-
 ### Integration with Mattermost Server
 1. `docker-compose up`
-2. `mvn verify`
+2. `mvn test`
+
+#### To run specify test
+1. `docker-compose up`
+2. `mvn test -Dtest=UsersApiTest -Dsurefire.failIfNoSpecifiedTests=false`
 
 ## Contact
 - Create GitHub Issue (https://github.com/maruTA-bis5/primefaces-excella-exporter/issues/new)
@@ -92,4 +93,3 @@ Currently, use CheckStyle's built-in `google_checks.xml`.
 
 ## License
 [Apache Software License, Version 2.0](LICENSE.txt)
-

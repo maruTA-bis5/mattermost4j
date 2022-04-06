@@ -14,6 +14,7 @@
 
 package net.bis5.mattermost.client4.api;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import net.bis5.mattermost.client4.ApiResponse;
@@ -467,8 +468,9 @@ public interface UserApi {
 
   /**
    * sets profile image of the user.
+   * @throws IOException
    */
-  ApiResponse<Boolean> setProfileImage(String userId, Path imageFilePath);
+  ApiResponse<Boolean> setProfileImage(String userId, Path imageFilePath) throws IOException;
 
   ApiResponse<UserAccessToken> createUserAccessToken(String userId, String description);
 

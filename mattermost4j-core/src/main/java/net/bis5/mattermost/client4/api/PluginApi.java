@@ -14,6 +14,7 @@
 
 package net.bis5.mattermost.client4.api;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import net.bis5.mattermost.client4.ApiResponse;
 import net.bis5.mattermost.model.PluginManifest;
@@ -24,11 +25,11 @@ import net.bis5.mattermost.model.Plugins;
  */
 public interface PluginApi {
 
-  default ApiResponse<PluginManifest> uploadPlugin(Path plugin) {
+  default ApiResponse<PluginManifest> uploadPlugin(Path plugin) throws IOException {
     return uploadPlugin(plugin, false);
   }
 
-  ApiResponse<PluginManifest> uploadPlugin(Path plugin, boolean force);
+  ApiResponse<PluginManifest> uploadPlugin(Path plugin, boolean force) throws IOException;
 
   ApiResponse<Plugins> getPlugins();
 

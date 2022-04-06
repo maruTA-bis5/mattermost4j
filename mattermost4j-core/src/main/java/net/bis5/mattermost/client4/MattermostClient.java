@@ -16,12 +16,14 @@ package net.bis5.mattermost.client4;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -926,11 +928,13 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
-  public ApiResponse<Boolean> setProfileImage(String userId, Path imageFilePath) {
+  public ApiResponse<Boolean> setProfileImage(String userId, Path imageFilePath) throws IOException {
     FormMultiPart multiPart = new FormMultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
-    multiPart.bodyPart("image", imageFilePath);
 
-    return doApiPostMultiPart(getUserProfileImageRoute(userId), multiPart).checkStatusOk();
+    try (InputStream stream = Files.newInputStream(imageFilePath)) {
+      multiPart.bodyPart("image", stream);
+      return doApiPostMultiPart(getUserProfileImageRoute(userId), multiPart).checkStatusOk();
+    }
   }
 
   @Override
@@ -1148,11 +1152,13 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
-  public ApiResponse<Boolean> setTeamIcon(String teamId, Path iconFilePath) {
+  public ApiResponse<Boolean> setTeamIcon(String teamId, Path iconFilePath) throws IOException {
     FormMultiPart multiPart = new FormMultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
-    multiPart.bodyPart("image", iconFilePath);
 
-    return doApiPostMultiPart(getTeamIconRoute(teamId), multiPart).checkStatusOk();
+    try (InputStream stream = Files.newInputStream(iconFilePath)) {
+      multiPart.bodyPart("image", stream);
+      return doApiPostMultiPart(getTeamIconRoute(teamId), multiPart).checkStatusOk();
+    }
   }
 
   @Override
@@ -1478,12 +1484,30 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 
     FormMultiPart multiPart = new FormMultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
 
-    for (Path filePath : filePaths) {
-      multiPart.bodyPart("files", filePath);
+    List<InputStream> streams = new ArrayList<>();
+    try {
+      for (Path filePath : filePaths) {
+        InputStream stream = Files.newInputStream(filePath);
+        multiPart.bodyPart("files", stream, filePath.getFileName().toString());
+        streams.add(stream);
+      }
+      multiPart.field("channel_id", channelId);
+      return doApiPostMultiPart(getFilesRoute(), multiPart, FileUploadResult.class);
+    } finally {
+      streams.forEach(s -> ioOperation(InputStream::close, s));
     }
-    multiPart.field("channel_id", channelId);
+  }
 
-    return doApiPostMultiPart(getFilesRoute(), multiPart, FileUploadResult.class);
+  @FunctionalInterface
+  private interface IOCallable<T> {
+    void call(T io) throws IOException;
+  }
+  void ioOperation(IOCallable<InputStream> callable, InputStream stream) {
+    try (InputStream s = stream) {
+      callable.call(s);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 
   @Override
@@ -1574,11 +1598,13 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
-  public ApiResponse<Boolean> uploadLicenseFile(Path licenseFile) {
+  public ApiResponse<Boolean> uploadLicenseFile(Path licenseFile) throws IOException {
     FormMultiPart multiPart = new FormMultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
-    multiPart.bodyPart("license", licenseFile);
 
-    return doApiPostMultiPart("/license", multiPart).checkStatusOk();
+    try (InputStream stream = Files.newInputStream(licenseFile)) {
+      multiPart.bodyPart("license", stream);
+      return doApiPostMultiPart("/license", multiPart).checkStatusOk();
+    }
   }
 
   @Override
@@ -1707,27 +1733,33 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
-  public ApiResponse<Boolean> uploadSamlIdpCertificate(Path dataFile, String fileName) {
+  public ApiResponse<Boolean> uploadSamlIdpCertificate(Path dataFile, String fileName) throws IOException {
     FormMultiPart multiPart = new FormMultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
-    multiPart.bodyPart("certificate", dataFile);
 
-    return doApiPostMultiPart(getSamlRoute() + "/certificate/idp", multiPart).checkStatusOk();
+    try (InputStream stream = Files.newInputStream(dataFile)) {
+      multiPart.bodyPart("certificate", stream);
+      return doApiPostMultiPart(getSamlRoute() + "/certificate/idp", multiPart).checkStatusOk();
+    }
   }
 
   @Override
-  public ApiResponse<Boolean> uploadSamlPublicCertificate(Path dataFile, String fileName) {
+  public ApiResponse<Boolean> uploadSamlPublicCertificate(Path dataFile, String fileName) throws IOException {
     FormMultiPart multiPart = new FormMultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
-    multiPart.bodyPart("certificate", dataFile);
 
-    return doApiPostMultiPart(getSamlRoute() + "/certificate/public", multiPart).checkStatusOk();
+    try (InputStream stream = Files.newInputStream(dataFile)) {
+      multiPart.bodyPart("certificate", stream);
+      return doApiPostMultiPart(getSamlRoute() + "/certificate/public", multiPart).checkStatusOk();
+    }
   }
 
   @Override
-  public ApiResponse<Boolean> uploadSamlPrivateCertificate(Path dataFile, String fileName) {
+  public ApiResponse<Boolean> uploadSamlPrivateCertificate(Path dataFile, String fileName) throws IOException {
     FormMultiPart multiPart = new FormMultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
-    multiPart.bodyPart("certificate", dataFile);
 
-    return doApiPostMultiPart(getSamlRoute() + "/certificate/private", multiPart).checkStatusOk();
+    try (InputStream stream = Files.newInputStream(dataFile)) {
+      multiPart.bodyPart("certificate", stream);
+      return doApiPostMultiPart(getSamlRoute() + "/certificate/private", multiPart).checkStatusOk();
+    }
   }
 
   @Override
@@ -1806,11 +1838,13 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   }
 
   @Override
-  public ApiResponse<Boolean> uploadBrandImage(Path dataFile) {
+  public ApiResponse<Boolean> uploadBrandImage(Path dataFile) throws IOException {
     FormMultiPart multiPart = new FormMultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
-    multiPart.bodyPart("image", dataFile);
 
-    return doApiPostMultiPart(getBrandImageRoute(), multiPart).checkStatusOk();
+    try (InputStream stream = Files.newInputStream(dataFile)) {
+      multiPart.bodyPart("image", stream);
+      return doApiPostMultiPart(getBrandImageRoute(), multiPart).checkStatusOk();
+    }
   }
 
   @Override
@@ -1943,13 +1977,14 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   // Emoji Section
 
   @Override
-  public ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile) {
+  public ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile) throws IOException {
     FormMultiPart multiPart = new FormMultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
-    multiPart.bodyPart("image", imageFile);
 
-    multiPart.field("emoji", emoji, MediaType.APPLICATION_JSON_TYPE);
-
-    return doApiPostMultiPart(getEmojisRoute(), multiPart, Emoji.class);
+    try (InputStream stream = Files.newInputStream(imageFile)) {
+      multiPart.bodyPart("image", stream);
+      multiPart.field("emoji", emoji, MediaType.APPLICATION_JSON_TYPE);
+      return doApiPostMultiPart(getEmojisRoute(), multiPart, Emoji.class);
+    }
   }
 
   @Override
@@ -2052,13 +2087,14 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
   // Plugin Section
 
   @Override
-  public ApiResponse<PluginManifest> uploadPlugin(Path plugin, boolean force) {
+  public ApiResponse<PluginManifest> uploadPlugin(Path plugin, boolean force) throws IOException {
     FormMultiPart multiPart = new FormMultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
-    multiPart.bodyPart("plugin", plugin);
 
-    multiPart.field("force", force, MediaType.APPLICATION_JSON_TYPE);
-
-    return doApiPostMultiPart(getPluginsRoute(), multiPart, PluginManifest.class);
+    try (InputStream stream = Files.newInputStream(plugin)) {
+      multiPart.bodyPart("plugin", stream);
+      multiPart.field("force", force, MediaType.APPLICATION_JSON_TYPE);
+      return doApiPostMultiPart(getPluginsRoute(), multiPart, PluginManifest.class);
+    }
   }
 
   @Override
