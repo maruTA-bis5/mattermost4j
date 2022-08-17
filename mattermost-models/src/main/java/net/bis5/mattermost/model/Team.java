@@ -59,5 +59,6 @@ public class Team {
   private boolean groupConstrained;
   /** @since Mattermost Server 5.36 */
   private String policyId;
-
+  /** @since Mattermost Server 7.1.0 */
+  private boolean cloudLimitsArchived;
 }
