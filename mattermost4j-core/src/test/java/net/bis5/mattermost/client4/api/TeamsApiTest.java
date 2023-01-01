@@ -18,6 +18,7 @@ package net.bis5.mattermost.client4.api;
 
 import static net.bis5.mattermost.client4.Assertions.assertNoError;
 import static net.bis5.mattermost.client4.Assertions.assertStatus;
+import static net.bis5.mattermost.client4.Assertions.isNotSupportVersion;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
@@ -184,7 +185,12 @@ class TeamsApiTest implements MattermostClientTest {
   @Test
   void deleteTeam_Permanent_featureDisabled() {
     th.loginSystemAdmin();
+    ApiResponse<Config> configResponse = th.client().getConfig();
+    if (isNotSupportVersion("5.25.4", configResponse)) {
+      return;
+    }
     Config config = th.client().getConfig().readEntity();
+
     assertFalse(config.getServiceSettings().isEnableApiTeamDeletion(), "precondition");
 
     assertStatus(client.deleteTeam(th.basicTeam().getId(), true), Status.UNAUTHORIZED);

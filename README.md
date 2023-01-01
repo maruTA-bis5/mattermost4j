@@ -9,10 +9,10 @@ mattermost4j
 Mattermost API v4 client for Java.
 
 ## Requirement
-- JDK 8 or 11
-	- for JDK 11 users: You may add these dependencies for runtime
-		- Jakarta XML Binding
-		- Jakarta Activation
+- JDK 11 or later
+	- Additional dependencies required for Java SE runtime environment. These dependencies is not required for Jakarta EE server environment.
+		- Jakarta XML Binding (`jakarta.xml.bind:jakarta.xml.bind-api`)
+		- Jakarta Activation (`jakarta.activation:jakarta.activation-api`)
 - Mattermost Server
     - Please check mattermost4j version compatible with your server instance:
     https://github.com/maruTA-bis5/mattermost4j/wiki#what-version-shoud-i-use
@@ -55,13 +55,13 @@ client.postByIncomingWebhook(payload);
 <dependency>
 	<groupId>net.bis5.mattermost4j</groupId>
 	<artifactId>mattermost4j-core</artifactId>
-	<version>0.25.0</version>
+	<version>${mattermost4j.version}</version>
 </dependency>
 ```
 
 ### Gradle:
 ```
-compile 'net.bis5.mattermost4j:mattermost4j-core:0.25.0'
+compile 'net.bis5.mattermost4j:mattermost4j-core:${mattermost4j.version}'
 ```
 
 ## Contribution

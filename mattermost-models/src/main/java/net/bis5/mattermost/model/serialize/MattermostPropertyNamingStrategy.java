@@ -14,6 +14,7 @@
 
 package net.bis5.mattermost.model.serialize;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
@@ -56,11 +57,11 @@ public class MattermostPropertyNamingStrategy extends PropertyNamingStrategy {
   protected PropertyNamingStrategy judgeStrategy(AnnotatedMember member) {
     Class<?> clazz = member.getDeclaringClass();
     if (Config.class.isAssignableFrom(clazz)) {
-      return PropertyNamingStrategy.UPPER_CAMEL_CASE;
+      return PropertyNamingStrategies.UPPER_CAMEL_CASE;
     } else if (clazz.getCanonicalName().startsWith("net.bis5.mattermost.model.config.")) {
-      return PropertyNamingStrategy.UPPER_CAMEL_CASE;
+      return PropertyNamingStrategies.UPPER_CAMEL_CASE;
     } else {
-      return PropertyNamingStrategy.SNAKE_CASE;
+      return PropertyNamingStrategies.SNAKE_CASE;
     }
   }
 }
