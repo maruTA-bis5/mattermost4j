@@ -189,6 +189,10 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
     return new MattermostClientBuilder();
   }
 
+  Client getHttpClientForUnitTest() {
+    return httpClient;
+  }
+
   protected Client buildClient(boolean ignoreUnknownProperties, Level clientLogLevel, Consumer<ClientBuilder> httpClientConfig) {
     ClientBuilder builder = MattermostClientFactory.createClientBuilder(ignoreUnknownProperties, clientLogLevel);
 

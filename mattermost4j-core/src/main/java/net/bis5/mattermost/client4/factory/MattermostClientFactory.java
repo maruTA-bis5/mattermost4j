@@ -26,19 +26,27 @@ import net.bis5.mattermost.client4.spi.MattermostClientProvider;
  */
 public class MattermostClientFactory {
 
+  private MattermostClientFactory() {
+    throw new InternalError();
+  }
+
   private static ServiceLoader<MattermostClientProvider> providerLoader = ServiceLoader.load(MattermostClientProvider.class);
 
   public static ClientBuilder createClientBuilder(boolean ignoreUnknownProperty, Level clientLogLevel) {
-    for (MattermostClientProvider provider : providerLoader) {
-      return provider.createClientBuilder(ignoreUnknownProperty, clientLogLevel);
-    }
-    return null;
+    return providerLoader.findFirst()
+      .map(p -> p.createClientBuilder(ignoreUnknownProperty, clientLogLevel))
+      .orElseThrow(ClientProviderNotFoundException::new);
   }
 
   public static MultiPartAdapter createMultiPartAdapter() {
-    for (MattermostClientProvider provider : providerLoader) {
-      return provider.createMultiPartAdapter();
+    return providerLoader.findFirst()
+      .map(MattermostClientProvider::createMultiPartAdapter)
+      .orElseThrow(ClientProviderNotFoundException::new);
+  }
+
+  public static class ClientProviderNotFoundException extends RuntimeException {
+    ClientProviderNotFoundException() {
+      super("No " + MattermostClientProvider.class.getName() + " is registered.");
     }
-    return null;
   }
 }

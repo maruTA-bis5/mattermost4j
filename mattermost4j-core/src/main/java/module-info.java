@@ -37,4 +37,5 @@ module net.bis5.mattermost4j.core {
     exports net.bis5.mattermost.provider;
 
     opens net.bis5.mattermost.client4.model to com.fasterxml.jackson.databind;
+    uses net.bis5.mattermost.client4.spi.MattermostClientProvider;
 }
