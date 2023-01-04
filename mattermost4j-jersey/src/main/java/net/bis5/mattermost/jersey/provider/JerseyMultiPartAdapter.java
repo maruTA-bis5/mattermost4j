@@ -19,18 +19,6 @@ import net.bis5.mattermost.client4.MultiPartAdapter;
 public class JerseyMultiPartAdapter implements MultiPartAdapter {
 
   @Override
-  public String detectSuffix(String contentDispositionHeader) {
-    try {
-      ContentDisposition contentDisposition = new ContentDisposition(contentDispositionHeader);
-      String fileName = contentDisposition.getFileName();
-      return fileName.substring(fileName.lastIndexOf("."));
-    } catch (ParseException e) {
-      // If server returns illegal syntax, that is server bug.
-      throw new IllegalArgumentException(e);
-    }
-  }
-
-  @Override
   public <T> ApiResponse<T> doApiPostMultiPart(Client httpClient, String url, String authority, FormMultiPart multiPart, Class<T> responseType) {
   
     FormDataMultiPart jerseyMultiPart = new FormDataMultiPart();

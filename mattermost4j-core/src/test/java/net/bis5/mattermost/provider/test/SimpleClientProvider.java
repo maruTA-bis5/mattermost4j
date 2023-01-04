@@ -38,11 +38,6 @@ public class SimpleClientProvider implements MattermostClientProvider {
     return new MultiPartAdapter() {
 
       @Override
-      public String detectSuffix(String contentDispositionHeader) {
-        throw new UnsupportedOperationException();
-      }
-
-      @Override
       public <T> ApiResponse<T> doApiPostMultiPart(Client httpClient, String url, String authority,  FormMultiPart multiPart, Class<T> responseType) {
         throw new UnsupportedOperationException();
       }

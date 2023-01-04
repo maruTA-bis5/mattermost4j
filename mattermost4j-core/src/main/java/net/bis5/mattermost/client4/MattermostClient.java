@@ -164,6 +164,7 @@ import net.bis5.mattermost.model.UserList;
 import net.bis5.mattermost.model.UserPatch;
 import net.bis5.mattermost.model.UserSearch;
 import net.bis5.mattermost.model.license.MfaSecret;
+import net.bis5.mattermost.respheader.ContentDisposition;
 import net.bis5.opengraph.models.OpenGraph;
 
 /**
@@ -2038,8 +2039,14 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
     } else {
       String contentDispositionHeader =
           String.class.cast(response.getHeaders().getFirst("Content-Disposition"));
-      return multiPartAdapter.detectSuffix(contentDispositionHeader);
+      return detectSuffix(contentDispositionHeader);
     }
+  }
+
+  private String detectSuffix(String contentDispositionHeader) {
+      var contentDisposition = new ContentDisposition(contentDispositionHeader);
+      String fileName = contentDisposition.getFileName();
+      return fileName != null ? fileName.substring(fileName.lastIndexOf(".")) : "";
   }
 
   @Override

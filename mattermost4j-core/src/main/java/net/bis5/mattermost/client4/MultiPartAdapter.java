@@ -79,8 +79,6 @@ public interface MultiPartAdapter {
     private final MediaType mediaType;
   }
 
-  String detectSuffix(String contentDispositionHeader);
-
   <T> ApiResponse<T> doApiPostMultiPart(Client httpClient, String url, String authority,  FormMultiPart multiPart, Class<T> responseType);
 
 }
