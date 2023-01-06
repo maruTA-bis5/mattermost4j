@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.bis5.mattermost4j</groupId>
 	<artifactId>mattermost4j-parent</artifactId>
-	<version>0.25.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Mattermost4J Parent POM</name>
 	<url>https://github.com/maruTA-bis5/mattermost4j</url>
@@ -49,8 +49,8 @@
 	</distributionManagement>
 
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.java.spotbugs.reportPaths>${project.build.directory}/spotbugsXml.xml</sonar.java.spotbugs.reportPaths>
 		<sonar.junit.reportPaths>${project.build.directory}/surefire-reports,${project.build.directory}/failsafe-reports</sonar.junit.reportPaths>
@@ -88,8 +88,21 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.10.1</version>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>1.18.24</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
+				<version>3.0.0-M7</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -114,7 +127,7 @@
 					<encoding>UTF-8</encoding>
 					<docencoding>UTF-8</docencoding>
 					<charset>UTF-8</charset>
-					<sourcepath>target/generated-sources/delombok:src/moditect</sourcepath>
+					<sourcepath>target/generated-sources/delombok</sourcepath>
 				</configuration>
 				<executions>
 					<execution>
@@ -170,20 +183,20 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok-maven-plugin</artifactId>
-				<version>1.18.20.0</version>
+				<groupId>com.github.auties00</groupId>
+				<artifactId>delombok-plugin</artifactId>
+				<version>1.18.24</version>
 				<executions>
 					<execution>
-						<phase>generate-sources</phase>
+						<phase>process-sources</phase>
 						<goals>
 							<goal>delombok</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
-					<addOutputDirectory>false</addOutputDirectory>
-					<sourceDirectory>src/main/java</sourceDirectory>
+					<rootDirectory>${project.build.sourceDirectory}</rootDirectory>
+					<outputDirectory>${project.build.directory}/generated-sources/delombok</outputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -243,27 +256,6 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>0.8.7</version>
 				</plugin>
-				<plugin>
-					<groupId>org.moditect</groupId>
-					<artifactId>moditect-maven-plugin</artifactId>
-					<version>1.0.0.RC2</version>
-					<executions>
-						<execution>
-							<id>add-module-info</id>
-							<phase>package</phase>
-							<goals>
-								<goal>add-module-info</goal>
-							</goals>
-							<configuration>
-								<jvmVersion>11</jvmVersion>
-								<overwriteExistingFiles>true</overwriteExistingFiles>
-								<module>
-									<moduleInfoFile>src/moditect/module-info.java</moduleInfoFile>
-								</module>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -296,7 +288,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.22</version>
+			<version>1.18.24</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -305,6 +297,11 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
+				<version>2.13.3</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.module</groupId>
+				<artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
 				<version>2.13.3</version>
 			</dependency>
 			<dependency>

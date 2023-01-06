@@ -17,8 +17,9 @@
 module net.bis5.mattermost4j.models {
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.core;
-    requires com.fasterxml.jackson.databind;
+    requires transitive com.fasterxml.jackson.databind;
     requires java.prefs;
+    requires static lombok;
 
     exports net.bis5.mattermost.model;
     exports net.bis5.mattermost.model.config;
@@ -28,4 +29,13 @@ module net.bis5.mattermost4j.models {
     exports net.bis5.mattermost.model.gitlab;
     exports net.bis5.mattermost.model.license;
     exports net.bis5.mattermost.model.serialize;
+
+    opens net.bis5.mattermost.model to com.fasterxml.jackson.databind;
+    opens net.bis5.mattermost.model.config to com.fasterxml.jackson.databind;
+    opens net.bis5.mattermost.model.config.consts to com.fasterxml.jackson.databind;
+    opens net.bis5.mattermost.model.config.consts.saml to com.fasterxml.jackson.databind;
+    opens net.bis5.mattermost.model.config.plugin to com.fasterxml.jackson.databind;
+    opens net.bis5.mattermost.model.gitlab to com.fasterxml.jackson.databind;
+    opens net.bis5.mattermost.model.license to com.fasterxml.jackson.databind;
+    opens net.bis5.mattermost.model.serialize to com.fasterxml.jackson.databind;
 }

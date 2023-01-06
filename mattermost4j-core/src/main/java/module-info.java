@@ -20,14 +20,18 @@ module net.bis5.mattermost4j.core {
     requires jersey.media.json.jackson;
     requires org.apache.commons.lang3;
 
-    requires transitive com.fasterxml.jackson.annotation;
+    requires com.fasterxml.jackson.annotation;
     requires transitive com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.module.jakarta.xmlbind;
     requires transitive jakarta.ws.rs;
+    requires transitive jakarta.xml.bind;
     requires transitive java.logging;
     requires transitive java.sql;
     requires transitive jersey.media.multipart;
     requires transitive net.bis5.mattermost4j.models;
     requires transitive opengraph4j;
+
+    requires static lombok;
 
     exports net.bis5.mattermost.client4;
     exports net.bis5.mattermost.client4.api;
@@ -35,4 +39,5 @@ module net.bis5.mattermost4j.core {
     exports net.bis5.mattermost.client4.model;
     exports net.bis5.mattermost.jersey.provider;
 
+    opens net.bis5.mattermost.client4.model to com.fasterxml.jackson.databind;
 }

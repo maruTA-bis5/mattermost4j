@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 class MattermostModelMapperProviderTest {
 
   @Nested
-  static class IgnoreUnknownPropertiesTest {
+  class IgnoreUnknownPropertiesTest {
     private static final String JSON_INCLUDE_UNKNOWN_PROPERTY = //
         "{\"UNKNOWN_PROPERTY\":\"value\",\"id\":\"qjwhr6gcq3d8d883cgsuk17h9a\"}";
 
