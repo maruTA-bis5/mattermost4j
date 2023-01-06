@@ -24,6 +24,7 @@ module net.bis5.mattermost4j.jersey {
     requires net.bis5.mattermost4j.core;
 
     requires jakarta.annotation;
+    requires jakarta.inject;
 
     exports net.bis5.mattermost.jersey.provider;
     provides net.bis5.mattermost.client4.spi.MattermostClientProvider with net.bis5.mattermost.jersey.provider.MattermostJerseyClientProvider;

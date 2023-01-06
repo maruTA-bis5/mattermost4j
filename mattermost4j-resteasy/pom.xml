@@ -5,20 +5,20 @@
 		<artifactId>mattermost4j-parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>mattermost4j-jersey</artifactId>
-	<name>Mattermost4J :: Jersey Client</name>
+	<artifactId>mattermost4j-resteasy</artifactId>
+	<name>Mattermost4J :: RESTEasy Client</name>
 
-   <dependencyManagement>
+	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.glassfish.jersey</groupId>
-				<artifactId>jersey-bom</artifactId>
-				<version>3.1.0</version>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>resteasy-bom</artifactId>
+				<version>6.2.1.Final</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
-	 </dependencyManagement>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>net.bis5.mattermost4j</groupId>
@@ -31,24 +31,18 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
-			<artifactId>jersey-client</artifactId>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-client</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.inject</groupId>
-			<artifactId>jersey-hk2</artifactId>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson2-provider</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-multipart</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jakarta.inject</groupId>
-			<artifactId>jakarta.inject-api</artifactId>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-multipart-provider</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -59,20 +53,11 @@
 			<type>test-jar</type>
 			<classifier>tests</classifier>
 		</dependency>
-		<dependency>
-			<groupId>jakarta.annotation</groupId>
-			<artifactId>jakarta.annotation-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jvnet.mimepull</groupId>
-			<artifactId>mimepull</artifactId>
-			<version>1.9.13</version>
-		</dependency>
 	</dependencies>
+
 	<profiles>
 		<profile>
-			<id>jersey</id>
+			<id>resteasy</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -88,4 +73,18 @@
 			</build>
 		</profile>
 	</profiles>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugin</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<manifestEntries>
+						<Automatic-Module-Name>net.bis5.mattermost4j.resteasy</Automatic-Module-Name>
+					</manifestEntries>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
