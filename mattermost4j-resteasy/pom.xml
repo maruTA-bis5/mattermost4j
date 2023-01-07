@@ -8,10 +8,6 @@
 	<artifactId>mattermost4j-resteasy</artifactId>
 	<name>Mattermost4J :: RESTEasy Client</name>
 
-  <properties>
-		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-	</properties>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

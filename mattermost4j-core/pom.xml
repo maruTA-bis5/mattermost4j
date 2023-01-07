@@ -8,10 +8,6 @@
 	<artifactId>mattermost4j-core</artifactId>
 	<name>Mattermost APIv4 Client for Java</name>
 
-  <properties>
-		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>net.bis5.mattermost4j</groupId>
