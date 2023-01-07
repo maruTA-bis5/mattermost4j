@@ -14,6 +14,7 @@
 
 package net.bis5.mattermost.client4.api;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 import net.bis5.mattermost.client4.ApiResponse;
@@ -105,7 +106,7 @@ public interface SystemApi {
 
   ApiResponse<AnalyticsRows> getAnalytics(AnalyticsCategory category, String teamId);
 
-  ApiResponse<Boolean> uploadLicenseFile(Path licenseFile);
+  ApiResponse<Boolean> uploadLicenseFile(Path licenseFile) throws IOException;
 
   ApiResponse<Boolean> removeLicense();
 

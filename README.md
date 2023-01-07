@@ -16,7 +16,8 @@ Mattermost API v4 client for Java.
 - Mattermost Server
     - Please check mattermost4j version compatible with your server instance:
     https://github.com/maruTA-bis5/mattermost4j/wiki#what-version-shoud-i-use
-    
+- Jakarta RESTful Web Services 3.1 implementation (Client only, A part of Jakarta EE 10)
+
 ## Usage
 ### Basic API Client
 ```java
@@ -27,7 +28,6 @@ client = new MattermostClient("YOUR-MATTERMOST-URL");
 // case 2. use builder
 client = MattermostClient.builder()
     .url("YOUR-MATTERMOST-URL")
-	.logLevel(Level.INFO)
 	.ignoreUnknownProperties()
 	.build();
 
@@ -38,7 +38,7 @@ client.setAccessToken(token);
 ```
 
 ### Use Incoming Webhook
-```
+```java
 // You can also use builder for create client instance.
 IncomingWebhookClient client = new IncomingWebhookClient("YOUR-MATTERMOST-URL");
 
@@ -50,19 +50,22 @@ client.postByIncomingWebhook(payload);
 ```
 
 ## Install
-### Apache Maven:
-```xml
-<dependency>
-	<groupId>net.bis5.mattermost4j</groupId>
-	<artifactId>mattermost4j-core</artifactId>
-	<version>${mattermost4j.version}</version>
-</dependency>
-```
+Add these dependencies to your project.
+- Core (`net.bis5.mattermost4j:mattermost4j-core`)
+- Client Adapter matches to your RESTful Web Service Client  
+You can request to create new client adapter for other client not in below list if you would like to use.
+	- for Jersey: `net.bis5.mattermost4j:mattermost4j-jersey`
+	- for RESTEasy: `net.bis5.mattermost4j:mattermost4j-resteasy`
 
-### Gradle:
-```
-compile 'net.bis5.mattermost4j:mattermost4j-core:${mattermost4j.version}'
-```
+## Module index
+groupId: `net.bis5.mattermost4j`
+|artifactId|JPMS module|module name|note|
+|---|---|---|---|
+|`mattermost-models`|`net.bis5.mattermost4j.models`|Maattermost Data Models||
+|`mattermost4j-core`|`net.bis5.mattermost4j.core`|Mattermost APIv4 Client for Java||
+|`mattermost4j-integration-test-base`|`net.bis5.mattermost4j.testbase`|Mattermost4J :: Integration Test Base||
+|`mattermost4j-jersey`|`net.bis5.mattermost4j.jersey`|Mattermost4J :: Jersey Client||
+|`mattermost4j-resteasy`|`net.bis5.mattermost4j.resteasy`|Mattermost4J :: RESTEasy Client|(JPMS) Automatic module|
 
 ## Contribution
 1. Fork it ( https://github.com/maruTA-bis5/mattermost4j/fork )
@@ -78,12 +81,13 @@ use https://github.com/google/styleguide/ {intellij,eclipse}-java-google-style.x
 Currently, use CheckStyle's built-in `google_checks.xml`.
 
 ## Test
-### Unit test
-- `mvn test`
-
 ### Integration with Mattermost Server
 1. `docker-compose up`
-2. `mvn verify`
+2. `mvn test`
+
+#### To run specify test
+1. `docker-compose up`
+2. `mvn test -Dtest=UsersApiTest -Dsurefire.failIfNoSpecifiedTests=false`
 
 ## Contact
 - Create GitHub Issue (https://github.com/maruTA-bis5/primefaces-excella-exporter/issues/new)
@@ -92,4 +96,3 @@ Currently, use CheckStyle's built-in `google_checks.xml`.
 
 ## License
 [Apache Software License, Version 2.0](LICENSE.txt)
-

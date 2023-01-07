@@ -17,11 +17,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import jakarta.ws.rs.client.Client;
-import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import org.glassfish.jersey.client.ClientProperties;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -38,7 +35,6 @@ class HttpConfigTest {
 
     final MattermostClient client = MattermostClient.builder()
         .url("http://localhost:815")
-        .logLevel(Level.INFO)
         .httpConfig(clientBuilder ->
         {
           clientBuilder.connectTimeout(timeout, TimeUnit.MILLISECONDS);
@@ -46,20 +42,17 @@ class HttpConfigTest {
         })
         .build();
 
-    final Field httpClientField = MattermostClient.class.getDeclaredField("httpClient");
-    httpClientField.setAccessible(true);
-
-    final Client rsClient = (Client) httpClientField.get(client);
+    final Client rsClient = client.getHttpClientForUnitTest();
 
     assertThat(
         "Internally used httpClient uses configured read timeouts",
-        rsClient.getConfiguration().getProperty(ClientProperties.READ_TIMEOUT),
+        rsClient.getConfiguration().getProperty("jersey.config.client.readTimeout"),
         is(timeout)
     );
 
     assertThat(
         "Internally used httpClient uses configured connect timeouts",
-        rsClient.getConfiguration().getProperty(ClientProperties.CONNECT_TIMEOUT),
+        rsClient.getConfiguration().getProperty("jersey.config.client.connectTimeout"),
         is(timeout)
     );
   }

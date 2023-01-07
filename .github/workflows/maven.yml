@@ -12,7 +12,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-java@v2
         with:
           java-version: 11
@@ -28,23 +28,25 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: failure()
   test-with-server:
-    name: "JDK ${{ matrix.java-version}} - Mattermost ${{ matrix.mattermost-version }}"
+    name: "JDK ${{ matrix.java-version}} - Mattermost ${{ matrix.mattermost-version }} - Client ${{ matrix.client-impl }}"
     needs: lint
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         mattermost-version:
           - 6.3.0
           - 6.2.1
           - 6.1.1
           - 5.37.6
-        mattermost-version-latest:
-          - 6.3.0
         java-version:
           - 11
           - 17
+        client-impl:
+          - jersey
+          - resteasy
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-java@v2
         with:
           java-version: ${{ matrix.java-version }}
@@ -53,19 +55,32 @@ jobs:
       - run: docker-compose up -d
         env:
           MATTERMOST_VERSION: ${{ matrix.mattermost-version }}
-      - run: mvn clean verify --show-version
+      - run: mvn clean verify --show-version -P${{ matrix.client-impl }}
+  sonarqube-scanning:
+    runs-on: ubuntu-latest
+    if: github.repository == 'maruTA-bis5/mattermost4j' && github.actor != 'dependabot[bot]'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: temurin
+          cache: maven
+      - run: docker-compose up -d
+        env:
+          MATTERMOST_VERSION: 6.3.0
+      - run: mvn clean
+      - run: mvn verify --show-version -Pjersey
+      - run: docker-compose down
+      - run: docker-compose up -d
+        env:
+          MATTERMOST_VERSION: 6.3.0
+      - run: mvn verify --show-version -Presteasy
       - name: SonarQube scan
         run: mvn sonar:sonar -s .github/workflows/settings-sonar.xml
-        if: github.repository == 'maruTA-bis5/mattermost4j' && github.actor != 'dependabot[bot]' && matrix.mattermost-version == matrix.mattermost-version-latest && matrix.java-version == 11
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: 8398a7/action-slack@v2
-        with:
-          status: ${{ job.status }}
-          author_name: test status for version ${{ matrix.mattermost-version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: failure()

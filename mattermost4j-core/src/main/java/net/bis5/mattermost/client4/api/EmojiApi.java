@@ -33,8 +33,9 @@ public interface EmojiApi {
    * will save an emoji to the server if the current user has permission to do so. If successful,
    * the provided emoji will be returned with its Id field filled in. Otherwise, an error will be
    * returned.
+   * @throws IOException
    */
-  ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile);
+  ApiResponse<Emoji> createEmoji(Emoji emoji, Path imageFile) throws IOException;
 
   /**
    * returns a list of custom emoji in the system.

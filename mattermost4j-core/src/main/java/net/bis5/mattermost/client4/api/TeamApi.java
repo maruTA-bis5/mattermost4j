@@ -289,8 +289,9 @@ public interface TeamApi {
 
   /**
    * Set the team icon.
+   * @throws IOException
    */
-  ApiResponse<Boolean> setTeamIcon(String teamId, Path iconFilePath);
+  ApiResponse<Boolean> setTeamIcon(String teamId, Path iconFilePath) throws IOException;
 
   /**
    * Remove the team icon.

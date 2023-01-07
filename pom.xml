@@ -10,6 +10,9 @@
 	<modules>
 		<module>mattermost4j-core</module>
 		<module>mattermost-models</module>
+		<module>mattermost4j-jersey</module>
+		<module>mattermost4j-resteasy</module>
+		<module>mattermost4j-integration-test-base</module>
 	</modules>
 	<licenses>
 		<license>
@@ -120,7 +123,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.3.2</version>
 				<configuration>
 					<show>protected</show>
 					<source>11</source>
@@ -256,6 +258,16 @@
 					<artifactId>jacoco-maven-plugin</artifactId>
 					<version>0.8.7</version>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugin</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.3.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.3.2</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -269,20 +281,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<version>1.3</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>3.22.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.19</version>
+			<artifactId>hamcrest</artifactId>
+			<version>2.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -305,9 +305,9 @@
 				<version>2.13.3</version>
 			</dependency>
 			<dependency>
-				<groupId>org.glassfish.jersey</groupId>
-				<artifactId>jersey-bom</artifactId>
-				<version>3.0.4</version>
+				<groupId>jakarta.platform</groupId>
+				<artifactId>jakarta.jakartaee-bom</artifactId>
+				<version>10.0.0</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>

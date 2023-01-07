@@ -32,8 +32,9 @@ public interface BrandApi {
 
   /**
    * sets the brand image for the system.
+   * @throws IOException
    */
-  ApiResponse<Boolean> uploadBrandImage(Path dataFIle);
+  ApiResponse<Boolean> uploadBrandImage(Path dataFIle) throws IOException;
 
   /**
    * delete the brand image for the system.
