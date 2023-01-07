@@ -8,6 +8,10 @@
 	<artifactId>mattermost4j-core</artifactId>
 	<name>Mattermost APIv4 Client for Java</name>
 
+  <properties>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>net.bis5.mattermost4j</groupId>
@@ -85,7 +89,7 @@
 	</dependencies>
 	<build>
 		<plugins>
-			<plugin>
+			<!-- <plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<excludes>
@@ -93,7 +97,7 @@
 					</excludes>
 					<useModulePath>false</useModulePath>
 				</configuration>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.10.1</version>

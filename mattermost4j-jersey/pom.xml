@@ -8,6 +8,10 @@
 	<artifactId>mattermost4j-jersey</artifactId>
 	<name>Mattermost4J :: Jersey Client</name>
 
+  <properties>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+	</properties>
+
    <dependencyManagement>
 		<dependencies>
 			<dependency>
