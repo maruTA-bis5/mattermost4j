@@ -1,6 +1,8 @@
 package net.bis5.mattermost.respheader;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -45,10 +47,16 @@ public class ContentDisposition {
   private String resolveFileName(Map<String, String> headerEntries) {
     if (headerEntries.containsKey("filename*")) {
       String encodedFileName = StringUtils.removeStartIgnoreCase(headerEntries.get("filename*"), "utf-8''");
-      return URLDecoder.decode(encodedFileName);
+      try {
+        return URLDecoder.decode(encodedFileName, StandardCharsets.UTF_8.name());
+      } catch (UnsupportedEncodingException uee) {
+        // UTF-8 must be supported by all runtime environment
+        throw new InternalError(uee);
+      }
     } else if (headerEntries.containsKey("filename")) {
       return StringUtils.unwrap(headerEntries.get("filename"), "\"");
     }
     return null;
   }
+
 }
