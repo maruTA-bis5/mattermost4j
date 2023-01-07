@@ -15,7 +15,6 @@
 package net.bis5.mattermost.client4.factory;
 
 import java.util.ServiceLoader;
-import java.util.logging.Level;
 
 import jakarta.ws.rs.client.ClientBuilder;
 import net.bis5.mattermost.client4.MultiPartAdapter;
@@ -32,9 +31,9 @@ public class MattermostClientFactory {
 
   private static ServiceLoader<MattermostClientProvider> providerLoader = ServiceLoader.load(MattermostClientProvider.class);
 
-  public static ClientBuilder createClientBuilder(boolean ignoreUnknownProperty, Level clientLogLevel) {
+  public static ClientBuilder createClientBuilder(boolean ignoreUnknownProperty) {
     return providerLoader.findFirst()
-      .map(p -> p.createClientBuilder(ignoreUnknownProperty, clientLogLevel))
+      .map(p -> p.createClientBuilder(ignoreUnknownProperty))
       .orElseThrow(ClientProviderNotFoundException::new);
   }
 

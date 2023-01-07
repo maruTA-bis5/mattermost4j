@@ -28,7 +28,6 @@ client = new MattermostClient("YOUR-MATTERMOST-URL");
 // case 2. use builder
 client = MattermostClient.builder()
     .url("YOUR-MATTERMOST-URL")
-	.logLevel(Level.INFO)
 	.ignoreUnknownProperties()
 	.build();
 

@@ -1,7 +1,5 @@
 package net.bis5.mattermost.resteasy.provider;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 import jakarta.ws.rs.client.ClientBuilder;
@@ -12,7 +10,7 @@ import net.bis5.mattermost.provider.MattermostModelMapperProvider;
 public class MattermostRestEasyClientProvider implements MattermostClientProvider {
 
   @Override
-  public ClientBuilder createClientBuilder(boolean ignoreUnknownProperties, Level clientLogLevel) {
+  public ClientBuilder createClientBuilder(boolean ignoreUnknownProperties) {
     return ClientBuilder.newBuilder()
         .register(new MattermostModelMapperProvider(ignoreUnknownProperties));
   }

@@ -37,7 +37,6 @@ class HttpConfigTest {
 
     final MattermostClient client = MattermostClient.builder()
         .url("http://localhost:815")
-        .logLevel(Level.INFO)
         .httpConfig(clientBuilder ->
         {
           clientBuilder.connectTimeout(timeout, TimeUnit.MILLISECONDS);

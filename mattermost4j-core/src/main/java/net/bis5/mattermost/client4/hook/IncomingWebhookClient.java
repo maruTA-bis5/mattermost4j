@@ -14,8 +14,6 @@
 
 package net.bis5.mattermost.client4.hook;
 
-import java.util.logging.Level;
-
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -38,16 +36,12 @@ public class IncomingWebhookClient implements IncomingWebhook {
   private final WebTarget hookTarget;
 
   public IncomingWebhookClient(String hookUrl) {
-    this(hookUrl, null);
-  }
-
-  public IncomingWebhookClient(String hookUrl, Level clientLogLevel) {
-    hookClient = createClient(clientLogLevel);
+    hookClient = createClient();
     hookTarget = hookClient.target(hookUrl);
   }
 
-  protected Client createClient(Level clientLogLevel) {
-    ClientBuilder builder = MattermostClientFactory.createClientBuilder(false, clientLogLevel);
+  protected Client createClient() {
+    ClientBuilder builder = MattermostClientFactory.createClientBuilder(false);
     return builder.build();
   }
 

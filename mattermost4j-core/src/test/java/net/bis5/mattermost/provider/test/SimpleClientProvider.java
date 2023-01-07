@@ -1,12 +1,5 @@
 package net.bis5.mattermost.provider.test;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.logging.LoggingFeature;
-import org.glassfish.jersey.logging.LoggingFeature.Verbosity;
-
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import net.bis5.mattermost.client4.MultiPartAdapter;
@@ -17,13 +10,8 @@ import net.bis5.mattermost.provider.MattermostModelMapperProvider;
 public class SimpleClientProvider implements MattermostClientProvider {
 
   @Override
-  public ClientBuilder createClientBuilder(boolean ignoreUnknownProperties, Level clientLogLevel) {
-    ClientBuilder builder = ClientBuilder.newBuilder();
-    if (clientLogLevel != null) {
-      builder.register(new LoggingFeature(Logger.getLogger(getClass().getName()), clientLogLevel,
-          Verbosity.PAYLOAD_ANY, 100000));
-    }
-    return builder;
+  public ClientBuilder createClientBuilder(boolean ignoreUnknownProperties) {
+    return ClientBuilder.newBuilder();
   }
 
   @Override

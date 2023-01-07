@@ -34,7 +34,6 @@ public interface MattermostClientTest {
   default MattermostClient createClient() {
     return MattermostClient.builder() //
         .url(getApplicationUrl()) //
-        .logLevel(Level.INFO) //
         .build();
   }
 }

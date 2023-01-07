@@ -14,8 +14,6 @@
 
 package net.bis5.mattermost.client4.spi;
 
-import java.util.logging.Level;
-
 import jakarta.ws.rs.client.ClientBuilder;
 import net.bis5.mattermost.client4.MultiPartAdapter;
 
@@ -27,10 +25,9 @@ public interface MattermostClientProvider {
   /**
    * Create {@link ClientBuilder} instance.
    * @param ignoreUnknownProperties
-   * @param clientLogLevel
    * @return Preconfigured {@link ClientBuilder}
    */
-  ClientBuilder createClientBuilder(boolean ignoreUnknownProperties, Level clientLogLevel);
+  ClientBuilder createClientBuilder(boolean ignoreUnknownProperties);
 
   /**
    * Create {@link MultiPartAdapter} instance to use to process multi-part request/response.

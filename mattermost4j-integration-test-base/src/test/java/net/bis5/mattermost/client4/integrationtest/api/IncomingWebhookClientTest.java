@@ -82,7 +82,7 @@ class IncomingWebhookClientTest implements MattermostClientTest {
 
     IncomingWebhookRequest payload = new IncomingWebhookRequest();
     payload.setText("Hello Webhook World");
-    IncomingWebhookClient webhookClient = new IncomingWebhookClient(hookUrl, Level.WARNING);
+    IncomingWebhookClient webhookClient = new IncomingWebhookClient(hookUrl);
 
     ApiResponse<Boolean> response = webhookClient.postByIncomingWebhook(payload);
 
@@ -112,7 +112,7 @@ class IncomingWebhookClientTest implements MattermostClientTest {
     IncomingWebhookRequest payload = new IncomingWebhookRequest();
     payload.setText("Webhook with icon_emoji" + th.newId());
     payload.setIconEmoji("mattermost");
-    IncomingWebhookClient webhookClient = new IncomingWebhookClient(hookUrl, Level.WARNING);
+    IncomingWebhookClient webhookClient = new IncomingWebhookClient(hookUrl);
 
     ApiResponse<Boolean> response = webhookClient.postByIncomingWebhook(payload);
     assertNoError(response);

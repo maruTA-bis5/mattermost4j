@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -194,8 +193,8 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
     return httpClient;
   }
 
-  protected Client buildClient(boolean ignoreUnknownProperties, Level clientLogLevel, Consumer<ClientBuilder> httpClientConfig) {
-    ClientBuilder builder = MattermostClientFactory.createClientBuilder(ignoreUnknownProperties, clientLogLevel);
+  protected Client buildClient(boolean ignoreUnknownProperties, Consumer<ClientBuilder> httpClientConfig) {
+    ClientBuilder builder = MattermostClientFactory.createClientBuilder(ignoreUnknownProperties);
 
     httpClientConfig.accept(builder);
 
@@ -204,16 +203,10 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
 
   public static class MattermostClientBuilder {
 
-    private Level logLevel;
     private String url;
     private boolean ignoreUnknownProperties;
     private Consumer<ClientBuilder> httpClientConfig = clientBuilder -> {
     };
-
-    public MattermostClientBuilder logLevel(Level logLevel) {
-      this.logLevel = logLevel;
-      return this;
-    }
 
     public MattermostClientBuilder url(String url) {
       this.url = url;
@@ -231,7 +224,7 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
     }
 
     public MattermostClient build() {
-      return new MattermostClient(url, ignoreUnknownProperties, logLevel, httpClientConfig);
+      return new MattermostClient(url, ignoreUnknownProperties, httpClientConfig);
     }
   }
 
@@ -245,29 +238,19 @@ public class MattermostClient implements AutoCloseable, AuditsApi, Authenticatio
    * @param url
    */
   public MattermostClient(String url) {
-    this(url, null);
-  }
-
-  /**
-   * Create new MattermostClient instance.
-   * @param url
-   * @param logLevel
-   */
-  public MattermostClient(String url, Level logLevel) {
-    this(url, false, logLevel, clientBuilder -> {});
+    this(url, false, clientBuilder -> {});
   }
 
   /**
    * Create new MattermostClient instance.
    * @param url Mattermost url
    * @param ignoreUnknownProperties
-   * @param logLevel
    * @param httpClientConfig
    */
-  protected MattermostClient(String url, boolean ignoreUnknownProperties, Level logLevel, Consumer<ClientBuilder> httpClientConfig) {
+  protected MattermostClient(String url, boolean ignoreUnknownProperties, Consumer<ClientBuilder> httpClientConfig) {
     this.url = url;
     this.apiUrl = url + API_URL_SUFFIX;
-    this.httpClient = buildClient(ignoreUnknownProperties, logLevel, httpClientConfig);
+    this.httpClient = buildClient(ignoreUnknownProperties, httpClientConfig);
     this.multiPartAdapter = MattermostClientFactory.createMultiPartAdapter();
   }
 
