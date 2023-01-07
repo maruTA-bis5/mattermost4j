@@ -1,5 +1,6 @@
 package net.bis5.mattermost.respheader;
 
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class ContentDisposition {
       .map(String::strip)
       .map(this::toPair)
       .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-    this.fileName = headerEntries.get("filename");
+    this.fileName = resolveFileName(headerEntries);
   }
 
   private Pair<String, String> toPair(String entry) {
@@ -36,8 +37,18 @@ public class ContentDisposition {
       return Pair.of(entry.toLowerCase(), "true");
     }
     String key = entry.substring(0, firstEqualPos).strip();
-    String value = StringUtils.unwrap(entry.substring(firstEqualPos), "\"");
+    String value = entry.substring(Math.min(firstEqualPos + 1, entry.length()));
 
     return Pair.of(key, value);
+  }
+
+  private String resolveFileName(Map<String, String> headerEntries) {
+    if (headerEntries.containsKey("filename*")) {
+      String encodedFileName = StringUtils.removeStartIgnoreCase(headerEntries.get("filename*"), "utf-8''");
+      return URLDecoder.decode(encodedFileName);
+    } else if (headerEntries.containsKey("filename")) {
+      return StringUtils.unwrap(headerEntries.get("filename"), "\"");
+    }
+    return null;
   }
 }
