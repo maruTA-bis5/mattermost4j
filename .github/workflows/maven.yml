@@ -32,6 +32,7 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         mattermost-version:
           - 6.3.0
