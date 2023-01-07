@@ -17,10 +17,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import jakarta.ws.rs.client.Client;
-import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 import org.junit.jupiter.api.Test;
 
 /**
