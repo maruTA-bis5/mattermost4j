@@ -57,7 +57,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.java.spotbugs.reportPaths>${project.build.directory}/spotbugsXml.xml</sonar.java.spotbugs.reportPaths>
 		<sonar.junit.reportPaths>${project.build.directory}/surefire-reports,${project.build.directory}/failsafe-reports</sonar.junit.reportPaths>
-		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	</properties>
 
 	<profiles>
@@ -168,20 +167,19 @@
 				<executions>
 					<execution>
 						<id>prepare-agent</id>
-						<phase>initialize</phase>
 						<goals>
 							<goal>prepare-agent</goal>
+							<goal>prepare-agent-integration</goal>
 						</goals>
 						<configuration>
-							<append>true</append>
-							<destFile>${project.basedir}/../target/jacoco-it.exec</destFile>
+							<destFile>${project.build.directory}/jacoco.exec</destFile>
 						</configuration>
 					</execution>
 					<execution>
 						<id>report</id>
 						<phase>verify</phase>
 						<goals>
-							<goal>report-aggregate</goal>
+							<goal>report</goal>
 						</goals>
 					</execution>
 				</executions>
