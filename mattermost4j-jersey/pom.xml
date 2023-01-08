@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>net.bis5.mattermost4j</groupId>
 		<artifactId>mattermost4j-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0-beta.1</version>
 	</parent>
 	<artifactId>mattermost4j-jersey</artifactId>
 	<name>Mattermost4J :: Jersey Client</name>
