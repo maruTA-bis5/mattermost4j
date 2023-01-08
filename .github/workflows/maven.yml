@@ -19,14 +19,6 @@ jobs:
           distribution: temurin
           cache: maven
       - run: mvn clean verify -DskipTests=true --show-version
-      - uses: 8398a7/action-slack@v2
-        with:
-          status: ${{ job.status }}
-          author_name: lint status
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: failure()
   test-with-server:
     name: "JDK ${{ matrix.java-version}} - Mattermost ${{ matrix.mattermost-version }} - Client ${{ matrix.client-impl }}"
     needs: lint
