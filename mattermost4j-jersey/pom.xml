@@ -8,7 +8,7 @@
 	<artifactId>mattermost4j-jersey</artifactId>
 	<name>Mattermost4J :: Jersey Client</name>
 
-   <dependencyManagement>
+	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.glassfish.jersey</groupId>
@@ -18,7 +18,7 @@
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
-	 </dependencyManagement>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>net.bis5.mattermost4j</groupId>
@@ -76,6 +76,7 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<failIfNoTests>true</failIfNoTests>
