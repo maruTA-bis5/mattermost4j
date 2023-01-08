@@ -13,7 +13,7 @@
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-bom</artifactId>
-				<version>6.2.1.Final</version>
+				<version>6.2.2.Final</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -61,6 +61,7 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-plugin</artifactId>
 						<configuration>
 							<failIfNoTests>true</failIfNoTests>

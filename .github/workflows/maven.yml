@@ -13,20 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           java-version: 11
           distribution: temurin
           cache: maven
       - run: mvn clean verify -DskipTests=true --show-version
-      - uses: 8398a7/action-slack@v2
-        with:
-          status: ${{ job.status }}
-          author_name: lint status
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: failure()
   test-with-server:
     name: "JDK ${{ matrix.java-version}} - Mattermost ${{ matrix.mattermost-version }} - Client ${{ matrix.client-impl }}"
     needs: lint
@@ -47,7 +39,7 @@ jobs:
           - resteasy
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java-version }}
           distribution: temurin
@@ -63,7 +55,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           java-version: 11
           distribution: temurin
