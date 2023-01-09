@@ -27,10 +27,11 @@ jobs:
       fail-fast: false
       matrix:
         mattermost-version:
-          - 6.3.0
-          - 6.2.1
-          - 6.1.1
-          - 5.37.6
+          - 7.5.2
+          - 7.4.1
+          - 7.3.1
+          - 7.2.1 
+          - 7.1.5 # esr
         java-version:
           - 11
           - 17
