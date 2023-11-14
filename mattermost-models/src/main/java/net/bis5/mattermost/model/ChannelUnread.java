@@ -34,6 +34,8 @@ public class ChannelUnread {
   private long msgCount;
   @JsonProperty("mention_count")
   private long mentionCount;
+  @JsonProperty("urgent_mention_count")
+  private long urgentMentionCount;
   private Map<String, String> notifyProps;
   /** @since Mattermost Server 5.35 */
   private long mentionCountRoot;
